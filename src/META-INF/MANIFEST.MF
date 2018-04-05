@@ -3,7 +3,7 @@ Created-By: Hartwig Thomas, Enter AG, Rüti ZH, Switzerland
 Specification-Title: JDBC 
 Specification-Version: 4
 Implementation-Title: JDBC implementation for MS Access databases
-Implementation-Version: 2.0.44
+Implementation-Version: 2.0.45
 Implementation-Vendor: Enter AG, Rüti ZH, Switzerland
 Built-Date: 05. Apr 2018
 Class-Path: jackcess-1.2.6a.jar
