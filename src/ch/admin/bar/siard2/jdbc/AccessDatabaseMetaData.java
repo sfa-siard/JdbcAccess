@@ -2124,8 +2124,10 @@ public class AccessDatabaseMetaData
       if (iColumn > 0)
         sbSql.append(",");
       sbSql.append("\r\n  ");
-      // TODO: should really be evaluated as a value expression!
-      String sColumnName = listColumns.get(iColumn); 
+      String sColumnName = listColumns.get(iColumn);
+      // handle external parentheses separately
+      if (sColumnName.startsWith("(") && sColumnName.endsWith(")"))
+        sColumnName = sColumnName.substring(1,sColumnName.length()-1);
       sbSql.append(SqlLiterals.formatId(sColumnName));
     }
     sbSql.append("\r\nFROM ");
@@ -2415,6 +2417,9 @@ public class AccessDatabaseMetaData
             for (int iColumn = 0; iColumn < listColumnNames.size(); iColumn++)
             {
               String sColumnName = listColumnNames.get(iColumn);
+              // handle external parentheses separately
+              if (sColumnName.startsWith("(") && sColumnName.endsWith(")"))
+                sColumnName = sColumnName.substring(1,sColumnName.length()-1);
               int iDataType = rsmd.getColumnType(iColumn+1);
               int iPrecision = rsmd.getPrecision(iColumn+1);
               int iScale = rsmd.getScale(iColumn+1);

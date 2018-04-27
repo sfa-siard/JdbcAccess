@@ -6,3 +6,7 @@ First release of JdbcAccess on GitHub.
 
 2.0.48
 .gitattributes added.
+
+2.0.54
+AccessDatabaseMetaData.matches() corrected (failed for names containing "_") and test for it added.
+In AccessDatabaseMetaData parentheses from parenthesized names from SelectQuery.getSelectColumns() removed.
