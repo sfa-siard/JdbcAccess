@@ -89,6 +89,22 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester
     assertEquals("Wrong database meta data class!", AccessDatabaseMetaData.class, getDatabaseMetaData().getClass());
   } /* testClass */
   
+  @Test
+  public void testMatches()
+  {
+    try
+    {
+      BaseDatabaseMetaData bdmd = (BaseDatabaseMetaData)getDatabaseMetaData();
+      assertTrue("Underscore in name fails!",AccessDatabaseMetaData.matches(bdmd.toPattern("ZLA_LAND"),"ZLA_LAND"));
+      assertTrue("Percent in name fails!",AccessDatabaseMetaData.matches(bdmd.toPattern("ZLA%readme"),"ZLA%readme"));
+      assertTrue("Other special character in name fails!",AccessDatabaseMetaData.matches(bdmd.toPattern("ZLA.LAND"),"ZLA.LAND"));
+      assertTrue("Percent does not match all!",AccessDatabaseMetaData.matches("%","ZLA_readme"));
+      assertTrue("Underscore does not match single letter!",AccessDatabaseMetaData.matches("ZLA_readme","ZLAPreadme"));
+      assertTrue("Underscore does not match special character!",AccessDatabaseMetaData.matches("ZLA_readme","ZLA.readme"));
+    }
+    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+  }
+  
   @Override
   @Test
   public void testGetTypeInfo()

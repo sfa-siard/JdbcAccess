@@ -305,7 +305,7 @@ public class AccessDatabaseMetaData
    * @param sValue string value.
    * @return true, if sValue matches sPattern.
    */
-  private boolean matches(String sPattern, String sValue)
+  static boolean matches(String sPattern, String sValue)
   {
     boolean bMatch = true;
     if (sPattern != null)
@@ -313,14 +313,15 @@ public class AccessDatabaseMetaData
       /* escape all regex special characters
        * ".", "*", "|", "?", "+", "(", ")", "[", "]", "{", "}", "^", "$", "\" 
        * ("\" first!) */
-      String sMetaCharacters = "\\$^}{][)(+?|*.";
+      String sMetaCharacters = "$^}{][)(+?|*.";
       for (int i = 0; i < sMetaCharacters.length(); i++)
       {
         String sCharEscape = sMetaCharacters.substring(i,i+1);
         sPattern = sPattern.replace(sCharEscape, "\\"+sCharEscape);
       }
       /* neither '_' nor '%' are special characters for JAVA regular expressions */
-      sPattern = sPattern.replaceAll("_", ".").replaceAll("%", ".*");
+      sPattern = sPattern.replaceAll("^_", ".").replaceAll("([^\\\\])_", "$1.").
+        replaceAll("^%", ".*").replaceAll("([^\\\\])%", "$1.*");
       Pattern pattern = Pattern.compile(sPattern);
       Matcher matcher = pattern.matcher(sValue);
       bMatch = matcher.matches();
