@@ -9,14 +9,15 @@ import org.junit.*;
 
 import ch.enterag.utils.*;
 import ch.enterag.utils.base.*;
-import ch.enterag.utils.database.SqlTypes;
+import ch.enterag.utils.database.*;
 import ch.enterag.utils.jdbc.*;
-import ch.enterag.utils.lang.Execute;
-import ch.enterag.sqlparser.SqlLiterals;
+import ch.enterag.utils.lang.*;
+import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.identifier.*;
 import ch.admin.bar.siard2.access.*;
 import ch.admin.bar.siard2.jdbcx.*;
 
+@SuppressWarnings("unused")
 public class AccessStatementTester extends BaseStatementTester
 {
   private static final File fileTEST_EMPTY_DATABASE = new File("testfiles/testempty.accdb");
@@ -32,9 +33,13 @@ public class AccessStatementTester extends BaseStatementTester
     try
     {
       FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_ACCESS_DATABASE);
+      /** This was only possible until JAVA 8. Now it is blocked by the split packages prohibition.
+       * So we use the test database originally created under JAVA 8.
+       * If we ever want more controlled features in the test database we are in trouble ...
       if (Execute.isOsWindows())
         new TestAccessDatabase(fileTEST_ACCESS_DATABASE);
       else
+      **/
         FU.copy(fileTEST_ACCESS_SOURCE, fileTEST_ACCESS_DATABASE);
       FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_SQL_DATABASE);
       AccessDataSource dsAccess = new AccessDataSource();

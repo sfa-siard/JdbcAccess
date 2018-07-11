@@ -34,9 +34,10 @@ Created    : 16.06.2017, Hartwig Thomas
   <!-- antlr 4 jar -->
   <property name="jarantlr4runtime" value="antlr-runtime-4.5.2.jar"/>
   <property name="cpantlr" value="${dirlib}/${jarantlr4runtime}"/>
-  <!-- sunjdbc -->
+  <!-- sunjdbc was used for tests on Windows for JAVA 8
   <property name="jarsunjdbc" value="sunjdbc.jar"/>
   <property name="cpsunjdbc" value="${dirlib}/${jarsunjdbc}"/>
+  -->
   <!-- jdbcbase jars -->
   <property name="jarjdbcbase" value="jdbcbase.jar"/>
   <property name="jarjdbcbasetest" value="jdbcbase-test.jar"/>
@@ -262,7 +263,7 @@ Created    : 16.06.2017, Hartwig Thomas
   <property name="classjdbctestsuite" value="ch.admin.bar.siard2.jdbc._AccessJdbcTestSuite"/>
   <property name="filejdbctests" value="jdbc-tests"/>
 	<target name="tests" depends="jar">
-    <echo message="${ant.project.name}: tests  ${dirdist}/${jarfile};${cpmyjackcess};${cpjdbcbase-test};${cpsqlparser};${cpantlr};${cpenterutils};${cpsunjdbc};${cpjunit}"/>
+    <echo message="${ant.project.name}: tests  ${dirdist}/${jarfile};${cpmyjackcess};${cpjdbcbase-test};${cpsqlparser};${cpantlr};${cpenterutils};${cpjunit}"/>
 		<!-- build the tests -->
     <javac debug="true" debuglevel="${debuglevel}"
       includeantruntime="false"
@@ -279,7 +280,6 @@ Created    : 16.06.2017, Hartwig Thomas
         <pathelement path="${cpsqlparser}"/>
         <pathelement path="${cpantlr}"/>
         <pathelement path="${cpenterutils}"/>
-        <pathelement path="${cpsunjdbc}"/>
         <pathelement path="${cpjunit}"/>
     	</classpath>
     </javac>
@@ -294,7 +294,6 @@ Created    : 16.06.2017, Hartwig Thomas
       	<pathelement path="${cpsqlparser}"/>
         <pathelement path="${cpenterutils}"/>
         <pathelement path="${cpantlr}"/>
-      	<pathelement path="${cpsunjdbc}"/>
         <pathelement path="${cpjunit}"/>
       </classpath>
       <test 
@@ -313,7 +312,6 @@ Created    : 16.06.2017, Hartwig Thomas
         <pathelement path="${cpsqlparser}"/>
         <pathelement path="${cpenterutils}"/>
         <pathelement path="${cpantlr}"/>
-        <pathelement path="${cpsunjdbc}"/>
         <pathelement path="${cpjunit}"/>
       </classpath>
       <test 
