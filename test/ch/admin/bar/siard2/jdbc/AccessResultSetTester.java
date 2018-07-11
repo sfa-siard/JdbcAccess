@@ -19,7 +19,6 @@ import ch.enterag.sqlparser.identifier.*;
 import ch.admin.bar.siard2.access.*;
 import ch.admin.bar.siard2.jdbcx.*;
 
-@SuppressWarnings("unused")
 public class AccessResultSetTester extends BaseResultSetTester
 {
   private static String getTableQuery(QualifiedId qiTable, List<TestColumnDefinition> listCd)
@@ -98,13 +97,16 @@ public class AccessResultSetTester extends BaseResultSetTester
     try
     {
       FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_ACCESS_DATABASE);
-      /** This was only possible until JAVA 8. Now it is blocked by the split packages prohibition.
-       * So we use the test database originally created under JAVA 8.
-       * If we ever want more controlled features in the test database we are in trouble ...
-      if (Execute.isOsWindows())
+      /* The JDBC-ODBC bridge could still be used until JAVA 1.8 using
+       * an extract from the JAVA 7 run-time library and the JdbcOdbc.dll.
+       * Now that is blocked by the split packages prohibition.
+       * So we use the test database originally created under JAVA 1.8.
+       * If we ever want more controlled features in the test database 
+       * we shall be in trouble ... (have to use JAVA 1.7 or 1.8!)
+       */
+      if (Execute.isOsWindows() && Execute.isJavaVersionLessThan("9"))
         new TestAccessDatabase(fileTEST_ACCESS_DATABASE);
       else
-      **/
         FU.copy(fileTEST_ACCESS_SOURCE, fileTEST_ACCESS_DATABASE);
       FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_SQL_DATABASE);
       AccessDataSource dsAccess = new AccessDataSource();
