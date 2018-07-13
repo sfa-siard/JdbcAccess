@@ -1,12 +1,8 @@
-Release Notes for JdbcAccess 2.0
+Release Notes for JdbcAccess 2.1
 ================================
 
-2.0.43
-First release of JdbcAccess on GitHub.
+2.1.0 
+Release for JAVA 10
 
-2.0.48
-.gitattributes added.
-
-2.0.54
-AccessDatabaseMetaData.matches() corrected (failed for names containing "_") and test for it added.
-In AccessDatabaseMetaData parentheses from parenthesized names from SelectQuery.getSelectColumns() removed.
+2.0.1
+First release of JdbcAccess.
