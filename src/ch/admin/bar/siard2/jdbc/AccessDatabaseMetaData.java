@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
 import com.healthmarketscience.jackcess.query.*;
+
+import ch.enterag.utils.database.SqlTypes;
 import ch.enterag.utils.jdbc.*;
 import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.datatype.*;
@@ -2409,10 +2411,17 @@ public class AccessDatabaseMetaData
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
           {
             SelectQuery sq = _mapViews.get(sTableName);
-            String sSql = getQuery(sq);
-            Statement stmt = _conn.createStatement();
-            AccessResultSet rsQuery = (AccessResultSet)stmt.executeQuery(sSql);
-            ResultSetMetaData rsmd = rsQuery.getMetaData();
+            Statement stmt = null;
+            AccessResultSet rsQuery = null;
+            ResultSetMetaData rsmd = null;
+            try
+            {
+              String sSql = getQuery(sq);
+              stmt = _conn.createStatement();
+              rsQuery = (AccessResultSet)stmt.executeQuery(sSql);
+              rsmd = rsQuery.getMetaData();
+            }
+            catch(SQLException se) {} // multiple tables ...
             List<String> listColumnNames = sq.getSelectColumns();
             for (int iColumn = 0; iColumn < listColumnNames.size(); iColumn++)
             {
@@ -2420,15 +2429,26 @@ public class AccessDatabaseMetaData
               // handle external parentheses separately
               if (sColumnName.startsWith("(") && sColumnName.endsWith(")"))
                 sColumnName = sColumnName.substring(1,sColumnName.length()-1);
-              int iDataType = rsmd.getColumnType(iColumn+1);
-              int iPrecision = rsmd.getPrecision(iColumn+1);
-              int iScale = rsmd.getScale(iColumn+1);
-              String sTypeName = rsmd.getColumnTypeName(iColumn+1);
               if (matches(sColumnNamePattern,sColumnName))
+              {
+                int iDataType = Types.NULL;
+                int iPrecision = -1;
+                int iScale = -1;
+                String sTypeName = SqlTypes.sUNKNOWN;
+                if (rsmd != null)
+                {
+                  iDataType = rsmd.getColumnType(iColumn+1);
+                  iPrecision = rsmd.getPrecision(iColumn+1);
+                  iScale = rsmd.getScale(iColumn+1);
+                  sTypeName = rsmd.getColumnTypeName(iColumn+1);
+                }
                 listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn, sColumnName, iDataType, sTypeName, iPrecision, iScale));
+              }
             }
-            rsQuery.close();
-            stmt.close();
+            if (rsQuery != null)
+              rsQuery.close();
+            if (stmt != null)
+              stmt.close();
           }
         }
         catch(IOException ie) { throw new SQLException(ie.getClass().getName()+": "+ie.getMessage()); }

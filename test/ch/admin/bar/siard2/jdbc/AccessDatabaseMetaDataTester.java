@@ -120,7 +120,21 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester
     try { print(getDatabaseMetaData().getTypeInfo()); }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   }
-
+/*
+  @Test
+  public void testBug456GetColumns()
+  {
+    try
+    {
+      tearDown();
+      FU.copy(new File("D:\\Projekte\\SIARD2\\Bugs\\456\\spatz\\spatz.accdb"), fileTEST_ACCESS_DATABASE);
+      setUp(false);
+      print(getDatabaseMetaData().getColumns(null, "Admin", "Abfrage1", "%"));
+    }
+    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+    catch(IOException ie) { fail(EU.getExceptionMessage(ie)); }
+  }
+*/  
   @Test
   public void testGetColumnsSqlSimple()
   {
