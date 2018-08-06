@@ -120,7 +120,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester
     try { print(getDatabaseMetaData().getTypeInfo()); }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   }
-/*
+/***
   @Test
   public void testBug456GetColumns()
   {
@@ -134,7 +134,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
     catch(IOException ie) { fail(EU.getExceptionMessage(ie)); }
   }
-*/  
+***/  
   @Test
   public void testGetColumnsSqlSimple()
   {
