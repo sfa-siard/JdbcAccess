@@ -2431,7 +2431,7 @@ public class AccessDatabaseMetaData
                 sColumnName = sColumnName.substring(1,sColumnName.length()-1);
               if (matches(sColumnNamePattern,sColumnName))
               {
-                int iDataType = Types.NULL;
+                int iDataType = Types.OTHER;
                 int iPrecision = -1;
                 int iScale = -1;
                 String sTypeName = SqlTypes.sUNKNOWN;
