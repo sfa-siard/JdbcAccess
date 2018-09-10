@@ -34,6 +34,7 @@ public class AccessConnectionTester extends BaseConnectionTester
        * If we ever want more controlled features in the test database 
        * we shall be in trouble ... (have to use JAVA 7 or 8!)
        */
+      System.out.println("isOsWindows: "+String.valueOf(Execute.isOsWindows())+", isJavaVersionLessThan(9): "+String.valueOf(Execute.isJavaVersionLessThan("9")));
       if (Execute.isOsWindows() && Execute.isJavaVersionLessThan("9"))
         new TestAccessDatabase(fileTEST_ACCESS_DATABASE);
       else
