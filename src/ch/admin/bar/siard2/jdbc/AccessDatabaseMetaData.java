@@ -13,18 +13,15 @@ package ch.admin.bar.siard2.jdbc;
 
 import java.io.*;
 import java.nio.charset.*;
-import java.lang.reflect.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
 import com.healthmarketscience.jackcess.query.*;
-import com.healthmarketscience.jackcess.impl.query.*;
 
-import ch.enterag.utils.EU;
+import ch.enterag.utils.*;
 import ch.enterag.utils.jdbc.*;
-import ch.enterag.utils.reflect.Glue;
 import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.datatype.*;
 import ch.enterag.sqlparser.datatype.DataType;
