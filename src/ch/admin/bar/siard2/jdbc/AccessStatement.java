@@ -538,6 +538,11 @@ public class AccessStatement
       TableCursor tc = new TableCursor(table,ss);
       rs = new AccessResultSet(_conn, this, rshSelect, tc);
     }
+    else if (qs.isCount())
+    {
+      CountCursor cc = new CountCursor(table.getRowCount(),rshSelect.getName(0));
+      rs = new AccessResultSet(_conn, this, rshSelect, cc);
+    }
     else
     {
       SqlStatement ssBase = _sf.newSqlStatement();

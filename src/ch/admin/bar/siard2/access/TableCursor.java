@@ -263,4 +263,4 @@ public class TableCursor implements ResultSetCursor
     return _iRowCount;
   } /* getCount */
   
-} /* class SelectCursor */
+} /* class TableCursor */

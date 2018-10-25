@@ -238,8 +238,43 @@ public class AccessStatementTester extends BaseStatementTester
       rs.close();
     }
     catch(SQLException se) { System.out.println(EU.getExceptionMessage(se)); }
-  } /* testExecuteSelectSize */
+  } /* testExecuteSelectSizes */
   
+  /***
+  @Test
+  public void testExecuteSelectCount()
+  {
+    File fileBugDatabase = new File("..\\Bugs\\456\\TestDB\\TestDB.accdb");
+    File fileAccessDatabase = new File("tmp\\TestDB.accdb");
+    try
+    {
+      FU.copy(fileBugDatabase, fileAccessDatabase);
+      AccessDataSource dsAccess = new AccessDataSource();
+      dsAccess.setDatabaseName(fileAccessDatabase.getAbsolutePath());
+      dsAccess.setDescription("Bug 456 data base");
+      dsAccess.setReadOnly(false);
+      dsAccess.setUser(sUSER);
+      dsAccess.setPassword(sPASSWORD);
+      AccessConnection connAccess = (AccessConnection)dsAccess.getConnection();
+      connAccess.setAutoCommit(false);
+      AccessStatement stmtAccess = (AccessStatement)connAccess.createStatement();
+      ResultSet rs = stmtAccess.executeQuery("SELECT COUNT(*) AS RECORDS FROM \"Admin\".\"evdCity\"");
+      if (rs.next())
+      {
+        long l = rs.getLong("RECORDS");
+        System.out.println("Records: "+String.valueOf(l));
+        assertEquals("Invalid record count for empty table!",1354764l,l);
+      }
+      else
+        fail("No number of records determined!");
+      rs.close();
+      stmtAccess.close();
+      connAccess.close();
+    }
+    catch(IOException ie) { fail(EU.getExceptionMessage(ie)); }
+    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+  } 
+  ***/
   /***
   @Test
   public void testEmptySelectSize()
@@ -275,4 +310,5 @@ public class AccessStatementTester extends BaseStatementTester
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   }
   ***/
+  
 } /* AccessStatementTester */
