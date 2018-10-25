@@ -12,7 +12,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/enterutils.jar"/>
+	<classpathentry kind="lib" path="lib/enterutils.jar" sourcepath="/EnterUtilities/src"/>
 	<classpathentry kind="lib" path="lib/jdbcbase-test.jar" sourcepath="/JdbcBase/test"/>
 	<classpathentry kind="lib" path="lib/jdbcbase.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-4.5.2.jar"/>

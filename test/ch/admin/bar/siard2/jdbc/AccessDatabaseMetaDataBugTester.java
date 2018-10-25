@@ -14,8 +14,10 @@ import ch.admin.bar.siard2.jdbcx.*;
 
 public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
 {
-  private static final File fileTEST_ACCESS_SOURCE = new File("../Bugs/20180426/Datenbank_UEB.accdb");
-  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/Datenbank_UEB.accdb");
+//  private static final File fileTEST_ACCESS_SOURCE = new File("../Bugs/20180426/Datenbank_UEB.accdb");
+//  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/Datenbank_UEB.accdb");
+  private static final File fileTEST_ACCESS_SOURCE = new File("../Bugs/460/Art1.accdb");
+  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/Art1.accdb");
   private static final String sUSER = "Admin";
   private static final String sPASSWORD = "";
   
@@ -47,12 +49,32 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   }
   
+//  @Test
+//  public void testGetColumnsView()
+//  {
+//    try
+//    {
+//      QualifiedId qiView = new QualifiedId(null,"Admin","NachnamenMitarbeiter");
+//      ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+//      while (rs.next())
+//      {
+//        String sColumnName = rs.getString("COLUMN_NAME");
+//        int iDataType = rs.getInt("DATA_TYPE");
+//        String sTypeName = rs.getString("TYPE_NAME");
+//        System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+//      }
+//      rs.close();
+//      print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+//    }
+//    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+//  } /* testGetColumnsView */
+//
   @Test
-  public void testGetColumnsView()
+  public void testGetColumnsJoinedView()
   {
     try
     {
-      QualifiedId qiView = new QualifiedId(null,"Admin","NachnamenMitarbeiter");
+      QualifiedId qiView = new QualifiedId(null,"Admin","Artwork City Query");
       ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
       while (rs.next())
       {

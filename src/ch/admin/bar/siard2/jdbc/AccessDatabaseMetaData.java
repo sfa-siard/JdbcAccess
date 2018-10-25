@@ -13,16 +13,23 @@ package ch.admin.bar.siard2.jdbc;
 
 import java.io.*;
 import java.nio.charset.*;
+import java.lang.reflect.*;
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
 import com.healthmarketscience.jackcess.query.*;
+import com.healthmarketscience.jackcess.impl.query.*;
+
+import ch.enterag.utils.EU;
 import ch.enterag.utils.jdbc.*;
+import ch.enterag.utils.reflect.Glue;
 import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.datatype.*;
 import ch.enterag.sqlparser.datatype.DataType;
 import ch.enterag.sqlparser.datatype.enums.*;
+import ch.enterag.sqlparser.identifier.*;
 import ch.admin.bar.siard2.access.*;
 
 /*====================================================================*/
@@ -2115,6 +2122,7 @@ public class AccessDatabaseMetaData
    * @param sq select query.
    * @return SQL query.
    */
+  @SuppressWarnings("unused")
   private String getQuery(SelectQuery sq)
   {
     StringBuilder sbSql = new StringBuilder("SELECT ");
@@ -2409,31 +2417,31 @@ public class AccessDatabaseMetaData
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
           {
             SelectQuery sq = _mapViews.get(sTableName);
-            String sSql = getQuery(sq);
-            Statement stmt = _conn.createStatement();
-            AccessResultSet rsQuery = (AccessResultSet)stmt.executeQuery(sSql);
-            ResultSetMetaData rsmd = rsQuery.getMetaData();
-            List<String> listColumnNames = sq.getSelectColumns();
-            for (int iColumn = 0; iColumn < listColumnNames.size(); iColumn++)
+            List<String> listSelectColumns = sq.getSelectColumns();
+            for (int iColumn = 0; iColumn < listSelectColumns.size(); iColumn++)
             {
-              String sColumnName = listColumnNames.get(iColumn);
+              String sSelectColumn = listSelectColumns.get(iColumn);
               // handle external parentheses separately
-              if (sColumnName.startsWith("(") && sColumnName.endsWith(")"))
-                sColumnName = sColumnName.substring(1,sColumnName.length()-1);
-              if (matches(sColumnNamePattern,sColumnName))
+              if (sSelectColumn.startsWith("(") && sSelectColumn.endsWith(")"))
+                sSelectColumn = sSelectColumn.substring(1,sSelectColumn.length()-1);
+              // split table/column
+              QualifiedId qiColumn = new QualifiedId(sSelectColumn);
+              Table table = _conn.getDatabase().getTable(qiColumn.getSchema());
+              Column column = null;
+              if (table != null)
+                column = table.getColumn(qiColumn.getName());
+              if (matches(sColumnNamePattern,sSelectColumn))
               {
-                int iDataType = rsmd.getColumnType(iColumn+1);
-                int iPrecision = rsmd.getPrecision(iColumn+1);
-                int iScale = rsmd.getScale(iColumn+1);
-                String sTypeName = rsmd.getColumnTypeName(iColumn+1);
-                listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn, sColumnName, iDataType, sTypeName, iPrecision, iScale));
+                if (column != null)
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, sSelectColumn, column));
+                else
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, Types.OTHER, "Unknown", -1, -1));
               }
             }
-            rsQuery.close();
-            stmt.close();
           }
         }
-        catch(IOException ie) { throw new SQLException(ie.getClass().getName()+": "+ie.getMessage()); }
+        catch(ParseException pe) { throw new SQLException(EU.getExceptionMessage(pe)); }
+        catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
       }
     }
     Collections.sort(listColumns, new ColumnsComparator());
