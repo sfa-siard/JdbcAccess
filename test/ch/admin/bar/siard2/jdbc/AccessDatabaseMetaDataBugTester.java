@@ -75,12 +75,16 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     try
     {
       QualifiedId qiView = new QualifiedId(null,"Admin","Artwork City Query");
+      int iColumn = 0;
       ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
       while (rs.next())
       {
         String sColumnName = rs.getString("COLUMN_NAME");
         int iDataType = rs.getInt("DATA_TYPE");
         String sTypeName = rs.getString("TYPE_NAME");
+        iColumn++;
+        int iPosition = rs.getInt("ORDINAL_POSITION");
+        assertEquals("Wrong position!",iColumn,iPosition);
         System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
       }
       rs.close();

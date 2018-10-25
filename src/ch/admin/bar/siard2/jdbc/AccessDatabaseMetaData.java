@@ -2298,6 +2298,26 @@ public class AccessDatabaseMetaData
   
   /*------------------------------------------------------------------*/
   /** create and fill a row of JDBC column description from the
+   * Jackcess column object but with a different column index.
+   * @param sCatalog catalog.
+   * @param sSchema schema.
+   * @param sTableName table name.
+   * @param iColumnIndex column index (1-based).
+   * @param sColumnName (alias) name of the column.
+   * @param column Jackcess column object.
+   * @return row of JDBC column description.
+   * @throws SQLException if an I/O error occurred.
+   */
+  private ResultSetRow getColumnRow(String sCatalog, String sSchema, 
+    String sTableName, int iColumnIndex, String sColumnName, Column column) throws SQLException
+  {
+    ResultSetRow row = getColumnRow(sCatalog,sSchema,sTableName,sColumnName,column);
+    row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(iColumnIndex));
+    return row;
+  } /* getColumnRow */
+  
+  /*------------------------------------------------------------------*/
+  /** create and fill a row of JDBC column description from the
    * column descriptions of a view.
    * @param sCatalog catalog.
    * @param sSchema schema.
@@ -2430,7 +2450,7 @@ public class AccessDatabaseMetaData
               if (matches(sColumnNamePattern,sSelectColumn))
               {
                 if (column != null)
-                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, sSelectColumn, column));
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, column));
                 else
                   listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, Types.OTHER, "Unknown", -1, -1));
               }
