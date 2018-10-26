@@ -14,7 +14,6 @@ package ch.admin.bar.siard2.jdbc;
 import java.io.*;
 import java.nio.charset.*;
 import java.sql.*;
-import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
@@ -26,7 +25,6 @@ import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.datatype.*;
 import ch.enterag.sqlparser.datatype.DataType;
 import ch.enterag.sqlparser.datatype.enums.*;
-import ch.enterag.sqlparser.identifier.*;
 import ch.admin.bar.siard2.access.*;
 
 /*====================================================================*/
@@ -2379,6 +2377,57 @@ public class AccessDatabaseMetaData
   } /* getColumnRow */
   
   /*------------------------------------------------------------------*/
+  /** find end of Access identifier.
+   * @param s: String with identifier.
+   * @param iStart: start of identifier in string.
+   * @return end of identifier.
+   */
+  private int getIdentifierEnd(String s, int iStart)
+  {
+    int iEnd = iStart;
+    if (s.charAt(iStart) == '[')
+    {
+      for (iEnd = iEnd + 1; (iEnd < s.length()) && (s.charAt(iEnd) != ']'); iEnd++) {}
+      iEnd++;
+    }
+    else
+      for (; (iEnd < s.length()) && Character.isJavaIdentifierPart(s.charAt(iEnd)); iEnd++) {}
+    return iEnd;
+  }
+  /*------------------------------------------------------------------*/
+  /** parse a column expression into a table and column part.
+   * @param sColumnExpression: column expression.
+   * @return [Table,Column] or null, if it cannot be parsed. 
+   */
+  private String[] parseTableColumn(String sColumnExpression)
+  {
+    String[] asTableColumn = null;
+    if (sColumnExpression.startsWith("(") && sColumnExpression.endsWith(")"))
+      sColumnExpression = sColumnExpression.substring(1,sColumnExpression.length()-1);
+    String sTable = null;
+    String sColumn = null;
+    int iStart = 0;
+    int iEnd = getIdentifierEnd(sColumnExpression, iStart);
+    sTable = sColumnExpression.substring(iStart, iEnd);
+    if (sTable.startsWith("[") && (sTable.endsWith("]")))
+      sTable = sTable.substring(1,sTable.length()-1);
+    if ((iEnd < sColumnExpression.length()) && (sColumnExpression.charAt(iEnd) == '.'))
+    {
+      iStart = iEnd + 1;
+      iEnd = getIdentifierEnd(sColumnExpression, iStart);
+      if (iEnd >= sColumnExpression.length())
+      {
+        sColumn = sColumnExpression.substring(iStart, iEnd);
+        if (sColumn.startsWith("[") && (sColumn.endsWith("]")))
+          sColumn = sColumn.substring(1,sColumn.length()-1);
+      }
+    }
+    if ((sTable != null) && (sColumn != null))
+      asTableColumn = new String[] {sTable,sColumn};
+    return asTableColumn;
+  } /* parseTableColumn */
+  
+  /*------------------------------------------------------------------*/
   /** {@link DatabaseMetaData} */
   @Override
   public ResultSet getColumns(String sCatalog, String sSchemaPattern, String sTableNamePattern, String sColumnNamePattern) throws SQLException
@@ -2438,15 +2487,15 @@ public class AccessDatabaseMetaData
             for (int iColumn = 0; iColumn < listSelectColumns.size(); iColumn++)
             {
               String sSelectColumn = listSelectColumns.get(iColumn);
-              // handle external parentheses separately
-              if (sSelectColumn.startsWith("(") && sSelectColumn.endsWith(")"))
-                sSelectColumn = sSelectColumn.substring(1,sSelectColumn.length()-1);
               // split table/column
-              QualifiedId qiColumn = new QualifiedId(sSelectColumn);
-              Table table = _conn.getDatabase().getTable(qiColumn.getSchema());
               Column column = null;
-              if (table != null)
-                column = table.getColumn(qiColumn.getName());
+              String[] asTableColumn = parseTableColumn(sSelectColumn);
+              if (asTableColumn != null)
+              {
+                Table table = _conn.getDatabase().getTable(asTableColumn[0]);
+                if (table != null)
+                  column = table.getColumn(asTableColumn[1]);
+              }
               if (matches(sColumnNamePattern,sSelectColumn))
               {
                 if (column != null)
@@ -2457,7 +2506,6 @@ public class AccessDatabaseMetaData
             }
           }
         }
-        catch(ParseException pe) { throw new SQLException(EU.getExceptionMessage(pe)); }
         catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
       }
     }

@@ -14,10 +14,27 @@ import ch.admin.bar.siard2.jdbcx.*;
 
 public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
 {
-//  private static final File fileTEST_ACCESS_SOURCE = new File("../Bugs/20180426/Datenbank_UEB.accdb");
-//  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/Datenbank_UEB.accdb");
-  private static final File fileTEST_ACCESS_SOURCE = new File("../Bugs/460/Art1.accdb");
-  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/Art1.accdb");
+  private static final int iBug = Integer.parseInt(System.getProperty("bug"));
+  private static final File fileTEST_ACCESS_SOURCE;
+  private static final File fileTEST_ACCESS_DATABASE;
+  static
+  {
+    if (iBug == 460)
+    {
+      fileTEST_ACCESS_SOURCE = new File("../Bugs/460/Art1.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/Art1.accdb");
+    }
+    else if (iBug == 461)
+    {
+      fileTEST_ACCESS_SOURCE = new File("../Bugs/461/coffee.mdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/coffee.mdb");
+    }
+    else
+    {
+      fileTEST_ACCESS_SOURCE = new File("../Bugs/20180426/Datenbank_UEB.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/Datenbank_UEB.accdb");
+    }
+  }
   private static final String sUSER = "Admin";
   private static final String sPASSWORD = "";
   
@@ -49,48 +66,63 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   }
   
-//  @Test
-//  public void testGetColumnsView()
-//  {
-//    try
-//    {
-//      QualifiedId qiView = new QualifiedId(null,"Admin","NachnamenMitarbeiter");
-//      ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
-//      while (rs.next())
-//      {
-//        String sColumnName = rs.getString("COLUMN_NAME");
-//        int iDataType = rs.getInt("DATA_TYPE");
-//        String sTypeName = rs.getString("TYPE_NAME");
-//        System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
-//      }
-//      rs.close();
-//      print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
-//    }
-//    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
-//  } /* testGetColumnsView */
-//
   @Test
-  public void testGetColumnsJoinedView()
+  public void testGetColumnsView()
   {
     try
     {
-      QualifiedId qiView = new QualifiedId(null,"Admin","Artwork City Query");
-      int iColumn = 0;
-      ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
-      while (rs.next())
+      if (iBug == 461)
       {
-        String sColumnName = rs.getString("COLUMN_NAME");
-        int iDataType = rs.getInt("DATA_TYPE");
-        String sTypeName = rs.getString("TYPE_NAME");
-        iColumn++;
-        int iPosition = rs.getInt("ORDINAL_POSITION");
-        assertEquals("Wrong position!",iColumn,iPosition);
-        System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        QualifiedId qiView = new QualifiedId(null,"Admin","CoffeeChain Query");
+        int iColumn = 0;
+        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        while (rs.next())
+        {
+          String sColumnName = rs.getString("COLUMN_NAME");
+          int iDataType = rs.getInt("DATA_TYPE");
+          String sTypeName = rs.getString("TYPE_NAME");
+          iColumn++;
+          int iPosition = rs.getInt("ORDINAL_POSITION");
+          assertEquals("Wrong position!",iColumn,iPosition);
+          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        }
+        rs.close();
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
       }
-      rs.close();
-      print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+      else if (iBug == 460)
+      {
+        QualifiedId qiView = new QualifiedId(null,"Admin","Artwork City Query");
+        int iColumn = 0;
+        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        while (rs.next())
+        {
+          String sColumnName = rs.getString("COLUMN_NAME");
+          int iDataType = rs.getInt("DATA_TYPE");
+          String sTypeName = rs.getString("TYPE_NAME");
+          iColumn++;
+          int iPosition = rs.getInt("ORDINAL_POSITION");
+          assertEquals("Wrong position!",iColumn,iPosition);
+          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        }
+        rs.close();
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+      }
+      else
+      {
+        QualifiedId qiView = new QualifiedId(null,"Admin","NachnamenMitarbeiter");
+        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        while (rs.next())
+        {
+          String sColumnName = rs.getString("COLUMN_NAME");
+          int iDataType = rs.getInt("DATA_TYPE");
+          String sTypeName = rs.getString("TYPE_NAME");
+          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        }
+        rs.close();
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+      }
     }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
   } /* testGetColumnsView */
-
+  
 } /* AccessDatabaseMetaDataTester */
