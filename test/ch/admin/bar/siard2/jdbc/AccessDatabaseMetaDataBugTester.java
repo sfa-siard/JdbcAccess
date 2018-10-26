@@ -29,10 +29,15 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       fileTEST_ACCESS_SOURCE = new File("../Bugs/461/coffee.mdb");
       fileTEST_ACCESS_DATABASE = new File("tmp/coffee.mdb");
     }
-    else
+    else if (iBug == 20180426) 
     {
       fileTEST_ACCESS_SOURCE = new File("../Bugs/20180426/Datenbank_UEB.accdb");
       fileTEST_ACCESS_DATABASE = new File("tmp/Datenbank_UEB.accdb");
+    }
+    else 
+    {
+      fileTEST_ACCESS_SOURCE = new File("testfiles/testaccess.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/testaccess.accdb");
     }
   }
   private static final String sUSER = "Admin";
@@ -107,9 +112,23 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
         rs.close();
         print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
       }
-      else
+      else if (iBug == 20180426)
       {
         QualifiedId qiView = new QualifiedId(null,"Admin","NachnamenMitarbeiter");
+        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        while (rs.next())
+        {
+          String sColumnName = rs.getString("COLUMN_NAME");
+          int iDataType = rs.getInt("DATA_TYPE");
+          String sTypeName = rs.getString("TYPE_NAME");
+          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        }
+        rs.close();
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+      }
+      else
+      {
+        QualifiedId qiView = new QualifiedId(null,"Admin","VIEWTEST");
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())
         {

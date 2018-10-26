@@ -2333,13 +2333,15 @@ public class AccessDatabaseMetaData
     int iDataType, String sTypeName, int iPrecision, int iScale) 
   {
     DataType dt = Shunting.convertTypeFromJdbc(iDataType, iPrecision, iScale);
+    if (dt != null)
+      sTypeName = dt.format();
     ResultSetRow row = new ResultSetRow();
     row.put(sJDBC_TABLE_CAT, sCatalog);
     row.put(sJDBC_TABLE_SCHEM, sSchema);
     row.put(sJDBC_TABLE_NAME, sTableName);
     row.put(sJDBC_COLUMN_NAME, sColumnName);
     row.put(sJDBC_DATA_TYPE, iDataType);
-    row.put(sJDBC_TYPE_NAME, dt.format());
+    row.put(sJDBC_TYPE_NAME, sTypeName);
     row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iPrecision));
     row.put(sJDBC_BUFFER_LENGTH, Integer.valueOf(0)); 
     row.put(sJDBC_DECIMAL_DIGITS, Integer.valueOf(iScale));
@@ -2484,17 +2486,22 @@ public class AccessDatabaseMetaData
           {
             SelectQuery sq = _mapViews.get(sTableName);
             List<String> listSelectColumns = sq.getSelectColumns();
+            List<String> listFromTables = sq.getFromTables();
+            Table table = null;
+            if (listFromTables.size() == 1)
+              table = _conn.getDatabase().getTable(listFromTables.get(0));
             for (int iColumn = 0; iColumn < listSelectColumns.size(); iColumn++)
             {
               String sSelectColumn = listSelectColumns.get(iColumn);
               // split table/column
               Column column = null;
-              String[] asTableColumn = parseTableColumn(sSelectColumn);
-              if (asTableColumn != null)
+              if (table != null)
+                column = table.getColumn(sSelectColumn);
+              else
               {
-                Table table = _conn.getDatabase().getTable(asTableColumn[0]);
-                if (table != null)
-                  column = table.getColumn(asTableColumn[1]);
+                String[] asTableColumn = parseTableColumn(sSelectColumn);
+                if (asTableColumn != null)
+                  column = _conn.getDatabase().getTable(asTableColumn[0]).getColumn(asTableColumn[1]);
               }
               if (matches(sColumnNamePattern,sSelectColumn))
               {
