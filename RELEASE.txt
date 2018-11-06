@@ -1,6 +1,9 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.40
+Bugfixes (mainly VIEW meta data)
+
 2.1.0 
 Release for JAVA 10
 

@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
 import com.healthmarketscience.jackcess.query.*;
+
+import ch.enterag.utils.*;
 import ch.enterag.utils.jdbc.*;
 import ch.enterag.sqlparser.*;
 import ch.enterag.sqlparser.datatype.*;
@@ -2115,6 +2117,7 @@ public class AccessDatabaseMetaData
    * @param sq select query.
    * @return SQL query.
    */
+  @SuppressWarnings("unused")
   private String getQuery(SelectQuery sq)
   {
     StringBuilder sbSql = new StringBuilder("SELECT ");
@@ -2293,6 +2296,26 @@ public class AccessDatabaseMetaData
   
   /*------------------------------------------------------------------*/
   /** create and fill a row of JDBC column description from the
+   * Jackcess column object but with a different column index.
+   * @param sCatalog catalog.
+   * @param sSchema schema.
+   * @param sTableName table name.
+   * @param iColumnIndex column index (1-based).
+   * @param sColumnName (alias) name of the column.
+   * @param column Jackcess column object.
+   * @return row of JDBC column description.
+   * @throws SQLException if an I/O error occurred.
+   */
+  private ResultSetRow getColumnRow(String sCatalog, String sSchema, 
+    String sTableName, int iColumnIndex, String sColumnName, Column column) throws SQLException
+  {
+    ResultSetRow row = getColumnRow(sCatalog,sSchema,sTableName,sColumnName,column);
+    row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(iColumnIndex));
+    return row;
+  } /* getColumnRow */
+  
+  /*------------------------------------------------------------------*/
+  /** create and fill a row of JDBC column description from the
    * column descriptions of a view.
    * @param sCatalog catalog.
    * @param sSchema schema.
@@ -2310,13 +2333,15 @@ public class AccessDatabaseMetaData
     int iDataType, String sTypeName, int iPrecision, int iScale) 
   {
     DataType dt = Shunting.convertTypeFromJdbc(iDataType, iPrecision, iScale);
+    if (dt != null)
+      sTypeName = dt.format();
     ResultSetRow row = new ResultSetRow();
     row.put(sJDBC_TABLE_CAT, sCatalog);
     row.put(sJDBC_TABLE_SCHEM, sSchema);
     row.put(sJDBC_TABLE_NAME, sTableName);
     row.put(sJDBC_COLUMN_NAME, sColumnName);
     row.put(sJDBC_DATA_TYPE, iDataType);
-    row.put(sJDBC_TYPE_NAME, dt.format());
+    row.put(sJDBC_TYPE_NAME, sTypeName);
     row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iPrecision));
     row.put(sJDBC_BUFFER_LENGTH, Integer.valueOf(0)); 
     row.put(sJDBC_DECIMAL_DIGITS, Integer.valueOf(iScale));
@@ -2352,6 +2377,57 @@ public class AccessDatabaseMetaData
     row.put(sJDBC_IS_GENERATEDCOLUMN, "NO");
     return row;    
   } /* getColumnRow */
+  
+  /*------------------------------------------------------------------*/
+  /** find end of Access identifier.
+   * @param s: String with identifier.
+   * @param iStart: start of identifier in string.
+   * @return end of identifier.
+   */
+  private int getIdentifierEnd(String s, int iStart)
+  {
+    int iEnd = iStart;
+    if (s.charAt(iStart) == '[')
+    {
+      for (iEnd = iEnd + 1; (iEnd < s.length()) && (s.charAt(iEnd) != ']'); iEnd++) {}
+      iEnd++;
+    }
+    else
+      for (; (iEnd < s.length()) && Character.isJavaIdentifierPart(s.charAt(iEnd)); iEnd++) {}
+    return iEnd;
+  }
+  /*------------------------------------------------------------------*/
+  /** parse a column expression into a table and column part.
+   * @param sColumnExpression: column expression.
+   * @return [Table,Column] or null, if it cannot be parsed. 
+   */
+  private String[] parseTableColumn(String sColumnExpression)
+  {
+    String[] asTableColumn = null;
+    if (sColumnExpression.startsWith("(") && sColumnExpression.endsWith(")"))
+      sColumnExpression = sColumnExpression.substring(1,sColumnExpression.length()-1);
+    String sTable = null;
+    String sColumn = null;
+    int iStart = 0;
+    int iEnd = getIdentifierEnd(sColumnExpression, iStart);
+    sTable = sColumnExpression.substring(iStart, iEnd);
+    if (sTable.startsWith("[") && (sTable.endsWith("]")))
+      sTable = sTable.substring(1,sTable.length()-1);
+    if ((iEnd < sColumnExpression.length()) && (sColumnExpression.charAt(iEnd) == '.'))
+    {
+      iStart = iEnd + 1;
+      iEnd = getIdentifierEnd(sColumnExpression, iStart);
+      if (iEnd >= sColumnExpression.length())
+      {
+        sColumn = sColumnExpression.substring(iStart, iEnd);
+        if (sColumn.startsWith("[") && (sColumn.endsWith("]")))
+          sColumn = sColumn.substring(1,sColumn.length()-1);
+      }
+    }
+    if ((sTable != null) && (sColumn != null))
+      asTableColumn = new String[] {sTable,sColumn};
+    return asTableColumn;
+  } /* parseTableColumn */
   
   /*------------------------------------------------------------------*/
   /** {@link DatabaseMetaData} */
@@ -2409,31 +2485,35 @@ public class AccessDatabaseMetaData
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
           {
             SelectQuery sq = _mapViews.get(sTableName);
-            String sSql = getQuery(sq);
-            Statement stmt = _conn.createStatement();
-            AccessResultSet rsQuery = (AccessResultSet)stmt.executeQuery(sSql);
-            ResultSetMetaData rsmd = rsQuery.getMetaData();
-            List<String> listColumnNames = sq.getSelectColumns();
-            for (int iColumn = 0; iColumn < listColumnNames.size(); iColumn++)
+            List<String> listSelectColumns = sq.getSelectColumns();
+            List<String> listFromTables = sq.getFromTables();
+            Table table = null;
+            if (listFromTables.size() == 1)
+              table = _conn.getDatabase().getTable(listFromTables.get(0));
+            for (int iColumn = 0; iColumn < listSelectColumns.size(); iColumn++)
             {
-              String sColumnName = listColumnNames.get(iColumn);
-              // handle external parentheses separately
-              if (sColumnName.startsWith("(") && sColumnName.endsWith(")"))
-                sColumnName = sColumnName.substring(1,sColumnName.length()-1);
-              if (matches(sColumnNamePattern,sColumnName))
+              String sSelectColumn = listSelectColumns.get(iColumn);
+              // split table/column
+              Column column = null;
+              if (table != null)
+                column = table.getColumn(sSelectColumn);
+              else
               {
-                int iDataType = rsmd.getColumnType(iColumn+1);
-                int iPrecision = rsmd.getPrecision(iColumn+1);
-                int iScale = rsmd.getScale(iColumn+1);
-                String sTypeName = rsmd.getColumnTypeName(iColumn+1);
-                listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn, sColumnName, iDataType, sTypeName, iPrecision, iScale));
+                String[] asTableColumn = parseTableColumn(sSelectColumn);
+                if (asTableColumn != null)
+                  column = _conn.getDatabase().getTable(asTableColumn[0]).getColumn(asTableColumn[1]);
+              }
+              if (matches(sColumnNamePattern,sSelectColumn))
+              {
+                if (column != null)
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, column));
+                else
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, Types.OTHER, "Unknown", -1, -1));
               }
             }
-            rsQuery.close();
-            stmt.close();
           }
         }
-        catch(IOException ie) { throw new SQLException(ie.getClass().getName()+": "+ie.getMessage()); }
+        catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
       }
     }
     Collections.sort(listColumns, new ColumnsComparator());
