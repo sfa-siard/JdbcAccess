@@ -2424,8 +2424,13 @@ public class AccessDatabaseMetaData
           sColumn = sColumn.substring(1,sColumn.length()-1);
       }
     }
-    if ((sTable != null) && (sColumn != null))
-      asTableColumn = new String[] {sTable,sColumn};
+    if (sTable != null)
+    {
+      if (sColumn != null)
+        asTableColumn = new String[] {sTable,sColumn};
+      else
+        asTableColumn = new String[] {null,sTable};
+    }
     return asTableColumn;
   } /* parseTableColumn */
   
@@ -2494,12 +2499,12 @@ public class AccessDatabaseMetaData
             {
               String sSelectColumn = listSelectColumns.get(iColumn);
               // split table/column
+              String[] asTableColumn = parseTableColumn(sSelectColumn);
               Column column = null;
               if (table != null)
-                column = table.getColumn(sSelectColumn);
+                column = table.getColumn(asTableColumn[1]);
               else
               {
-                String[] asTableColumn = parseTableColumn(sSelectColumn);
                 if (asTableColumn != null)
                   column = _conn.getDatabase().getTable(asTableColumn[0]).getColumn(asTableColumn[1]);
               }
