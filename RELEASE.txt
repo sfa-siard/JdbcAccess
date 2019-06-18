@@ -1,6 +1,9 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.?? 
+Added QUERY_TEXT in DatabaseMetaData (Issue 9)
+
 2.1.40
 Bugfixes (mainly VIEW meta data)
 
