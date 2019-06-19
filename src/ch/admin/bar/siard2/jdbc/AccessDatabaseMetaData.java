@@ -1937,7 +1937,7 @@ public class AccessDatabaseMetaData
     rsh.addColumn(sJDBC_TYPE_NAME, java.sql.Types.VARCHAR);
     rsh.addColumn(sJDBC_SELF_REFERENCING_COL_NAME, java.sql.Types.VARCHAR);
     rsh.addColumn(sJDBC_REF_GENERATION, java.sql.Types.VARCHAR);
-    rsh.addColumn(BaseDatabaseMetaData._sQUERY_TEXT, java.sql.Types.VARCHAR);
+    rsh.addColumn(_sQUERY_TEXT, java.sql.Types.VARCHAR);
     List<Row> listTables = new ArrayList<Row>();
     if ((sCatalog == null) || sCatalog.equals(_conn.getCatalog()))
     {
