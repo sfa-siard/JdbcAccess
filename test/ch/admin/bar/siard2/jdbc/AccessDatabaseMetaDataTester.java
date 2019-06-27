@@ -449,4 +449,29 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester
     catch(IOException ie) { fail(EU.getExceptionMessage(ie)); }
   } /* testGetImportedKeys */
   
+  @Override
+  @Test
+  public void testGetTables()
+  {
+    enter();
+    try 
+    { 
+      AccessDatabaseMetaData dmdAccess = (AccessDatabaseMetaData)getDatabaseMetaData();
+      print(dmdAccess.getTables(null,null,"%",new String[] {"TABLE"})); 
+    } 
+    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+  }
+  
+  @Test
+  public void testGetViews()
+  {
+    enter();
+    try 
+    {
+      AccessDatabaseMetaData dmdAccess = (AccessDatabaseMetaData)getDatabaseMetaData();
+      print(dmdAccess.getTables(null, "%", "%", new String[] {"VIEW"})); 
+    }
+    catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
+  }
+  
 } /* AccessDatabaseMetaDataTester */

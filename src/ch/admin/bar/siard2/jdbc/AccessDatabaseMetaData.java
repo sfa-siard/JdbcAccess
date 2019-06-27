@@ -1937,6 +1937,7 @@ public class AccessDatabaseMetaData
     rsh.addColumn(sJDBC_TYPE_NAME, java.sql.Types.VARCHAR);
     rsh.addColumn(sJDBC_SELF_REFERENCING_COL_NAME, java.sql.Types.VARCHAR);
     rsh.addColumn(sJDBC_REF_GENERATION, java.sql.Types.VARCHAR);
+    rsh.addColumn(_sQUERY_TEXT, java.sql.Types.VARCHAR);
     List<Row> listTables = new ArrayList<Row>();
     if ((sCatalog == null) || sCatalog.equals(_conn.getCatalog()))
     {
@@ -1976,6 +1977,7 @@ public class AccessDatabaseMetaData
                   row.put(sJDBC_TYPE_NAME,null);
                   row.put(sJDBC_SELF_REFERENCING_COL_NAME,null);
                   row.put(sJDBC_REF_GENERATION,null);
+                  row.put(BaseDatabaseMetaData._sQUERY_TEXT,null);
                   listTables.add(row);
                 }
               }
@@ -1995,12 +1997,13 @@ public class AccessDatabaseMetaData
                 row.put(sJDBC_TABLE_SCHEM, sSchemaName);
                 row.put(sJDBC_TABLE_NAME, sq.getName());
                 row.put(sJDBC_TABLE_TYPE, sJDBC_TABLE_TYPE_VIEW);
-                row.put(sJDBC_REMARKS, sq.toSQLString());
+                row.put(sJDBC_REMARKS, null);
                 row.put(sJDBC_TYPE_CAT,null);
                 row.put(sJDBC_TYPE_SCHEM,null);
                 row.put(sJDBC_TYPE_NAME,null);
                 row.put(sJDBC_SELF_REFERENCING_COL_NAME,null);
                 row.put(sJDBC_REF_GENERATION,null);
+                row.put(BaseDatabaseMetaData._sQUERY_TEXT,sq.toSQLString());
                 listTables.add(row);
               }
             }
