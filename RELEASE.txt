@@ -1,6 +1,9 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.52
+Fixed problem of VIEW meta data in linked tables (Issue 10)
+
 2.1.49 
 Added QUERY_TEXT in DatabaseMetaData (Issue 9)
 

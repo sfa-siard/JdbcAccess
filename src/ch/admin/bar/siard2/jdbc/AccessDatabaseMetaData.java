@@ -2412,14 +2412,21 @@ public class AccessDatabaseMetaData
     String sTable = null;
     String sColumn = null;
     int iStart = 0;
-    int iEnd = getIdentifierEnd(sColumnExpression, iStart);
+    int iEnd = -1;
+    if (sColumnExpression.charAt(iStart) == '*')
+      iEnd = iStart + 1;
+    else
+      iEnd = getIdentifierEnd(sColumnExpression, iStart);
     sTable = sColumnExpression.substring(iStart, iEnd);
     if (sTable.startsWith("[") && (sTable.endsWith("]")))
       sTable = sTable.substring(1,sTable.length()-1);
     if ((iEnd < sColumnExpression.length()) && (sColumnExpression.charAt(iEnd) == '.'))
     {
       iStart = iEnd + 1;
-      iEnd = getIdentifierEnd(sColumnExpression, iStart);
+      if (sColumnExpression.charAt(iStart) == '*')
+        iEnd = iStart + 1;
+      else
+        iEnd = getIdentifierEnd(sColumnExpression, iStart);
       if (iEnd >= sColumnExpression.length())
       {
         sColumn = sColumnExpression.substring(iStart, iEnd);
@@ -2468,6 +2475,7 @@ public class AccessDatabaseMetaData
     rsh.addColumn(sJDBC_IS_AUTOINCREMENT, java.sql.Types.VARCHAR); // YES, NO or empty
     rsh.addColumn(sJDBC_IS_GENERATEDCOLUMN, java.sql.Types.VARCHAR); // YES, NO or empty
     List<Row> listColumns = new ArrayList<Row>();
+    Database db = _conn.getDatabase();
     ResultSet rsTables = getTables(sCatalog, sSchemaPattern, sTableNamePattern, null);
     if (rsTables != null)
     {
@@ -2480,7 +2488,7 @@ public class AccessDatabaseMetaData
         {
           if (sTableType.equals(sJDBC_TABLE_TYPE_TABLE))
           {
-            Table table = _conn.getDatabase().getTable(sTableName);
+            Table table = db.getTable(sTableName);
             List<? extends Column> listTableColumns = table.getColumns();
             for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
             {
@@ -2497,26 +2505,36 @@ public class AccessDatabaseMetaData
             List<String> listFromTables = sq.getFromTables();
             Table table = null;
             if (listFromTables.size() == 1)
-              table = _conn.getDatabase().getTable(listFromTables.get(0));
+              table = db.getTable(listFromTables.get(0));
             for (int iColumn = 0; iColumn < listSelectColumns.size(); iColumn++)
             {
               String sSelectColumn = listSelectColumns.get(iColumn);
               // split table/column
               String[] asTableColumn = parseTableColumn(sSelectColumn);
-              Column column = null;
-              if (table != null)
-                column = table.getColumn(asTableColumn[1]);
-              else
+              if (asTableColumn != null)
               {
-                if (asTableColumn != null)
-                  column = _conn.getDatabase().getTable(asTableColumn[0]).getColumn(asTableColumn[1]);
-              }
-              if (matches(sColumnNamePattern,sSelectColumn))
-              {
-                if (column != null)
-                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, column));
-                else
-                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sSelectColumn, Types.OTHER, "Unknown", -1, -1));
+                String sColumn = asTableColumn[1];
+                if (table == null)
+                  table = db.getTable(asTableColumn[0]);
+                if (table != null)
+                {
+                  // if column is * then expand listSelectColumns
+                  if ("*".equals(asTableColumn[1]))
+                  {
+                    List<? extends Column> listCols = table.getColumns();
+                    sColumn = listCols.get(0).getName();
+                    for (int i = 1; i < listCols.size(); i++)
+                      listSelectColumns.add(iColumn+1, "["+table.getName()+"].["+listCols.get(i).getName()+"]");
+                  }
+                }
+                Column column = table.getColumn(sColumn);
+                if (matches(sColumnNamePattern,sColumn))
+                {
+                  if (column != null)
+                    listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sColumn, column));
+                  else
+                    listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sColumn, Types.OTHER, "Unknown", -1, -1));
+                }
               }
             }
           }
