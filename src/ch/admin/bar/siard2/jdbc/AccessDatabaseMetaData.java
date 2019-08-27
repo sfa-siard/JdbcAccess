@@ -2514,8 +2514,9 @@ public class AccessDatabaseMetaData
               if (asTableColumn != null)
               {
                 String sColumn = asTableColumn[1];
-                if (table == null)
-                  table = db.getTable(asTableColumn[0]);
+                Table tableColumn = db.getTable(asTableColumn[0]);
+                if (tableColumn != null)
+                  table = tableColumn;
                 if (table != null)
                 {
                   // if column is * then expand listSelectColumns
