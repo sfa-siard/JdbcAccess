@@ -2473,7 +2473,7 @@ public class AccessDatabaseMetaData
               {
                 String sColumn = rsColumns.getString("COLUMN_NAME");
                 if (matches(sColumnNamePattern,sColumn))
-                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn+1, sColumn, rsColumns));
+                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn, sColumn, rsColumns));
               }
               rsColumns.close();
             }
