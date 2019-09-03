@@ -2391,11 +2391,10 @@ public class AccessDatabaseMetaData
           sColumn = sColumn.substring(1,sColumn.length()-1);
       }
     }
-    if (sTable != null)
+    if (sColumn != null)
     {
       asTableColumn[0] = sTable;
-      if (sColumn != null)
-        asTableColumn[1] = sColumn;
+      asTableColumn[1] = sColumn;
     }
     return asTableColumn;
   } /* parseTableColumn */
