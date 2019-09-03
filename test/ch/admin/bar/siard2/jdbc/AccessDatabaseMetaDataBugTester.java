@@ -41,8 +41,8 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     }
     else if (iBug == 10) 
     {
-      fileTEST_ACCESS_SOURCE = new File("../Bugs/Issue10/Database/Database2.accdb");
-      fileTEST_ACCESS_DATABASE = new File("tmp/Database2.accdb");
+      fileTEST_ACCESS_SOURCE = new File("../Bugs/Issue10/Database_frontend/Database_frontend.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/Database_frontend.accdb");
     }
     else 
     {
@@ -152,7 +152,7 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 10)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","TestView");
+        QualifiedId qiView = new QualifiedId(null,"Admin","BerichtLang");
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())
         {
