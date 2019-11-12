@@ -1,6 +1,12 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.56
+Third fix of problem of VIEW meta data views referencing tables in linked tables (Issue 10)
+
+2.1.54
+Second fix of problem of VIEW meta data in linked tables (Issue 10)
+
 2.1.52
 Fixed problem of VIEW meta data in linked tables (Issue 10)
 

@@ -41,8 +41,8 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     }
     else if (iBug == 10) 
     {
-      fileTEST_ACCESS_SOURCE = new File("../Bugs/Issue10/DbView.accdb");
-      fileTEST_ACCESS_DATABASE = new File("tmp/DbView.accdb");
+      fileTEST_ACCESS_SOURCE = new File("../Bugs/Issue10/Database_frontend/Database_frontend.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/Database_frontend.accdb");
     }
     else 
     {
@@ -152,13 +152,17 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 10)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","View");
+        QualifiedId qiView = new QualifiedId(null,"Admin","BerichtLang");
+        int iColumn = 0;
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())
         {
           String sColumnName = rs.getString("COLUMN_NAME");
           int iDataType = rs.getInt("DATA_TYPE");
           String sTypeName = rs.getString("TYPE_NAME");
+          iColumn++;
+          int iPosition = rs.getInt("ORDINAL_POSITION");
+          assertEquals("Wrong position!",iColumn,iPosition);
           System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
         }
         rs.close();
@@ -167,12 +171,16 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       else
       {
         QualifiedId qiView = new QualifiedId(null,"Admin","VIEWTEST");
+        int iColumn = 0;
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())
         {
           String sColumnName = rs.getString("COLUMN_NAME");
           int iDataType = rs.getInt("DATA_TYPE");
           String sTypeName = rs.getString("TYPE_NAME");
+          iColumn++;
+          int iPosition = rs.getInt("ORDINAL_POSITION");
+          assertEquals("Wrong position!",iColumn,iPosition);
           System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
         }
         rs.close();
