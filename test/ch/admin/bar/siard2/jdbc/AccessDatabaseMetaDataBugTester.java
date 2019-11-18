@@ -175,23 +175,40 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 13)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","Customers Extended");
-        /***
-        int iColumn = 0;
-        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        QualifiedId qiView = new QualifiedId(null,"Admin","Orders");
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+        Connection conn = getDatabaseMetaData().getConnection();
+        Statement stmt = conn.createStatement();
+        String sSql =
+          "SELECT "+
+          "\"Order ID\"," + 
+          "\"Employee ID\"," +
+          "\"Customer ID\","+
+          "\"Order Date\","+
+          "\"Shipped Date\","+
+          "\"Shipper ID\","+
+          "\"Ship Name\","+
+          "\"Ship Address\","+
+          "\"Ship City\","+
+          "\"Ship State/Province\","+
+          "\"Ship ZIP/Postal Code\","+
+          "\"Ship Country/Region\","+
+          "\"Shipping Fee\","+
+          "\"Taxes\","+
+          "\"Payment Type\","+
+          "\"Paid Date\","+
+          "\"Notes\","+
+          "\"Tax Rate\","+
+          "\"Tax Status\","+
+          "\"Status ID\" "+
+         "FROM \"Admin\".\"Orders\"";
+        ResultSet rs = stmt.executeQuery(sSql);
         while (rs.next())
         {
-          String sColumnName = rs.getString("COLUMN_NAME");
-          int iDataType = rs.getInt("DATA_TYPE");
-          String sTypeName = rs.getString("TYPE_NAME");
-          iColumn++;
-          int iPosition = rs.getInt("ORDINAL_POSITION");
-          assertEquals("Wrong position!",iColumn,iPosition);
-          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+          int iOrderId = rs.getInt(1);
+          System.out.println(String.valueOf(iOrderId));
         }
         rs.close();
-        ***/
-        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
       }
       else
       {
