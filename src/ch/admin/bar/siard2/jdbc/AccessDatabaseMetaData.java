@@ -2195,12 +2195,13 @@ public class AccessDatabaseMetaData
    * @param sSchema schema.
    * @param sTableName table name.
    * @param sColumnName (alias) name of the column.
+   * @param iColumnIndex column position (1-based).
    * @param column Jackcess column object.
    * @return row of JDBC column description.
    * @throws SQLException if an I/O error occurred.
    */
   private ResultSetRow getColumnRow(String sCatalog, String sSchema, 
-    String sTableName, String sColumnName, Column column) throws SQLException
+    String sTableName, String sColumnName, int iColumnIndex, Column column) throws SQLException
   {
     ResultSetRow row = new ResultSetRow();
     try
@@ -2275,7 +2276,7 @@ public class AccessDatabaseMetaData
         row.put(sJDBC_SQL_DATA_TYPE, null);
         row.put(sJDBC_SQL_DATETIME_SUB, null);
         row.put(sJDBC_CHAR_OCTET_LENGTH, Integer.valueOf(column.getLength()));
-        row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(column.getColumnIndex()+1));
+        row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(iColumnIndex));
         String sIsNullable = null;
         switch(iNullability)
         {
@@ -2449,6 +2450,7 @@ public class AccessDatabaseMetaData
           if (sTableType.equals(sJDBC_TABLE_TYPE_TABLE))
           {
             Table table = db.getTable(sTableName);
+            int iSkipped = 0;
             List<? extends Column> listTableColumns = table.getColumns();
             for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
             {
@@ -2456,7 +2458,7 @@ public class AccessDatabaseMetaData
               String sColumnName = column.getName();
               if (matches(sColumnNamePattern,sColumnName))
               {
-                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, column);
+                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, listColumns.size()+1, column);
                 if (rsr != null)
                   listColumns.add(rsr);
               }
