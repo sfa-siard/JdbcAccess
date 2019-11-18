@@ -133,9 +133,15 @@ abstract public class Shunting
         else
           throw new IllegalArgumentException("Cannot (yet) handle value lists of dates!");
       }
+      else if (cdt == ComplexDataType.VERSION_HISTORY)
+      {
+        /* version history is a pseudo column (not part of the columns) */
+        dt = null;
+      }
       else
         throw new IllegalArgumentException("Cannot handle complex data type "+cdt.toString()+"!");
-      dt.initArrayType(pt, iCardinality);
+      if (dt != null)
+        dt.initArrayType(pt, iCardinality);
     }
     return dt;
   } /* convertTypeFromAccess */

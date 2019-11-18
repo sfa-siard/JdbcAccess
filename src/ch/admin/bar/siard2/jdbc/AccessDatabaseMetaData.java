@@ -2211,86 +2211,91 @@ public class AccessDatabaseMetaData
       int iLength = column.getLength();
       DataType dt = Shunting.convertTypeFromAccess(column,
         iPrecision, iScale, iLength, iLengthInUnits);
-      PredefinedType pt = dt.getPredefinedType();
-      if (pt != null)
+      if (dt != null)
       {
-        iScale = pt.getScale();
-        iPrecision = pt.getPrecision();
-        iLength = pt.getLength();
-        if (iLength == PredefinedType.iUNDEFINED)
+        PredefinedType pt = dt.getPredefinedType();
+        if (pt != null)
         {
-          if ((pt.getType() == PreType.CHAR) || 
-              (pt.getType() == PreType.NCHAR) ||
-              (pt.getType() == PreType.BINARY))
-            iLength = 1;
+          iScale = pt.getScale();
+          iPrecision = pt.getPrecision();
+          iLength = pt.getLength();
+          if (iLength == PredefinedType.iUNDEFINED)
+          {
+            if ((pt.getType() == PreType.CHAR) || 
+                (pt.getType() == PreType.NCHAR) ||
+                (pt.getType() == PreType.BINARY))
+              iLength = 1;
+          }
+          else if (pt.getMultiplier() != null)
+            iLength = pt.getMultiplier().getValue()*iLength;
         }
-        else if (pt.getMultiplier() != null)
-          iLength = pt.getMultiplier().getValue()*iLength;
-      }
-      PropertyMap pm = column.getProperties();
-      row.put(sJDBC_TABLE_CAT, sCatalog);
-      row.put(sJDBC_TABLE_SCHEM, sSchema);
-      row.put(sJDBC_TABLE_NAME, sTableName);
-      row.put(sJDBC_COLUMN_NAME, sColumnName);
-      int iSqlType = Types.NULL;
-      if (dt.getType() != DataType.Type.ARRAY)
-        iSqlType = dt.getPredefinedType().getType().getSqlType();
-      else
-        iSqlType = Types.ARRAY;
-      row.put(sJDBC_DATA_TYPE, Integer.valueOf(iSqlType));
-      String sTypeName = column.getType().toString();
-      if (dt.getType() == DataType.Type.ARRAY)
-        sTypeName = dt.format();
-      row.put(sJDBC_TYPE_NAME, sTypeName);
-      if (iPrecision > 0)
-        row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iPrecision));
-      else
-        row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iLength));
-      row.put(sJDBC_BUFFER_LENGTH, null);
-      row.put(sJDBC_DECIMAL_DIGITS, Integer.valueOf(iScale));
-      row.put(sJDBC_NUM_PREC_RADIX, Integer.valueOf(10));
-      int iNullability = DatabaseMetaData.attributeNullableUnknown;
-      if (pm != null)
-      {
-        Boolean bRequired = (Boolean)pm.getValue("Required");
-        if (bRequired != null)
+        PropertyMap pm = column.getProperties();
+        row.put(sJDBC_TABLE_CAT, sCatalog);
+        row.put(sJDBC_TABLE_SCHEM, sSchema);
+        row.put(sJDBC_TABLE_NAME, sTableName);
+        row.put(sJDBC_COLUMN_NAME, sColumnName);
+        int iSqlType = Types.NULL;
+        if (dt.getType() != DataType.Type.ARRAY)
+          iSqlType = dt.getPredefinedType().getType().getSqlType();
+        else
+          iSqlType = Types.ARRAY;
+        row.put(sJDBC_DATA_TYPE, Integer.valueOf(iSqlType));
+        String sTypeName = column.getType().toString();
+        if (dt.getType() == DataType.Type.ARRAY)
+          sTypeName = dt.format();
+        row.put(sJDBC_TYPE_NAME, sTypeName);
+        if (iPrecision > 0)
+          row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iPrecision));
+        else
+          row.put(sJDBC_COLUMN_SIZE, Integer.valueOf(iLength));
+        row.put(sJDBC_BUFFER_LENGTH, null);
+        row.put(sJDBC_DECIMAL_DIGITS, Integer.valueOf(iScale));
+        row.put(sJDBC_NUM_PREC_RADIX, Integer.valueOf(10));
+        int iNullability = DatabaseMetaData.attributeNullableUnknown;
+        if (pm != null)
         {
-          if (bRequired.booleanValue())
-            iNullability = DatabaseMetaData.attributeNoNulls;
-          else
-            iNullability = DatabaseMetaData.attributeNullable;
+          Boolean bRequired = (Boolean)pm.getValue("Required");
+          if (bRequired != null)
+          {
+            if (bRequired.booleanValue())
+              iNullability = DatabaseMetaData.attributeNoNulls;
+            else
+              iNullability = DatabaseMetaData.attributeNullable;
+          }
         }
+        row.put(sJDBC_NULLABLE, Integer.valueOf(iNullability));
+        String sDescription = null;
+        if (pm != null)
+          sDescription = (String)pm.getValue("Description");
+        row.put(sJDBC_REMARKS, sDescription);
+        String sDefaultValue = null;
+        if (pm != null)
+          sDefaultValue = (String)pm.getValue("DefaultValue");
+        row.put(sJDBC_COLUMN_DEF, sDefaultValue);
+        row.put(sJDBC_SQL_DATA_TYPE, null);
+        row.put(sJDBC_SQL_DATETIME_SUB, null);
+        row.put(sJDBC_CHAR_OCTET_LENGTH, Integer.valueOf(column.getLength()));
+        row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(column.getColumnIndex()+1));
+        String sIsNullable = null;
+        switch(iNullability)
+        {
+          case DatabaseMetaData.attributeNullableUnknown: sIsNullable = ""; break;
+          case DatabaseMetaData.attributeNullable: sIsNullable = "YES"; break;
+          case DatabaseMetaData.attributeNoNulls: sIsNullable = "NO"; break;
+        }
+        row.put(sJDBC_IS_NULLABLE, sIsNullable);
+        row.put(sJDBC_SCOPE_CATALOG, null);
+        row.put(sJDBC_SCOPE_SCHEMA, null);
+        row.put(sJDBC_SCOPE_TABLE, null);
+        row.put(sJDBC_SOURCE_DATA_TYPE, null); // only for DISTINCT or user-generated REF
+        String sAutoIncrement = "NO";
+        if (column.isAutoNumber())
+          sAutoIncrement = "YES";
+        row.put(sJDBC_IS_AUTOINCREMENT, sAutoIncrement);
+        row.put(sJDBC_IS_GENERATEDCOLUMN, "NO");
       }
-      row.put(sJDBC_NULLABLE, Integer.valueOf(iNullability));
-      String sDescription = null;
-      if (pm != null)
-        sDescription = (String)pm.getValue("Description");
-      row.put(sJDBC_REMARKS, sDescription);
-      String sDefaultValue = null;
-      if (pm != null)
-        sDefaultValue = (String)pm.getValue("DefaultValue");
-      row.put(sJDBC_COLUMN_DEF, sDefaultValue);
-      row.put(sJDBC_SQL_DATA_TYPE, null);
-      row.put(sJDBC_SQL_DATETIME_SUB, null);
-      row.put(sJDBC_CHAR_OCTET_LENGTH, Integer.valueOf(column.getLength()));
-      row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(column.getColumnIndex()+1));
-      String sIsNullable = null;
-      switch(iNullability)
-      {
-        case DatabaseMetaData.attributeNullableUnknown: sIsNullable = ""; break;
-        case DatabaseMetaData.attributeNullable: sIsNullable = "YES"; break;
-        case DatabaseMetaData.attributeNoNulls: sIsNullable = "NO"; break;
-      }
-      row.put(sJDBC_IS_NULLABLE, sIsNullable);
-      row.put(sJDBC_SCOPE_CATALOG, null);
-      row.put(sJDBC_SCOPE_SCHEMA, null);
-      row.put(sJDBC_SCOPE_TABLE, null);
-      row.put(sJDBC_SOURCE_DATA_TYPE, null); // only for DISTINCT or user-generated REF
-      String sAutoIncrement = "NO";
-      if (column.isAutoNumber())
-        sAutoIncrement = "YES";
-      row.put(sJDBC_IS_AUTOINCREMENT, sAutoIncrement);
-      row.put(sJDBC_IS_GENERATEDCOLUMN, "NO");
+      else
+        row = null;
     }
     catch (IOException ie) { throw new SQLException(ie.getClass().getName()+": "+ie.getMessage()); }
     return row;    
@@ -2450,7 +2455,11 @@ public class AccessDatabaseMetaData
               Column column = listTableColumns.get(iColumn);
               String sColumnName = column.getName();
               if (matches(sColumnNamePattern,sColumnName))
-                listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, sColumnName, column));
+              {
+                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, column);
+                if (rsr != null)
+                  listColumns.add(rsr);
+              }
             }
           }
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
