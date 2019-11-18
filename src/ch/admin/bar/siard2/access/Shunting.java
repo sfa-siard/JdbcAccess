@@ -512,83 +512,107 @@ abstract public class Shunting
     throws IOException
   {
     BigDecimal bd = null;
-    switch (pt)
+    if (oValue != null)
     {
-      case BOOLEAN:
-        break;
-      case SMALLINT:
-        bd = (BigDecimal)oValue;
-        long l = bd.longValueExact();
-        oValue = Short.valueOf((short)l);
-        break;
-      case INTEGER:
-        bd = (BigDecimal)oValue;
-        oValue = Integer.valueOf((int)bd.longValueExact());
-        break;
-      case BIGINT:
-        bd = (BigDecimal)oValue;
-        oValue = Long.valueOf(bd.longValueExact());
-        break;
-      case NUMERIC:
-      case DECIMAL:
-        oValue = (BigDecimal)oValue;
-        break;
-      case REAL:
-        Double d = (Double)oValue;
-        oValue = Float.valueOf(d.floatValue());
-        break;
-      case FLOAT:
-      case DOUBLE:
-        oValue = (Double)oValue;
-        break;
-      case DATE:
-        Date date = (Date)oValue;
-        oValue = (java.util.Date)date;
-        break;
-      case TIME:
-        Time time = (Time)oValue;
-        oValue = (java.util.Date)time;
-        break;
-      case TIMESTAMP:
-        Timestamp ts = (Timestamp)oValue;
-        oValue = (java.util.Date)ts;
-        break;
-      case BINARY:
-      case VARBINARY:
-        oValue = (byte[])oValue;
-        break;
-      case BLOB:
-        Blob blob = new AccessBlob();
-        try { blob.setBytes(1l, (byte[])oValue); }
-        catch(SQLException se) { throw new IOException("Blob.setBytes() failed!",se); }
-        oValue = blob;
-        break;
-      case CHAR:
-      case NCHAR:
-      case VARCHAR:
-      case NVARCHAR:
-        oValue = (String)oValue;
-        break;
-      case CLOB:
-        Clob clob = new AccessClob();
-        try { clob.setString(1l, (String)oValue); }
-        catch(SQLException se) { throw new IOException("Clob.setString() failed!",se); }
-        oValue = clob;
-        break;
-      case NCLOB:
-        NClob nclob = new AccessNClob();
-        try { nclob.setString(1l, (String)oValue); }
-        catch(SQLException se) { throw new IOException("NClob.setString() failed!",se); }
-        oValue = nclob;
-        break;
-      case XML:
-        SQLXML sqlxml = new AccessSqlXml();
-        try { sqlxml.setString((String)oValue); }
-        catch(SQLException se) { throw new IOException("SQLXML.setString() failed!",se); }
-        oValue = sqlxml;
-        break;
-      default:
-        throw new RuntimeException("SQL data type "+pt.getKeyword()+" cannot be handled!");
+      switch (pt)
+      {
+        case BOOLEAN:
+          break;
+        case SMALLINT:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            long l = bd.longValueExact();
+            oValue = Short.valueOf((short)l);
+          }
+          else if (oValue instanceof Short)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Short!");
+          break;
+        case INTEGER:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            oValue = Integer.valueOf((int)bd.longValueExact());
+          }
+          else if (oValue instanceof Integer)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Integer!");
+          break;
+        case BIGINT:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            oValue = Long.valueOf(bd.longValueExact());
+          }
+          else if (oValue instanceof Long)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Long!");
+          break;
+        case NUMERIC:
+        case DECIMAL:
+          oValue = (BigDecimal)oValue;
+          break;
+        case REAL:
+          Double d = (Double)oValue;
+          oValue = Float.valueOf(d.floatValue());
+          break;
+        case FLOAT:
+        case DOUBLE:
+          oValue = (Double)oValue;
+          break;
+        case DATE:
+          Date date = (Date)oValue;
+          oValue = (java.util.Date)date;
+          break;
+        case TIME:
+          Time time = (Time)oValue;
+          oValue = (java.util.Date)time;
+          break;
+        case TIMESTAMP:
+          Timestamp ts = (Timestamp)oValue;
+          oValue = (java.util.Date)ts;
+          break;
+        case BINARY:
+        case VARBINARY:
+          oValue = (byte[])oValue;
+          break;
+        case BLOB:
+          Blob blob = new AccessBlob();
+          try { blob.setBytes(1l, (byte[])oValue); }
+          catch(SQLException se) { throw new IOException("Blob.setBytes() failed!",se); }
+          oValue = blob;
+          break;
+        case CHAR:
+        case NCHAR:
+        case VARCHAR:
+        case NVARCHAR:
+          oValue = (String)oValue;
+          break;
+        case CLOB:
+          Clob clob = new AccessClob();
+          try { clob.setString(1l, (String)oValue); }
+          catch(SQLException se) { throw new IOException("Clob.setString() failed!",se); }
+          oValue = clob;
+          break;
+        case NCLOB:
+          NClob nclob = new AccessNClob();
+          try { nclob.setString(1l, (String)oValue); }
+          catch(SQLException se) { throw new IOException("NClob.setString() failed!",se); }
+          oValue = nclob;
+          break;
+        case XML:
+          SQLXML sqlxml = new AccessSqlXml();
+          try { sqlxml.setString((String)oValue); }
+          catch(SQLException se) { throw new IOException("SQLXML.setString() failed!",se); }
+          oValue = sqlxml;
+          break;
+        default:
+          throw new RuntimeException("SQL data type "+pt.getKeyword()+" cannot be handled!");
+      }
     }
     return oValue;
   } /* getRowValue */

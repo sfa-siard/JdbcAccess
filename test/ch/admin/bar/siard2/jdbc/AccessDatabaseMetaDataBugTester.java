@@ -180,33 +180,28 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
         Connection conn = getDatabaseMetaData().getConnection();
         Statement stmt = conn.createStatement();
         String sSql =
-          "SELECT "+
-          "\"Order ID\"," + 
-          "\"Employee ID\"," +
-          "\"Customer ID\","+
-          "\"Order Date\","+
-          "\"Shipped Date\","+
-          "\"Shipper ID\","+
-          "\"Ship Name\","+
-          "\"Ship Address\","+
-          "\"Ship City\","+
-          "\"Ship State/Province\","+
-          "\"Ship ZIP/Postal Code\","+
-          "\"Ship Country/Region\","+
-          "\"Shipping Fee\","+
-          "\"Taxes\","+
-          "\"Payment Type\","+
-          "\"Paid Date\","+
-          "\"Notes\","+
-          "\"Tax Rate\","+
-          "\"Tax Status\","+
-          "\"Status ID\" "+
-         "FROM \"Admin\".\"Orders\"";
+          "\r\nSELECT"+
+            "\r\n  \"Supplier IDs\","+
+            "\r\n  ID,"+
+            "\r\n  \"Product Code\","+
+            "\r\n  \"Product Name\","+
+            "\r\n  \"Description\","+
+            "\r\n  \"Standard Cost\","+
+            "\r\n  \"List Price\","+
+            "\r\n  \"Reorder Level\","+
+            "\r\n  \"Target Level\","+
+            "\r\n  \"Quantity Per Unit\","+
+            "\r\n  \"Discontinued\","+
+            "\r\n  \"Minimum Reorder Quantity\","+
+            "\r\n  \"Category\","+
+            "\r\n  \"Attachments\""+
+            "\r\n FROM \"Admin\".\"Products\"";
         ResultSet rs = stmt.executeQuery(sSql);
         while (rs.next())
         {
-          int iOrderId = rs.getInt(1);
-          System.out.println(String.valueOf(iOrderId));
+          // Array array = rs.getArray(1);
+          int iId = rs.getInt(2);
+          System.out.println(String.valueOf(iId));
         }
         rs.close();
       }
