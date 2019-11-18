@@ -175,7 +175,7 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 13)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","Products");
+        QualifiedId qiView = new QualifiedId(null,"Admin","Customers Extended");
         /***
         int iColumn = 0;
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");

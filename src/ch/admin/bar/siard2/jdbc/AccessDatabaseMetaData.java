@@ -2334,7 +2334,7 @@ public class AccessDatabaseMetaData
     row.put(sJDBC_SQL_DATA_TYPE, null);
     row.put(sJDBC_SQL_DATETIME_SUB, null);
     row.put(sJDBC_CHAR_OCTET_LENGTH, rsColumn.getInt(sJDBC_CHAR_OCTET_LENGTH));
-    row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(iColumnIndex+1));
+    row.put(sJDBC_ORDINAL_POSITION, Integer.valueOf(iColumnIndex));
     row.put(sJDBC_IS_NULLABLE, rsColumn.getString(sJDBC_IS_NULLABLE));
     row.put(sJDBC_SCOPE_CATALOG, rsColumn.getString(sJDBC_SCOPE_CATALOG));
     row.put(sJDBC_SCOPE_SCHEMA, rsColumn.getString(sJDBC_SCOPE_SCHEMA));
@@ -2447,6 +2447,7 @@ public class AccessDatabaseMetaData
         String sTableType = rsTables.getString(sJDBC_TABLE_TYPE);
         try
         {
+          int iColumnIndex = 1;
           if (sTableType.equals(sJDBC_TABLE_TYPE_TABLE))
           {
             Table table = db.getTable(sTableName);
@@ -2455,9 +2456,11 @@ public class AccessDatabaseMetaData
             {
               Column column = listTableColumns.get(iColumn);
               String sColumnName = column.getName();
+              ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, column);
+              if (rsr != null)
+                iColumnIndex++;
               if (matches(sColumnNamePattern,sColumnName))
               {
-                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, listColumns.size()+1, column);
                 if (rsr != null)
                   listColumns.add(rsr);
               }
@@ -2481,9 +2484,12 @@ public class AccessDatabaseMetaData
               ResultSet rsColumns = getColumns(sCatalog, sSchemaPattern, sTableView, sSelectColumn);
               while (rsColumns.next())
               {
-                String sColumn = rsColumns.getString("COLUMN_NAME");
-                if (matches(sColumnNamePattern,sColumn))
-                  listColumns.add(getColumnRow(sCatalog, sSchema, sTableName, iColumn, sColumn, rsColumns));
+                String sColumnName = rsColumns.getString("COLUMN_NAME");
+                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, iColumnIndex, sColumnName, rsColumns);
+                if (rsr != null)
+                  iColumnIndex++;
+                if (matches(sColumnNamePattern,sColumnName))
+                  listColumns.add(rsr);
               }
               rsColumns.close();
             }
