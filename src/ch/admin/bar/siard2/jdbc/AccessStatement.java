@@ -459,14 +459,14 @@ public class AccessStatement
    * @return SQL data type.
    */
   private DataType getColumnType(Column column)
-    throws IOException
+    throws IOException, SQLException
   {
     int iScale = column.getScale();
     int iPrecision = column.getPrecision();
     int iLengthInUnits = column.getLengthInUnits();
     int iLength = column.getLength();
     DataType dt = Shunting.convertTypeFromAccess(column,
-      iPrecision, iScale, iLength, iLengthInUnits);
+      iPrecision, iScale, iLength, iLengthInUnits,_conn.getMetaData());
     return dt;
   } /* getColumnType */
   

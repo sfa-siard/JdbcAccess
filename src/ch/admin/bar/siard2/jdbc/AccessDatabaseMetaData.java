@@ -133,13 +133,13 @@ public class AccessDatabaseMetaData
   /** column name column */
   private static final String sJDBC_COLUMN_NAME = "COLUMN_NAME";
   /** data type column */
-  private static final String sJDBC_DATA_TYPE = "DATA_TYPE";
+  public static final String sJDBC_DATA_TYPE = "DATA_TYPE";
   /** column size column */
-  private static final String sJDBC_COLUMN_SIZE = "COLUMN_SIZE";
+  public static final String sJDBC_COLUMN_SIZE = "COLUMN_SIZE";
   /** buffer length column */
   private static final String sJDBC_BUFFER_LENGTH = "BUFFER_LENGTH";
   /** decimal digits column */
-  private static final String sJDBC_DECIMAL_DIGITS = "DECIMAL_DIGITS";
+  public static final String sJDBC_DECIMAL_DIGITS = "DECIMAL_DIGITS";
   /** radix for numerical precision column */
   private static final String sJDBC_NUM_PREC_RADIX = "NUM_PREC_RADIX";
   /** nullable column */
@@ -2211,7 +2211,7 @@ public class AccessDatabaseMetaData
       int iLengthInUnits = column.getLengthInUnits();
       int iLength = column.getLength();
       DataType dt = Shunting.convertTypeFromAccess(column,
-        iPrecision, iScale, iLength, iLengthInUnits);
+        iPrecision, iScale, iLength, iLengthInUnits,this);
       if (dt != null)
       {
         PredefinedType pt = dt.getPredefinedType();
@@ -2450,7 +2450,6 @@ public class AccessDatabaseMetaData
           if (sTableType.equals(sJDBC_TABLE_TYPE_TABLE))
           {
             Table table = db.getTable(sTableName);
-            int iSkipped = 0;
             List<? extends Column> listTableColumns = table.getColumns();
             for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
             {

@@ -15,6 +15,7 @@ import ch.enterag.sqlparser.datatype.DataType;
 import ch.enterag.sqlparser.datatype.enums.*;
 import ch.enterag.sqlparser.dml.*;
 import ch.enterag.sqlparser.expression.*;
+import ch.enterag.utils.jdbc.*;
 import ch.admin.bar.siard2.jdbc.*;
 
 abstract public class Shunting
@@ -40,8 +41,9 @@ abstract public class Shunting
   
   /*------------------------------------------------------------------*/
   public static DataType convertTypeFromAccess(Column column,
-    int iPrecision, int iScale, int iLength, int iLengthInUnits)
-    throws IOException
+    int iPrecision, int iScale, int iLength, int iLengthInUnits, 
+    DatabaseMetaData dmd)
+    throws IOException, SQLException
   {
     DataType dt = _sf.newDataType();
     PredefinedType pt = _sf.newPredefinedType();
@@ -129,6 +131,64 @@ abstract public class Shunting
             case Types.DECIMAL: pt.initDecimalType(iPrecision, iScale); break;
             case Types.VARCHAR: pt.initVarCharType(iLengthInUnits); break;
           }
+        }
+        else if (sRowSourceType.equals("Table/Query"))
+        {
+          iCardinality = (short)pm.getValue("ListRows");
+          /***
+          iScale = (byte)pm.getValue("DecimalPlaces");
+          iLength = (short)pm.getValue("ColumnWidth");
+          ***/
+          String sQuery = (String)pm.getValue("RowSource");
+          /* we should parse the query in order to get data type */
+          if (sQuery.startsWith("SELECT"))
+          {
+            String sColumns = sQuery.substring("SELECT".length()).trim();
+            /* this is shoddy parsing: we assume no "FROM" appears in the column names */
+            int iFrom = sColumns.indexOf("FROM");
+            if (iFrom > 0)
+            {
+              String sTable = sColumns.substring(iFrom+"FROM".length()).trim();
+              sColumns = sColumns.substring(0,iFrom).trim();
+              /* this is shoddy parsing: we assume no "WHERE" appears in the table names */
+              /* we really assume that there is only one table involved */
+              int iWhere = sTable.indexOf("WHERE");
+              if (iWhere > 0)
+                sTable = sTable.substring(0,iWhere).trim();
+              int iOrder = sTable.indexOf("ORDER");
+              if (iOrder > 0)
+                sTable = sTable.substring(0,iOrder).trim();
+              if (sTable.startsWith("[") && (sTable.endsWith("]")))
+                sTable = sTable.substring(1,sTable.length()-1);
+              /* this is shoddy parsing: we assume no commas in the columns names */
+              String[] asColumn = sColumns.split(",");
+              int iColumn = (short)pm.getValue("BoundColumn")-1;
+              String sColumn = asColumn[iColumn].trim();
+              if (sColumn.startsWith("[") && (sColumn.endsWith("]")))
+                sColumn = sColumn.substring(1,sColumn.length()-1);
+              BaseDatabaseMetaData bdmd = (BaseDatabaseMetaData)dmd;
+              ResultSet rs = bdmd.getColumns(
+                null,
+                "%", 
+                bdmd.toPattern(sTable), 
+                bdmd.toPattern(sColumn));
+              if (rs.next())
+              {
+                int iDataType = rs.getInt(AccessDatabaseMetaData.sJDBC_DATA_TYPE);
+                iPrecision = rs.getInt(AccessDatabaseMetaData.sJDBC_COLUMN_SIZE);
+                iScale = rs.getInt(AccessDatabaseMetaData.sJDBC_DECIMAL_DIGITS);
+                pt.initialize(iDataType, iPrecision, iScale);
+                dt.initPredefinedDataType(pt);
+              }
+              else
+                throw new IllegalArgumentException("Column "+sColumn+" of "+sTable+" not found!");
+              rs.close();  
+            }
+            else
+              throw new IllegalArgumentException("Row source of multi-value list of type Table/Query does not refer to a FROM table or view!");
+          }
+          else
+            throw new IllegalArgumentException("Row source of multi-value list of type Table/Query does not start with SELECT!");
         }
         else
           throw new IllegalArgumentException("Cannot (yet) handle value lists of dates!");
