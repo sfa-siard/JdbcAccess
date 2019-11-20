@@ -3,9 +3,7 @@ package ch.admin.bar.siard2.jdbc;
 import java.io.*;
 import java.sql.*;
 import static org.junit.Assert.*;
-
 import org.junit.*;
-
 import ch.enterag.utils.*;
 import ch.enterag.utils.jdbc.*;
 import ch.enterag.utils.database.*;
@@ -175,39 +173,7 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 13)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","Orders");
-        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
-        Connection conn = getDatabaseMetaData().getConnection();
-        Statement stmt = conn.createStatement();
-        String sSql =
-          "\r\nSELECT"+
-            "\r\n  \"Supplier IDs\","+
-            "\r\n  ID,"+
-            "\r\n  \"Product Code\","+
-            "\r\n  \"Product Name\","+
-            "\r\n  \"Description\","+
-            "\r\n  \"Standard Cost\","+
-            "\r\n  \"List Price\","+
-            "\r\n  \"Reorder Level\","+
-            "\r\n  \"Target Level\","+
-            "\r\n  \"Quantity Per Unit\","+
-            "\r\n  \"Discontinued\","+
-            "\r\n  \"Minimum Reorder Quantity\","+
-            "\r\n  \"Category\","+
-            "\r\n  \"Attachments\""+
-            "\r\n FROM \"Admin\".\"Products\"";
-        ResultSet rs = stmt.executeQuery(sSql);
-        while (rs.next())
-        {
-          // Array array = rs.getArray(1);
-          int iId = rs.getInt(2);
-          System.out.println(String.valueOf(iId));
-        }
-        rs.close();
-      }
-      else
-      {
-        QualifiedId qiView = new QualifiedId(null,"Admin","VIEWTEST");
+        QualifiedId qiView = new QualifiedId(null,"Admin","Inventory on Order");
         int iColumn = 0;
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())

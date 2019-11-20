@@ -1,6 +1,13 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.72
+Fixed all kinds of exotic problems 
+- append-only pseudo-columns,
+- Table/Query complex data type,
+- ... 
+from the Northwind database.
+
 2.1.56
 Third fix of problem of VIEW meta data views referencing tables in linked tables (Issue 10)
 
