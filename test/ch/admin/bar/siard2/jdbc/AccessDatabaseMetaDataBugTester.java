@@ -173,21 +173,9 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 13)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","Inventory on Order");
-        int iColumn = 0;
-        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
-        while (rs.next())
-        {
-          String sColumnName = rs.getString("COLUMN_NAME");
-          int iDataType = rs.getInt("DATA_TYPE");
-          String sTypeName = rs.getString("TYPE_NAME");
-          iColumn++;
-          int iPosition = rs.getInt("ORDINAL_POSITION");
-          assertEquals("Wrong position!",iColumn,iPosition);
-          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
-        }
-        rs.close();
-        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Inventory on Order");
+        QualifiedId qiTable = new QualifiedId(null,"Admin","Products");
+        print(getDatabaseMetaData().getColumns(qiTable.getCatalog(), qiTable.getSchema(), qiTable.getName(), "%"));
       }
     }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }

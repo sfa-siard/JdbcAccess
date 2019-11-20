@@ -2373,6 +2373,28 @@ public class AccessDatabaseMetaData
     row.put(sJDBC_IS_GENERATEDCOLUMN, null);
     return row;    
   } /* getColumnRow */
+
+  private String convertAccessSqlToIso(String sAccessSql)
+  {
+    String sIsoSql = sAccessSql.
+      replace("&", "||").
+      replace("\"", "'").
+      replace("[","\"").
+      replace("]", "\"").trim();
+    String sParam = "\\s*([^\\)\\(]+?)\\s*";
+    String sIsNullRegex = "(?i)IsNull\\("+sParam+"\\)";
+    String sIsNullReplace = "$1 IS NULL";
+    sIsoSql = sIsoSql.replaceAll(sIsNullRegex, sIsNullReplace);
+    String sIIfRegex = "(?i)IIf\\("+sParam+","+sParam+","+sParam+"\\)";
+    String sIIfReplace = "CASE WHEN $1 THEN $2 ELSE $3 END";
+    for (String s = sIsoSql.replaceAll(sIIfRegex, sIIfReplace);
+      !s.equals(sIsoSql);
+      s = sIsoSql.replaceAll(sIIfRegex, sIIfReplace))
+      sIsoSql = s;
+    if (sIsoSql.endsWith(";"))
+      sIsoSql = sIsoSql.substring(0,sIsoSql.length()-1).trim();
+    return sIsoSql;      
+  } /* convertAccessSqlToIso */
   
   /*------------------------------------------------------------------*/
   /** {@link DatabaseMetaData} */
@@ -2438,9 +2460,18 @@ public class AccessDatabaseMetaData
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
           {
             SelectQuery sq = _mapViews.get(sTableName);
-            String sSelect = sq.toSQLString().replace('[', '"').replace(']', '"').trim();
-            if (sSelect.endsWith(";"))
-              sSelect = sSelect.substring(0,sSelect.length()-1).trim();
+            String sSelect = convertAccessSqlToIso(sq.toSQLString());
+            /* ORDER is irrelevant for column types */
+            int iOrder = sSelect.indexOf("ORDER");
+            if (iOrder >= 0)
+              sSelect = sSelect.substring(0,iOrder).trim();
+            int iGroup = sSelect.indexOf("GROUP BY");
+            if (iGroup >= 0)
+              sSelect = sSelect.substring(0,iGroup).trim();
+            int iWhere = sSelect.indexOf("WHERE");
+            if (iWhere >= 0)
+              sSelect = sSelect.substring(0,iWhere).trim();
+            System.out.println(sSelect);
             AccessSqlFactory asf = new AccessSqlFactory();
             SqlStatement ss = asf.newSqlStatement();
             ss.parse(sSelect);
@@ -2458,47 +2489,92 @@ public class AccessDatabaseMetaData
               {
                 Column column = listTableColumns.get(iColumn);
                 String sColumnName = column.getName();
-                if (SqlLiterals.isRegular(sColumnName))
-                  sColumnName = sColumnName.toUpperCase();
                 // System.out.println(sColumnName);
                 listColumnNames.add(sColumnName);
+                listColumnNames.add(sColumnName.toUpperCase());
               }
               tp.setColumnNames(listColumnNames);
               for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
               {
                 Column column = listTableColumns.get(iColumn);
                 String sColumn = column.getName();
+                /**
                 if (SqlLiterals.isRegular(sColumn))
                   sColumn = sColumn.toUpperCase();
+                **/
                 ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumn, iColumn, column);
                 int iPrecision = rsr.getInt(sJDBC_COLUMN_SIZE);
                 int iScale = rsr.getInt(sJDBC_DECIMAL_DIGITS);
                 DataType dtColumn = Shunting.convertTypeFromAccess(column, iPrecision, iScale, iPrecision, -1, this);
                 tp.setColumnType(sColumn, dtColumn);
-                System.out.println(sColumn+": "+dtColumn.format());
+                tp.setColumnType(sColumn.toUpperCase(), dtColumn);
+                // System.out.println(sColumn+": "+dtColumn.format());
               }
             }
             for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists().size(); iSelectSublist++)
             {
               SelectSublist sel = qs.getSelectSublists().get(iSelectSublist);
-              Identifier idColumn = new Identifier(sel.getValueExpression().format());
-              if (sel.getColumnNames().size() > 0)
-                idColumn = sel.getColumnNames().get(0);
-              DataType dt = sel.getDataType(ss);
-              // System.out.println(idColumn.format()+": "+dt.format());
-              ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, idColumn.get(), iSelectSublist+1, dt, ss.format());
-              if (rsr != null)
-                iColumnIndex++;
-              if (matches(sColumnNamePattern,idColumn.get()))
+              if (!sel.isAsterisk())
               {
-                if (rsr != null)
-                  listColumns.add(rsr);
+                Identifier idColumn = new Identifier(sel.getValueExpression().format());
+                if (sel.getColumnNames().size() > 0)
+                  idColumn = sel.getColumnNames().get(0);
+                System.out.println(idColumn.format());
+                if (matches(sColumnNamePattern,idColumn.get()))
+                {
+                  DataType dt = sel.getDataType(ss);
+                  // System.out.println(idColumn.format()+": "+dt.format());
+                  ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, idColumn.get(), iColumnIndex, dt, ss.format());
+                  if (rsr != null)
+                  {
+                    iColumnIndex++;
+                    listColumns.add(rsr);
+                  }
+                }
+              }
+              /* if it has an asterisk, then treat it as if all columns of that table were included */
+              else
+              {
+                QualifiedId qiTable = qs.getTableReferences().get(0).getTablePrimary().getTableName();
+                IdChain idcTable = sel.getAsteriskQualifier();
+                if (idcTable != null)
+                {
+                  List<String> listTable = idcTable.get();
+                  int iLength = listTable.size();
+                  qiTable = new QualifiedId(null,"Admin",null);
+                  qiTable.setName(listTable.get(iLength-1));
+                  if (iLength > 1)
+                    qiTable.setSchema(listTable.get(iLength-2));
+                  if (iLength > 2)
+                    qiTable.setCatalog(listTable.get(iLength-3));
+                }
+                Table tableAsterisk = db.getTable(qiTable.getName());
+                List<? extends Column> listTableAsteriskColumns = tableAsterisk.getColumns();
+                for (int iColumn = 0; iColumn < listTableAsteriskColumns.size(); iColumn++)
+                {
+                  Column column = listTableAsteriskColumns.get(iColumn);
+                  String sColumnName = column.getName();
+                  if (matches(sColumnNamePattern,sColumnName))
+                  {
+                    ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumn, column);
+                    int iPrecision = rsr.getInt(sJDBC_COLUMN_SIZE);
+                    int iScale = rsr.getInt(sJDBC_DECIMAL_DIGITS);
+                    DataType dtAsterisk = Shunting.convertTypeFromAccess(column, iPrecision, iScale, iPrecision, -1, this);
+                    ResultSetRow rsrAsterisk = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, dtAsterisk, ss.format());
+                    if (rsrAsterisk != null)
+                    {
+                      iColumnIndex++;
+                      listColumns.add(rsrAsterisk);
+                    }
+                  }
+                }
               }
             }
           }
         }
         catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
       }
+      rsTables.close();
     }
     Collections.sort(listColumns, new ColumnsComparator());
     MetaDataCursor mdc = new MetaDataCursor(listColumns);
