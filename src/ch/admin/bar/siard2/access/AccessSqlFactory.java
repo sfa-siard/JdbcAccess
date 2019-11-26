@@ -32,6 +32,18 @@ public class AccessSqlFactory
   public List<GeneralValueSpecification> getQuestionMarks() { return _listQuestionMarks; }
   
   @Override
+  public TablePrimary newTablePrimary()
+  {
+    return new AccessTablePrimary(this);
+  } /* newTablePrimary */
+  
+  @Override
+  public QuerySpecification newQuerySpecification()
+  {
+    return new AccessQuerySpecification(this);
+  } /* newQuerySpecification */
+  
+  @Override
   public GeneralValueSpecification newGeneralValueSpecification()
   {
     return new AccessGeneralValueSpecification(this);

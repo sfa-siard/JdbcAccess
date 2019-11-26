@@ -2,7 +2,7 @@ Release Notes for JdbcAccess 2.1
 ================================
 
 2.1.73
-Replaced colum meta data of view by full parsing of query.
+Replaced column meta data of view by full parsing of query.
 
 2.1.72
 Fixed all kinds of exotic problems 

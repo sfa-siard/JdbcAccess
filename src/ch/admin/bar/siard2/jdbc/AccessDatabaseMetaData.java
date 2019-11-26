@@ -13,6 +13,7 @@ package ch.admin.bar.siard2.jdbc;
 
 import java.io.*;
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import com.healthmarketscience.jackcess.*;
@@ -325,7 +326,7 @@ public class AccessDatabaseMetaData
       /* neither '_' nor '%' are special characters for JAVA regular expressions */
       sPattern = sPattern.replaceAll("^_", ".").replaceAll("([^\\\\])_", "$1.").
         replaceAll("^%", ".*").replaceAll("([^\\\\])%", "$1.*");
-      Pattern pattern = Pattern.compile(sPattern);
+      Pattern pattern = Pattern.compile(sPattern,Pattern.CASE_INSENSITIVE);
       Matcher matcher = pattern.matcher(sValue);
       bMatch = matcher.matches();
     }
@@ -2358,7 +2359,7 @@ public class AccessDatabaseMetaData
     row.put(sJDBC_DECIMAL_DIGITS, Integer.valueOf(iDecimalDigits));
     row.put(sJDBC_NUM_PREC_RADIX, 10);
     row.put(sJDBC_NULLABLE, DatabaseMetaData.columnNullableUnknown);
-    row.put(sJDBC_REMARKS, sQuery);
+    row.put(sJDBC_REMARKS, null);
     row.put(sJDBC_COLUMN_DEF, null);
     row.put(sJDBC_SQL_DATA_TYPE, null);
     row.put(sJDBC_SQL_DATETIME_SUB, null);
@@ -2374,6 +2375,32 @@ public class AccessDatabaseMetaData
     return row;    
   } /* getColumnRow */
 
+  /*------------------------------------------------------------------*/
+  private int addTableColumns(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
+    int iColumnIndex, List<Row> listColumns)
+    throws IOException, SQLException
+  {
+    Database db = _conn.getDatabase();
+    Table table = db.getTable(sTableName);
+    List<? extends Column> listTableColumns = table.getColumns();
+    for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
+    {
+      Column column = listTableColumns.get(iColumn);
+      String sColumnName = column.getName();
+      if (matches(sColumnNamePattern,sColumnName))
+      {
+        ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, column);
+        if (rsr != null)
+        {
+          iColumnIndex++;
+          listColumns.add(rsr);
+        }
+      }
+    }
+    return iColumnIndex;
+  } /* addTableColumns */
+  
+  /*------------------------------------------------------------------*/
   private String convertAccessSqlToIso(String sAccessSql)
   {
     String sIsoSql = sAccessSql.
@@ -2391,16 +2418,446 @@ public class AccessDatabaseMetaData
       !s.equals(sIsoSql);
       s = sIsoSql.replaceAll(sIIfRegex, sIIfReplace))
       sIsoSql = s;
+    String sNzRegex = "(?i)NZ\\("+sParam+","+sParam+"\\)";
+    String sNzReplace = "CASE WHEN $1 IS NULL THEN $2 ELSE $1 END";
+    sIsoSql = sIsoSql.replaceAll(sNzRegex, sNzReplace);
     if (sIsoSql.endsWith(";"))
       sIsoSql = sIsoSql.substring(0,sIsoSql.length()-1).trim();
+    /* ORDER is irrelevant for column types */
+    int iOrder = sIsoSql.indexOf("ORDER");
+    if (iOrder >= 0)
+      sIsoSql = sIsoSql.substring(0,iOrder).trim();
+    int iGroup = sIsoSql.indexOf("GROUP BY");
+    if (iGroup >= 0)
+      sIsoSql = sIsoSql.substring(0,iGroup).trim();
+    int iWhere = sIsoSql.indexOf("WHERE");
+    if (iWhere >= 0)
+      sIsoSql = sIsoSql.substring(0,iWhere).trim();
     return sIsoSql;      
   } /* convertAccessSqlToIso */
+  
+  private String[] parseFromTableExpression(String sFromTables)
+  {
+    /* remove on conditions */
+    String sOn = "(ON[^\\)]*)";
+    sFromTables = sFromTables.replaceAll(sOn,"");
+    /* remove parentheses */
+    sFromTables = sFromTables.replace("(", "").replace(")","");
+    /* remove all LEFT RIGHT INNER OUTER */
+    sFromTables = sFromTables.replace("LEFT", "").replace("RIGHT","").replace("INNER", "").replace("OUTER", "");
+    /* replace all JOINS by commas */
+    sFromTables = sFromTables.replace("JOIN", ",");
+    /* remove all white space outside brackets */
+    boolean bInside = false;
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < sFromTables.length(); i++)
+    {
+      char c = sFromTables.charAt(i);
+      if (c == ']')
+        bInside = false;
+      else if (c == '[')
+        bInside = true;
+      else if (!bInside)
+      {
+        if (!Character.isWhitespace(c))
+          sb.append(c);
+      }
+      else
+        sb.append(c);
+    }
+    sFromTables = sb.toString();
+    String[] asFromTable = sFromTables.split(",");
+    return asFromTable;
+  } /* parseFromTableExpression */
+
+  /*------------------------------------------------------------------*/
+  /* search for the table in the tree of the table primary */
+  private TablePrimary getTablePrimary(String sTable, TablePrimary tp)
+  {
+    TablePrimary tpFound = null;
+    if (tp.getTableName().getName() != null)
+    {
+      if (sTable.equalsIgnoreCase(tp.getTableName().getName()))
+        tpFound = tp;
+    }
+    if ((tpFound == null) && (tp.getTableReference() != null))
+      tpFound = getTablePrimary(sTable, tp.getTableReference());
+    return tpFound;
+  } /* getTablePrimary */
+  
+  /*------------------------------------------------------------------*/
+  /* search for the table in the JOIN tree of the table reference */
+  private TablePrimary getTablePrimary(String sTable, TableReference tr)
+  {
+    TablePrimary tp = null;
+    if (tr.getTableReference() != null)
+      tp = getTablePrimary(sTable, tr.getTableReference());
+    if ((tp == null) && (tr.getSecondTableReference() != null))
+      tp = getTablePrimary(sTable,tr.getSecondTableReference());
+    if ((tp == null) && (tr.getTablePrimary() != null))
+      tp = getTablePrimary(sTable,tr.getTablePrimary());
+    return tp;
+  } /* getTablePrimary */
+  
+  /*------------------------------------------------------------------*/
+  /** search for table in case insensitive manner.
+   * @param sTable table name (Access)
+   * @param qs query specification.
+   * @return matching TablePrimary.
+   */
+  private TablePrimary getTablePrimary(String sTable, QuerySpecification qs)
+  {
+    TablePrimary tpMatched = null;
+    for (int iTableReference = 0; (tpMatched == null) && (iTableReference < qs.getTableReferences().size()); iTableReference++)
+    {
+      TableReference tr = qs.getTableReferences().get(iTableReference);
+      TablePrimary tp = getTablePrimary(sTable,tr);
+      if (tp != null)
+          tpMatched = tp;
+    }
+    return tpMatched;
+  } /* getTablePrimary */
+  
+  /*------------------------------------------------------------------*/
+  /** get list of column names of table including uppercase variants.
+   * @param table Access table. 
+   * @return list of column names of table.
+   */
+  private List<String> getColumnNames(Table table)
+  {
+    List<String> listColumnNames = new ArrayList<String>();
+    List<? extends Column> listTableColumns = table.getColumns();
+    for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
+    {
+      Column column = listTableColumns.get(iColumn);
+      String sColumnName = column.getName();
+      // System.out.println(sColumnName);
+      listColumnNames.add(sColumnName);
+      listColumnNames.add(sColumnName.toUpperCase());
+    }
+    return listColumnNames;
+  } /* getColumnNames */
+  
+  /*------------------------------------------------------------------*/
+  /** set data types for columns in table (including uppercase variants).
+   * @param table Access table
+   * @param tp TablePrimary in query
+   * @throws IOException
+   * @throws SQLException
+   */
+  private void setTableDataTypes(Table table, TablePrimary tp)
+    throws IOException, SQLException
+  {
+    int iColumnIndex = 1;
+    List<? extends Column> listTableColumns = table.getColumns();
+    for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
+    {
+      Column column = listTableColumns.get(iColumn);
+      String sColumn = column.getName();
+      ResultSetRow rsr = getColumnRow(null, "Admin", table.getName(), sColumn, iColumnIndex, column);
+      if (rsr != null)
+      {
+        iColumnIndex++;
+        int iPrecision = rsr.getInt(sJDBC_COLUMN_SIZE);
+        int iScale = rsr.getInt(sJDBC_DECIMAL_DIGITS);
+        DataType dtColumn = Shunting.convertTypeFromAccess(column, iPrecision, iScale, iPrecision, -1, this);
+        tp.setColumnType(sColumn, dtColumn);
+        tp.setColumnType(sColumn.toUpperCase(), dtColumn);
+        // System.out.println(table.getName()+"."+sColumn+": "+dtColumn.format());
+      }
+    }
+  } /* setTableDataTypes */
+  
+  /*------------------------------------------------------------------*/
+  /** set table data types from view (results in recursive call).
+   * @param sView view name.
+   * @param tp TablePrimary whose data are to be set.
+   */
+  private void setTableDataTypes(String sView, TablePrimary tp)
+    throws SQLException
+  {
+    ResultSet rs = getColumns(null,"Admin",sView,"%");
+    while (rs.next())
+    {
+      String sColumn = rs.getString(sJDBC_COLUMN_NAME);
+      int iDataType = rs.getInt(sJDBC_DATA_TYPE);
+      int iPrecision = rs.getInt(sJDBC_COLUMN_SIZE);
+      int iScale = rs.getInt(sJDBC_DECIMAL_DIGITS);
+      DataType dtColumn = Shunting.convertTypeFromJdbc(iDataType, iPrecision, iScale);
+      tp.setColumnType(sColumn, dtColumn);
+      tp.setColumnType(sColumn.toUpperCase(), dtColumn);
+      // System.out.println(sView+"."+sColumn+": "+dtColumn.format());
+    }
+    rs.close();
+  } /* setTableDataTypes */
+  
+  /*------------------------------------------------------------------*/
+  private int addSelectColumn(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern, 
+    String sSingleTable, SelectSublist sel, SqlStatement ss, int iColumnIndex, List<Row> listColumns)
+    throws SQLException
+  {
+    String sColumn = sel.getColumnNames().get(0).get();
+    sColumn = SqlLiterals.quoteId(sColumn);
+    try { sColumn = SqlLiterals.parseId(sColumn); }
+    catch(ParseException pe) { throw new SQLException("Column name "+sColumn+" could not be parsed ("+EU.getExceptionMessage(pe)+")!"); }
+    boolean bMatch = matches(sColumnNamePattern,sColumn);
+    if (!bMatch)
+    {
+      ValueExpression ve = sel.getValueExpression();
+      if (ve != null)
+      {
+        CommonValueExpression cve = ve.getCommonValueExpression();
+        if (cve != null)
+        {
+          ValueExpressionPrimary vep = cve.getValueExpressionPrimary();
+          if (vep != null)
+          {
+            GeneralValueSpecification gvs = vep.getGeneralValueSpecification();
+            if (gvs != null)
+            {
+              IdChain idcColumn = gvs.getColumnOrParameter();
+              if ((idcColumn != null) && (idcColumn.get().size() > 1) && idcColumn.get().get(idcColumn.get().size()-2).equalsIgnoreCase(sSingleTable))
+              {
+                sColumn = idcColumn.get().get(idcColumn.get().size()-1);
+                bMatch = matches(sColumnNamePattern,sColumn);
+              }
+            }
+          }
+        }
+      }
+    }
+    if (bMatch)
+    {
+      // System.out.println("  Data Type for select column "+sColumn);
+      DataType dt = sel.getDataType(ss);
+      ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumn, iColumnIndex, dt, ss.format());
+      if (rsr != null)
+      {
+        iColumnIndex++;
+        listColumns.add(rsr);
+      }
+    }
+    return iColumnIndex;
+  } /* addSelectColumn */
+  
+  /*------------------------------------------------------------------*/
+  private static <T, U> Map<T,U> pairOf(T first, U second)
+  {
+    return Collections.singletonMap(first, second);
+  } /* pairOf */
+  
+  /*------------------------------------------------------------------*/
+  /** get columns from asterisked select sublist
+   * @param sel select sublist
+   * @return column (alias) names and expressions
+   * @throws SQLException if an error occurred.
+   */
+  private List<Map<String,String>> getSelectColumns(SelectSublist sel)
+    throws SQLException
+  {
+    List<Map<String,String>> listSelectColumns = new ArrayList<Map<String,String>>(); 
+    /* either the AsteriskQualifier or the ve represents the table/view followed by an asterisk */
+    IdChain idcTable = sel.getAsteriskQualifier();
+    if (idcTable.get().size() == 0)
+    {
+      String sTableExpression = sel.getValueExpression().format();
+      sTableExpression = SqlLiterals.quoteId(sTableExpression);
+      try { idcTable.parseAdd(sTableExpression); }
+      catch(ParseException pe) { throw new SQLException("Table expression "+sTableExpression+" could not be parsed ("+EU.getExceptionMessage(pe)+")!"); }
+    }
+    QualifiedId qiTable = new QualifiedId(
+      (idcTable.get().size() > 2)?idcTable.get().get(idcTable.get().size()-3):null,
+      (idcTable.get().size() > 1)?idcTable.get().get(idcTable.get().size()-2):"Admin",
+      idcTable.get().get(idcTable.get().size()-1)
+      );
+    int iColumn = 0;
+    ResultSet rs = getColumns(qiTable.getCatalog(),toPattern(qiTable.getSchema()),toPattern(qiTable.getName()),null);
+    while (rs.next())
+    {
+      String sTableName = rs.getString(sJDBC_TABLE_NAME);
+      String sColumnName = rs.getString(sJDBC_COLUMN_NAME);
+      try
+      {
+        IdChain idcColumn = new IdChain();
+        idcColumn.parseAdd(SqlLiterals.formatId(sTableName));
+        idcColumn.parseAdd(SqlLiterals.formatId(sColumnName));
+        String sColumnExpression = idcColumn.format();
+        String sAliasName = sColumnExpression;
+        if (sel.getColumnNames().size() > 0)
+          sAliasName = sel.getColumnNames().get(iColumn).get();
+        listSelectColumns.add(pairOf(sAliasName,sColumnExpression));
+      }
+      catch(ParseException pe) { throw new SQLException("Table name "+sTableName+" or column name "+sColumnName+" could not be parsed ("+EU.getExceptionMessage(pe)+")!"); } 
+      iColumn++;
+    }
+    rs.close();
+    return listSelectColumns;
+  } /* getSelectColumns */
+  
+  /*------------------------------------------------------------------*/
+  /** replace alias names in expressions by expressions
+   * @param listSelectColumns
+   * @return list of select columns not referring to other select columns.
+   * @throws SQLException
+   */
+  private List<Map<String,String>> editSelectColumns(List<Map<String,String>> listSelectColumns)
+    throws SQLException
+  {
+    Map<String,String> mapAllColumns = new HashMap<String,String>();
+    for (int iSelectColumn = 0; iSelectColumn < listSelectColumns.size(); iSelectColumn++)
+    {
+      Map<String,String> mapSelectColumn = listSelectColumns.get(iSelectColumn);
+      mapAllColumns.putAll(mapSelectColumn);
+    }
+    for (boolean bChanged = true; bChanged; )
+    {
+      bChanged = false;
+      for (int iSelectColumn = 0; iSelectColumn < listSelectColumns.size(); iSelectColumn++)
+      {
+        Map<String,String> mapSelectColumn = listSelectColumns.get(iSelectColumn);
+        for (Iterator<String> iterColumn = mapSelectColumn.keySet().iterator(); iterColumn.hasNext(); )
+        {
+          String sAliasName = iterColumn.next();
+          String sExpression = mapSelectColumn.get(sAliasName);
+          for (Iterator<String> iterAllColumn = mapAllColumns.keySet().iterator(); iterAllColumn.hasNext(); )
+          {
+            String sKey = iterAllColumn.next();
+            if (!sKey.equals(sAliasName))
+            {
+              /* if the alias name appears in the expression, replace it by its defining expression */
+              sExpression = sExpression.replace(SqlLiterals.quoteId(sKey),"("+mapAllColumns.get(sKey)+")");
+              sExpression = sExpression.replace(sKey,"("+mapAllColumns.get(sKey)+")");
+            }
+          }
+          if (!sExpression.equals(mapSelectColumn.get(sAliasName)))
+          {
+            mapAllColumns.put(sAliasName, sExpression);
+            listSelectColumns.set(iSelectColumn, pairOf(sAliasName,sExpression));
+            bChanged = true;
+          }
+        }
+      }
+    }
+    return listSelectColumns;
+  } /* editSelectColumns */
+  
+  /*------------------------------------------------------------------*/
+  /** get select columns of query
+   * @param qs query specification
+   * @return column (alias) names and expressions
+   * @throws SQLException if an error occurred.
+   */
+  private List<Map<String,String>> getSelectColumns(QuerySpecification qs)
+    throws SQLException
+  {
+    List<Map<String,String>> listSelectColumns = new ArrayList<Map<String,String>>(); 
+    for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists().size(); iSelectSublist++)
+    {
+      SelectSublist sel = qs.getSelectSublists().get(iSelectSublist);
+      if (sel.isAsterisk())
+        listSelectColumns.addAll(getSelectColumns(sel));
+      else
+      {
+        /* expression */
+        String sExpression = sel.getValueExpression().format();
+        /* AS name */
+        String sAliasName = sExpression;
+        if (sel.getColumnNames().size() > 0)
+          sAliasName = sel.getColumnNames().get(0).get();
+        sAliasName = SqlLiterals.quoteId(sAliasName);
+        try { sAliasName = SqlLiterals.parseId(sAliasName); }
+        catch(ParseException pe) { throw new SQLException("Column alias "+sAliasName+" could not be parsed ("+EU.getExceptionMessage(pe)+")!"); }
+        listSelectColumns.add(pairOf(sAliasName,sExpression));
+      }
+    }
+    return editSelectColumns(listSelectColumns);
+  } /* getSelectColumns */
+  
+  /*------------------------------------------------------------------*/
+  private void normalizeSelectColumns(QuerySpecification qs)
+    throws SQLException
+  {
+    List<Map<String,String>> listSelectColumns = getSelectColumns(qs);
+    for (Iterator<SelectSublist> iterSelect = qs.getSelectSublists().iterator(); iterSelect.hasNext(); )
+    {
+      iterSelect.next();
+      iterSelect.remove();
+    }
+    AccessSqlFactory asf = new AccessSqlFactory();
+    for (Iterator<Map<String,String>> iterSelectColumn = listSelectColumns.iterator(); iterSelectColumn.hasNext(); )
+    {
+      Map<String,String> mapSelectColumn = iterSelectColumn.next();
+      for (Iterator<String> iterAliasName = mapSelectColumn.keySet().iterator(); iterAliasName.hasNext(); )
+      {
+        String sAliasName = iterAliasName.next();
+        String sExpression = mapSelectColumn.get(sAliasName);
+        SelectSublist sel = asf.newSelectSublist();
+        sel.parse(sExpression+" AS "+SqlLiterals.quoteId(sAliasName));
+        // System.out.println(sel.format());
+        qs.getSelectSublists().add(sel);
+      }
+    }
+  } /* normalizeSelectColumns */
+  
+  /*------------------------------------------------------------------*/
+  private int addViewColumns(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
+    int iColumnIndex, List<Row> listColumns)
+    throws IOException, SQLException
+  {
+    Database db = _conn.getDatabase();
+    SelectQuery sq = _mapViews.get(sTableName);
+    String sSelect = convertAccessSqlToIso(sq.toSQLString());
+    // System.out.println(sSelect);
+    AccessSqlFactory asf = new AccessSqlFactory();
+    SqlStatement ss = asf.newSqlStatement();
+    ss.parse(sSelect);
+    ss.setEvaluationContext("Hartwig", null, "Admin");
+    /* prepare tables in query for data type evaluation */
+    QuerySpecification qs = ss.getQuerySpecification();
+    // System.out.println(qs.format());
+    normalizeSelectColumns(qs);
+    // System.out.println(qs.format());
+    String sTable = null;
+    String[] asTable = new String[] {};
+    for (int iFromTable = 0; iFromTable < sq.getFromTables().size(); iFromTable++)
+    {
+      String sFromTable = sq.getFromTables().get(iFromTable);
+      // System.out.println(sFromTable);
+      asTable = parseFromTableExpression(sFromTable);
+      for (int iTable = 0; iTable < asTable.length; iTable++)
+      {
+        sTable = asTable[iTable];
+        Table table = db.getTable(sTable);
+        TablePrimary tp = getTablePrimary(sTable,qs);
+        if (table != null)
+        {
+          List<String> listColumnNames = getColumnNames(table);
+          tp.setColumnNames(listColumnNames);
+          setTableDataTypes(table, tp);
+        }
+        else // it is a query: determine its data types
+          setTableDataTypes(sTable, tp);
+      }
+    }
+    if ((sq.getFromTables().size() > 1) || (asTable.length > 1))
+      sTable = null;
+    /* evaluate the data types */
+    // System.out.println("DataTypes of "+sTableName+" determined");
+    for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists().size(); iSelectSublist++)
+    {
+      SelectSublist sel = qs.getSelectSublists().get(iSelectSublist);
+      iColumnIndex = addSelectColumn(sCatalog, sSchema, sTableName, sColumnNamePattern, 
+        sTable, sel, ss, iColumnIndex, listColumns);
+    }
+    return iColumnIndex;
+  } /* addViewColumns
   
   /*------------------------------------------------------------------*/
   /** {@link DatabaseMetaData} */
   @Override
   public ResultSet getColumns(String sCatalog, String sSchemaPattern, String sTableNamePattern, String sColumnNamePattern) throws SQLException
   {
+    // System.out.println(">> "+sTableNamePattern);
     ResultSetHeader rsh = new ResultSetHeader(sINFORMATION_SCHEMA, sCOLUMNS);
     rsh.addColumn(sJDBC_TABLE_CAT, java.sql.Types.VARCHAR);
     rsh.addColumn(sJDBC_TABLE_SCHEM, java.sql.Types.VARCHAR);
@@ -2427,7 +2884,6 @@ public class AccessDatabaseMetaData
     rsh.addColumn(sJDBC_IS_AUTOINCREMENT, java.sql.Types.VARCHAR); // YES, NO or empty
     rsh.addColumn(sJDBC_IS_GENERATEDCOLUMN, java.sql.Types.VARCHAR); // YES, NO or empty
     List<Row> listColumns = new ArrayList<Row>();
-    Database db = _conn.getDatabase();
     ResultSet rsTables = getTables(sCatalog, sSchemaPattern, sTableNamePattern, null);
     if (rsTables != null)
     {
@@ -2440,137 +2896,11 @@ public class AccessDatabaseMetaData
         {
           int iColumnIndex = 1;
           if (sTableType.equals(sJDBC_TABLE_TYPE_TABLE))
-          {
-            Table table = db.getTable(sTableName);
-            List<? extends Column> listTableColumns = table.getColumns();
-            for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
-            {
-              Column column = listTableColumns.get(iColumn);
-              String sColumnName = column.getName();
-              ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, column);
-              if (rsr != null)
-                iColumnIndex++;
-              if (matches(sColumnNamePattern,sColumnName))
-              {
-                if (rsr != null)
-                  listColumns.add(rsr);
-              }
-            }
-          }
+            iColumnIndex = addTableColumns(sCatalog, sSchema, sTableName, sColumnNamePattern,
+              iColumnIndex,listColumns);
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
-          {
-            SelectQuery sq = _mapViews.get(sTableName);
-            String sSelect = convertAccessSqlToIso(sq.toSQLString());
-            /* ORDER is irrelevant for column types */
-            int iOrder = sSelect.indexOf("ORDER");
-            if (iOrder >= 0)
-              sSelect = sSelect.substring(0,iOrder).trim();
-            int iGroup = sSelect.indexOf("GROUP BY");
-            if (iGroup >= 0)
-              sSelect = sSelect.substring(0,iGroup).trim();
-            int iWhere = sSelect.indexOf("WHERE");
-            if (iWhere >= 0)
-              sSelect = sSelect.substring(0,iWhere).trim();
-            System.out.println(sSelect);
-            AccessSqlFactory asf = new AccessSqlFactory();
-            SqlStatement ss = asf.newSqlStatement();
-            ss.parse(sSelect);
-            ss.setEvaluationContext("Hartwig", null, "Admin");
-            // System.out.println(ss.format());
-            QuerySpecification qs = ss.getQuerySpecification();
-            for (int iTable = 0; iTable < qs.getTableReferences().size(); iTable++)
-            {
-              TablePrimary tp = qs.getTableReferences().get(iTable).getTablePrimary();
-              String sTable = tp.getTableName().getName();
-              Table table = db.getTable(sTable);
-              List<String> listColumnNames = new ArrayList<String>();
-              List<? extends Column> listTableColumns = table.getColumns();
-              for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
-              {
-                Column column = listTableColumns.get(iColumn);
-                String sColumnName = column.getName();
-                // System.out.println(sColumnName);
-                listColumnNames.add(sColumnName);
-                listColumnNames.add(sColumnName.toUpperCase());
-              }
-              tp.setColumnNames(listColumnNames);
-              for (int iColumn = 0; iColumn < listTableColumns.size(); iColumn++)
-              {
-                Column column = listTableColumns.get(iColumn);
-                String sColumn = column.getName();
-                /**
-                if (SqlLiterals.isRegular(sColumn))
-                  sColumn = sColumn.toUpperCase();
-                **/
-                ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumn, iColumn, column);
-                int iPrecision = rsr.getInt(sJDBC_COLUMN_SIZE);
-                int iScale = rsr.getInt(sJDBC_DECIMAL_DIGITS);
-                DataType dtColumn = Shunting.convertTypeFromAccess(column, iPrecision, iScale, iPrecision, -1, this);
-                tp.setColumnType(sColumn, dtColumn);
-                tp.setColumnType(sColumn.toUpperCase(), dtColumn);
-                // System.out.println(sColumn+": "+dtColumn.format());
-              }
-            }
-            for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists().size(); iSelectSublist++)
-            {
-              SelectSublist sel = qs.getSelectSublists().get(iSelectSublist);
-              if (!sel.isAsterisk())
-              {
-                Identifier idColumn = new Identifier(sel.getValueExpression().format());
-                if (sel.getColumnNames().size() > 0)
-                  idColumn = sel.getColumnNames().get(0);
-                System.out.println(idColumn.format());
-                if (matches(sColumnNamePattern,idColumn.get()))
-                {
-                  DataType dt = sel.getDataType(ss);
-                  // System.out.println(idColumn.format()+": "+dt.format());
-                  ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, idColumn.get(), iColumnIndex, dt, ss.format());
-                  if (rsr != null)
-                  {
-                    iColumnIndex++;
-                    listColumns.add(rsr);
-                  }
-                }
-              }
-              /* if it has an asterisk, then treat it as if all columns of that table were included */
-              else
-              {
-                QualifiedId qiTable = qs.getTableReferences().get(0).getTablePrimary().getTableName();
-                IdChain idcTable = sel.getAsteriskQualifier();
-                if (idcTable != null)
-                {
-                  List<String> listTable = idcTable.get();
-                  int iLength = listTable.size();
-                  qiTable = new QualifiedId(null,"Admin",null);
-                  qiTable.setName(listTable.get(iLength-1));
-                  if (iLength > 1)
-                    qiTable.setSchema(listTable.get(iLength-2));
-                  if (iLength > 2)
-                    qiTable.setCatalog(listTable.get(iLength-3));
-                }
-                Table tableAsterisk = db.getTable(qiTable.getName());
-                List<? extends Column> listTableAsteriskColumns = tableAsterisk.getColumns();
-                for (int iColumn = 0; iColumn < listTableAsteriskColumns.size(); iColumn++)
-                {
-                  Column column = listTableAsteriskColumns.get(iColumn);
-                  String sColumnName = column.getName();
-                  if (matches(sColumnNamePattern,sColumnName))
-                  {
-                    ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumn, column);
-                    int iPrecision = rsr.getInt(sJDBC_COLUMN_SIZE);
-                    int iScale = rsr.getInt(sJDBC_DECIMAL_DIGITS);
-                    DataType dtAsterisk = Shunting.convertTypeFromAccess(column, iPrecision, iScale, iPrecision, -1, this);
-                    ResultSetRow rsrAsterisk = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, dtAsterisk, ss.format());
-                    if (rsrAsterisk != null)
-                    {
-                      iColumnIndex++;
-                      listColumns.add(rsrAsterisk);
-                    }
-                  }
-                }
-              }
-            }
-          }
+            iColumnIndex = addViewColumns(sCatalog, sSchema, sTableName, sColumnNamePattern,
+              iColumnIndex,listColumns);
         }
         catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
       }
@@ -2579,6 +2909,7 @@ public class AccessDatabaseMetaData
     Collections.sort(listColumns, new ColumnsComparator());
     MetaDataCursor mdc = new MetaDataCursor(listColumns);
     AccessResultSet rs = new AccessResultSet(_conn,null,rsh,mdc);
+    // System.out.println("<< "+sTableNamePattern);
     return rs;
   } /* getColumns */
 
