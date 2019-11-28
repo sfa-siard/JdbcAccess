@@ -2649,39 +2649,14 @@ public class AccessDatabaseMetaData
   
   /*------------------------------------------------------------------*/
   private int addSelectColumn(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern, 
-    SelectSublist sel, SqlStatement ss, int iColumnIndex, List<Row> listColumns)
+    String sColumnName, SelectSublist sel, SqlStatement ss, int iColumnIndex, List<Row> listColumns)
     throws SQLException
   {
-    String sColumn = null;
-    if (sel.getColumnNames().size() > 0)
-      sColumn = sel.getColumnNames().get(0).get();
-    else
-    {
-      ValueExpression ve = sel.getValueExpression();
-      if (ve != null)
-      {
-        CommonValueExpression cve = ve.getCommonValueExpression();
-        if (cve != null)
-        {
-          ValueExpressionPrimary vep = cve.getValueExpressionPrimary();
-          if (vep != null)
-          {
-            GeneralValueSpecification gvs = vep.getGeneralValueSpecification();
-            if (gvs != null)
-            {
-              IdChain idcColumn = gvs.getColumnOrParameter();
-              if (idcColumn.get().size() > 0)
-                sColumn = idcColumn.get().get(idcColumn.get().size()-1);
-            }
-          }
-        }
-      }
-    }
-    if (matches(sColumnNamePattern,sColumn))
+    if (matches(sColumnNamePattern,sColumnName))
     {
       // System.out.println("  Data Type for select column "+sColumn);
       DataType dt = sel.getDataType(ss);
-      ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumn, iColumnIndex, dt, ss.format());
+      ResultSetRow rsr = getColumnRow(sCatalog, sSchema, sTableName, sColumnName, iColumnIndex, dt, ss.format());
       if (rsr != null)
       {
         iColumnIndex++;
@@ -2705,6 +2680,81 @@ public class AccessDatabaseMetaData
     }
     return table;
   } /* findTable */
+
+  /*------------------------------------------------------------------*/
+  private List<String> getSelectColumnNames(QuerySpecification qs)
+    throws SQLException
+  {
+    List<IdChain> listSelectColumns = new ArrayList<IdChain>();
+    Map<String,Integer> mapOccurrences = new HashMap<String,Integer>(); 
+    for (int iSelect = 0; iSelect < qs.getSelectSublists().size(); iSelect++)
+    {
+      SelectSublist sel = qs.getSelectSublists().get(iSelect);
+      IdChain idcColumn = null;
+      if (sel.getColumnNames().size() > 0)
+      {
+        String sColumn = sel.getColumnNames().get(0).get();
+        idcColumn = new IdChain();
+        try { idcColumn.parseAdd(SqlLiterals.formatId(sColumn)); }
+        catch(ParseException pe) { System.err.println("Column name "+sColumn+" could not be parsed ("+EU.getExceptionMessage(pe)+")!"); }
+      }
+      else
+      {
+        ValueExpression ve = sel.getValueExpression();
+        if (ve != null)
+        {
+          CommonValueExpression cve = ve.getCommonValueExpression();
+          if (cve != null)
+          {
+            ValueExpressionPrimary vep = cve.getValueExpressionPrimary();
+            if (vep != null)
+            {
+              GeneralValueSpecification gvs = vep.getGeneralValueSpecification();
+              if (gvs != null)
+                idcColumn = gvs.getColumnOrParameter();
+            }
+          }
+        }
+      }
+      if (idcColumn.get().size() > 0)
+      {
+        String sColumn = idcColumn.get().get(idcColumn.get().size()-1);
+        Integer iOccurrences = mapOccurrences.get(sColumn);
+        if (iOccurrences == null)
+          iOccurrences = Integer.valueOf(1);
+        else
+          iOccurrences = Integer.valueOf(iOccurrences.intValue()+1);
+        mapOccurrences.put(sColumn,iOccurrences);
+        listSelectColumns.add(idcColumn);
+      }
+    }
+    List<String> listColumnNames = new ArrayList<String>();
+    for (int iSelect = 0; iSelect < listSelectColumns.size(); iSelect++)
+    {
+      IdChain idcColumn = listSelectColumns.get(iSelect);
+      String sColumn = idcColumn.get().get(idcColumn.get().size()-1);
+      Integer iOccurrences = mapOccurrences.get(sColumn);
+      if (iOccurrences.intValue() == 1)
+        listColumnNames.add(sColumn);
+      else
+      {
+        if (idcColumn.get().size() > 1)
+        {
+          iOccurrences = iOccurrences.intValue()-1;
+          mapOccurrences.put(sColumn, iOccurrences);
+          sColumn = idcColumn.get().get(idcColumn.get().size()-2)+"."+sColumn;
+          iOccurrences = mapOccurrences.get(sColumn);
+          if (iOccurrences == null)
+            iOccurrences = Integer.valueOf(1);
+          else
+            throw new SQLException("Select column "+idcColumn.format()+" could not be disambiguated!");
+          mapOccurrences.put(sColumn,iOccurrences);
+          listColumnNames.add(sColumn);
+        }
+      }
+    }
+    return listColumnNames;
+  } /* getSelectColumnNames */
   
   /*------------------------------------------------------------------*/
   private int addViewColumns(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
@@ -2734,13 +2784,14 @@ public class AccessDatabaseMetaData
       else // it is a query: determine its data types
         setTableDataTypes(sTable, tp);
     }
+    /* create list of column names without collisions */
+    List<String> listSelectColumnNames = getSelectColumnNames(qs);
     /* evaluate the data types */
-    // System.out.println("DataTypes of "+sTableName+" determined");
     for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists().size(); iSelectSublist++)
     {
       SelectSublist sel = qs.getSelectSublists().get(iSelectSublist);
       iColumnIndex = addSelectColumn(sCatalog, sSchema, sTableName, sColumnNamePattern, 
-        sel, ss, iColumnIndex, listColumns);
+        listSelectColumnNames.get(iSelectSublist),sel, ss, iColumnIndex, listColumns);
     }
     return iColumnIndex;
   } /* addViewColumns
