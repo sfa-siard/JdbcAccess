@@ -175,8 +175,9 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       {
         //QualifiedId qiTable = new QualifiedId(null,"Admin","Inventory on Order");
         //QualifiedId qiTable = new QualifiedId(null,"Admin","Suppliers Extended");
-        QualifiedId qiTable = new QualifiedId(null,"Admin","Invoice Data");
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Invoice Data");
         //QualifiedId qiTable = new QualifiedId(null,"Admin","Inventory");
+        QualifiedId qiTable = new QualifiedId(null,"Admin","Sales Analysis");
         print(getDatabaseMetaData().getColumns(qiTable.getCatalog(), qiTable.getSchema(), qiTable.getName(), "%"));
       }
     }

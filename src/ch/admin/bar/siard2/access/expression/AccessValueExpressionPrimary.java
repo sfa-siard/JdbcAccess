@@ -108,6 +108,20 @@ public class AccessValueExpressionPrimary
         dt = getSqlFactory().newDataType();
         dt.initPredefinedDataType(pt);
       }
+      else if ("Format".equalsIgnoreCase(qiRoutine.getName()))
+      {
+        PredefinedType pt = getSqlFactory().newPredefinedType();
+        pt.initVarCharType(256);
+        dt = getSqlFactory().newDataType();
+        dt.initPredefinedDataType(pt);
+      }
+      else if ("DatePart".equalsIgnoreCase(qiRoutine.getName()))
+      {
+        PredefinedType pt = getSqlFactory().newPredefinedType();
+        pt.initSmallIntType();
+        dt = getSqlFactory().newDataType();
+        dt.initPredefinedDataType(pt);
+      }
     }
     if (dt == null)
       dt = super.getDataType(ss);

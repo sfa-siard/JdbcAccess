@@ -2409,6 +2409,17 @@ public class AccessDatabaseMetaData
       replace("\"", "'").
       replace("[","\"").
       replace("]", "\"").trim();
+    // this quoting is rather weak, because it only handles the part after AS
+    // What we really need is a quoted replacement of all reserved words anywhere
+    sIsoSql = sIsoSql.replaceAll("(?i)AS\\s+(\\w+)", "AS \"$1\"");
+    sIsoSql = sIsoSql.replaceAll("(?i)(\\W)Month\\(", "$1DatePart('m',");
+    sIsoSql = sIsoSql.replaceAll("(?i)(\\W)Year\\(", "$1DatePart('yyyy',");
+    // this MOD replacement is very weak because it cannot handle complex expression!!!
+    String sModExpression = "(\\w+|\\w+\\([^\\)]+\\))";
+    String sModPattern = "(?i)"+sModExpression+"\\s+Mod\\s+"+sModExpression;
+    String sModReplacement = "MOD($1,$2)";
+    sIsoSql = sIsoSql.replaceAll(sModPattern,sModReplacement);
+    
     if (sIsoSql.endsWith(";"))
       sIsoSql = sIsoSql.substring(0,sIsoSql.length()-1).trim();
     /* ORDER is irrelevant for column types */
