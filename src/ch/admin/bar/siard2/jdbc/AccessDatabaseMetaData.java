@@ -2411,6 +2411,7 @@ public class AccessDatabaseMetaData
       replace("]", "\"").trim();
     // this quoting is rather weak, because it only handles the part after AS
     // What we really need is a quoted replacement of all reserved words anywhere
+    sIsoSql = sIsoSql.replaceAll("(\\s+)DISTINCTROW(\\s+)","$1DISTINCT$2");
     sIsoSql = sIsoSql.replaceAll("(?i)AS\\s+(\\w+)", "AS \"$1\"");
     sIsoSql = sIsoSql.replaceAll("(?i)(\\W)Month\\(", "$1DatePart('m',");
     sIsoSql = sIsoSql.replaceAll("(?i)(\\W)Year\\(", "$1DatePart('yyyy',");
