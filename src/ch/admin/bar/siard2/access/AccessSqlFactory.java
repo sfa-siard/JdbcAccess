@@ -30,6 +30,30 @@ public class AccessSqlFactory
 {
   private List<GeneralValueSpecification> _listQuestionMarks = new ArrayList<GeneralValueSpecification>();
   public List<GeneralValueSpecification> getQuestionMarks() { return _listQuestionMarks; }
+
+  @Override
+  public SqlStatement newSqlStatement()
+  {
+    return new AccessSqlStatement(this);
+  } /* newSqlStatement */
+  
+  @Override
+  public ValueExpressionPrimary newValueExpressionPrimary()
+  {
+    return new AccessValueExpressionPrimary(this);
+  } /* newValueExpressionPrimary */
+  
+  @Override
+  public TablePrimary newTablePrimary()
+  {
+    return new AccessTablePrimary(this);
+  } /* newTablePrimary */
+  
+  @Override
+  public QuerySpecification newQuerySpecification()
+  {
+    return new AccessQuerySpecification(this);
+  } /* newQuerySpecification */
   
   @Override
   public GeneralValueSpecification newGeneralValueSpecification()

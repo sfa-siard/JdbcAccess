@@ -15,6 +15,7 @@ import ch.enterag.sqlparser.datatype.DataType;
 import ch.enterag.sqlparser.datatype.enums.*;
 import ch.enterag.sqlparser.dml.*;
 import ch.enterag.sqlparser.expression.*;
+import ch.enterag.utils.jdbc.*;
 import ch.admin.bar.siard2.jdbc.*;
 
 abstract public class Shunting
@@ -40,8 +41,9 @@ abstract public class Shunting
   
   /*------------------------------------------------------------------*/
   public static DataType convertTypeFromAccess(Column column,
-    int iPrecision, int iScale, int iLength, int iLengthInUnits)
-    throws IOException
+    int iPrecision, int iScale, int iLength, int iLengthInUnits, 
+    DatabaseMetaData dmd)
+    throws IOException, SQLException
   {
     DataType dt = _sf.newDataType();
     PredefinedType pt = _sf.newPredefinedType();
@@ -130,12 +132,76 @@ abstract public class Shunting
             case Types.VARCHAR: pt.initVarCharType(iLengthInUnits); break;
           }
         }
+        else if (sRowSourceType.equals("Table/Query"))
+        {
+          iCardinality = (short)pm.getValue("ListRows");
+          /***
+          iScale = (byte)pm.getValue("DecimalPlaces");
+          iLength = (short)pm.getValue("ColumnWidth");
+          ***/
+          String sQuery = (String)pm.getValue("RowSource");
+          /* we should parse the query in order to get data type */
+          if (sQuery.startsWith("SELECT"))
+          {
+            String sColumns = sQuery.substring("SELECT".length()).trim();
+            /* this is shoddy parsing: we assume no "FROM" appears in the column names */
+            int iFrom = sColumns.indexOf("FROM");
+            if (iFrom > 0)
+            {
+              String sTable = sColumns.substring(iFrom+"FROM".length()).trim();
+              sColumns = sColumns.substring(0,iFrom).trim();
+              /* this is shoddy parsing: we assume no "WHERE" appears in the table names */
+              /* we really assume that there is only one table involved */
+              int iWhere = sTable.indexOf("WHERE");
+              if (iWhere > 0)
+                sTable = sTable.substring(0,iWhere).trim();
+              int iOrder = sTable.indexOf("ORDER");
+              if (iOrder > 0)
+                sTable = sTable.substring(0,iOrder).trim();
+              if (sTable.startsWith("[") && (sTable.endsWith("]")))
+                sTable = sTable.substring(1,sTable.length()-1);
+              /* this is shoddy parsing: we assume no commas in the columns names */
+              String[] asColumn = sColumns.split(",");
+              int iColumn = (short)pm.getValue("BoundColumn")-1;
+              String sColumn = asColumn[iColumn].trim();
+              if (sColumn.startsWith("[") && (sColumn.endsWith("]")))
+                sColumn = sColumn.substring(1,sColumn.length()-1);
+              BaseDatabaseMetaData bdmd = (BaseDatabaseMetaData)dmd;
+              ResultSet rs = bdmd.getColumns(
+                null,
+                "%", 
+                bdmd.toPattern(sTable), 
+                bdmd.toPattern(sColumn));
+              if (rs.next())
+              {
+                int iDataType = rs.getInt(AccessDatabaseMetaData.sJDBC_DATA_TYPE);
+                iPrecision = rs.getInt(AccessDatabaseMetaData.sJDBC_COLUMN_SIZE);
+                iScale = rs.getInt(AccessDatabaseMetaData.sJDBC_DECIMAL_DIGITS);
+                pt.initialize(iDataType, iPrecision, iScale);
+                dt.initPredefinedDataType(pt);
+              }
+              else
+                throw new IllegalArgumentException("Column "+sColumn+" of "+sTable+" not found!");
+              rs.close();  
+            }
+            else
+              throw new IllegalArgumentException("Row source of multi-value list of type Table/Query does not refer to a FROM table or view!");
+          }
+          else
+            throw new IllegalArgumentException("Row source of multi-value list of type Table/Query does not start with SELECT!");
+        }
         else
           throw new IllegalArgumentException("Cannot (yet) handle value lists of dates!");
       }
+      else if (cdt == ComplexDataType.VERSION_HISTORY)
+      {
+        /* version history is a pseudo column (not part of the columns) */
+        dt = null;
+      }
       else
         throw new IllegalArgumentException("Cannot handle complex data type "+cdt.toString()+"!");
-      dt.initArrayType(pt, iCardinality);
+      if (dt != null)
+        dt.initArrayType(pt, iCardinality);
     }
     return dt;
   } /* convertTypeFromAccess */
@@ -446,83 +512,107 @@ abstract public class Shunting
     throws IOException
   {
     BigDecimal bd = null;
-    switch (pt)
+    if (oValue != null)
     {
-      case BOOLEAN:
-        break;
-      case SMALLINT:
-        bd = (BigDecimal)oValue;
-        long l = bd.longValueExact();
-        oValue = Short.valueOf((short)l);
-        break;
-      case INTEGER:
-        bd = (BigDecimal)oValue;
-        oValue = Integer.valueOf((int)bd.longValueExact());
-        break;
-      case BIGINT:
-        bd = (BigDecimal)oValue;
-        oValue = Long.valueOf(bd.longValueExact());
-        break;
-      case NUMERIC:
-      case DECIMAL:
-        oValue = (BigDecimal)oValue;
-        break;
-      case REAL:
-        Double d = (Double)oValue;
-        oValue = Float.valueOf(d.floatValue());
-        break;
-      case FLOAT:
-      case DOUBLE:
-        oValue = (Double)oValue;
-        break;
-      case DATE:
-        Date date = (Date)oValue;
-        oValue = (java.util.Date)date;
-        break;
-      case TIME:
-        Time time = (Time)oValue;
-        oValue = (java.util.Date)time;
-        break;
-      case TIMESTAMP:
-        Timestamp ts = (Timestamp)oValue;
-        oValue = (java.util.Date)ts;
-        break;
-      case BINARY:
-      case VARBINARY:
-        oValue = (byte[])oValue;
-        break;
-      case BLOB:
-        Blob blob = new AccessBlob();
-        try { blob.setBytes(1l, (byte[])oValue); }
-        catch(SQLException se) { throw new IOException("Blob.setBytes() failed!",se); }
-        oValue = blob;
-        break;
-      case CHAR:
-      case NCHAR:
-      case VARCHAR:
-      case NVARCHAR:
-        oValue = (String)oValue;
-        break;
-      case CLOB:
-        Clob clob = new AccessClob();
-        try { clob.setString(1l, (String)oValue); }
-        catch(SQLException se) { throw new IOException("Clob.setString() failed!",se); }
-        oValue = clob;
-        break;
-      case NCLOB:
-        NClob nclob = new AccessNClob();
-        try { nclob.setString(1l, (String)oValue); }
-        catch(SQLException se) { throw new IOException("NClob.setString() failed!",se); }
-        oValue = nclob;
-        break;
-      case XML:
-        SQLXML sqlxml = new AccessSqlXml();
-        try { sqlxml.setString((String)oValue); }
-        catch(SQLException se) { throw new IOException("SQLXML.setString() failed!",se); }
-        oValue = sqlxml;
-        break;
-      default:
-        throw new RuntimeException("SQL data type "+pt.getKeyword()+" cannot be handled!");
+      switch (pt)
+      {
+        case BOOLEAN:
+          break;
+        case SMALLINT:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            long l = bd.longValueExact();
+            oValue = Short.valueOf((short)l);
+          }
+          else if (oValue instanceof Short)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Short!");
+          break;
+        case INTEGER:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            oValue = Integer.valueOf((int)bd.longValueExact());
+          }
+          else if (oValue instanceof Integer)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Integer!");
+          break;
+        case BIGINT:
+          if (oValue instanceof BigDecimal)
+          {
+            bd = (BigDecimal)oValue;
+            oValue = Long.valueOf(bd.longValueExact());
+          }
+          else if (oValue instanceof Long)
+            ;
+          else
+            throw new IOException(oValue.getClass().getName()+" could not be converted to Long!");
+          break;
+        case NUMERIC:
+        case DECIMAL:
+          oValue = (BigDecimal)oValue;
+          break;
+        case REAL:
+          Double d = (Double)oValue;
+          oValue = Float.valueOf(d.floatValue());
+          break;
+        case FLOAT:
+        case DOUBLE:
+          oValue = (Double)oValue;
+          break;
+        case DATE:
+          Date date = (Date)oValue;
+          oValue = (java.util.Date)date;
+          break;
+        case TIME:
+          Time time = (Time)oValue;
+          oValue = (java.util.Date)time;
+          break;
+        case TIMESTAMP:
+          Timestamp ts = (Timestamp)oValue;
+          oValue = (java.util.Date)ts;
+          break;
+        case BINARY:
+        case VARBINARY:
+          oValue = (byte[])oValue;
+          break;
+        case BLOB:
+          Blob blob = new AccessBlob();
+          try { blob.setBytes(1l, (byte[])oValue); }
+          catch(SQLException se) { throw new IOException("Blob.setBytes() failed!",se); }
+          oValue = blob;
+          break;
+        case CHAR:
+        case NCHAR:
+        case VARCHAR:
+        case NVARCHAR:
+          oValue = (String)oValue;
+          break;
+        case CLOB:
+          Clob clob = new AccessClob();
+          try { clob.setString(1l, (String)oValue); }
+          catch(SQLException se) { throw new IOException("Clob.setString() failed!",se); }
+          oValue = clob;
+          break;
+        case NCLOB:
+          NClob nclob = new AccessNClob();
+          try { nclob.setString(1l, (String)oValue); }
+          catch(SQLException se) { throw new IOException("NClob.setString() failed!",se); }
+          oValue = nclob;
+          break;
+        case XML:
+          SQLXML sqlxml = new AccessSqlXml();
+          try { sqlxml.setString((String)oValue); }
+          catch(SQLException se) { throw new IOException("SQLXML.setString() failed!",se); }
+          oValue = sqlxml;
+          break;
+        default:
+          throw new RuntimeException("SQL data type "+pt.getKeyword()+" cannot be handled!");
+      }
     }
     return oValue;
   } /* getRowValue */

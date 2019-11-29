@@ -459,14 +459,14 @@ public class AccessStatement
    * @return SQL data type.
    */
   private DataType getColumnType(Column column)
-    throws IOException
+    throws IOException, SQLException
   {
     int iScale = column.getScale();
     int iPrecision = column.getPrecision();
     int iLengthInUnits = column.getLengthInUnits();
     int iLength = column.getLength();
     DataType dt = Shunting.convertTypeFromAccess(column,
-      iPrecision, iScale, iLength, iLengthInUnits);
+      iPrecision, iScale, iLength, iLengthInUnits,_conn.getMetaData());
     return dt;
   } /* getColumnType */
   
@@ -513,12 +513,16 @@ public class AccessStatement
     for (int iColumn = 0; iColumn < table.getColumnCount(); iColumn++)
     {
       Column column = table.getColumns().get(iColumn);
-      listColumnNames.add(column.getName());
-      listColumnTypes.add(getColumnType(column));
+      DataType dt = getColumnType(column);
+      if (dt != null)
+      {
+        listColumnNames.add(column.getName());
+        listColumnTypes.add(dt);
+      }
     }
     TablePrimary tp = qs.getTableReferences().get(0).getTablePrimary();
     tp.setColumnNames(listColumnNames);
-    for (int iColumn = 0; iColumn < table.getColumnCount(); iColumn++)
+    for (int iColumn = 0; iColumn < listColumnNames.size(); iColumn++)
       tp.setColumnType(listColumnNames.get(iColumn), listColumnTypes.get(iColumn));
     /* replace asterisk by full column name list */
     if (qs.isAsterisk())
@@ -527,7 +531,9 @@ public class AccessStatement
       for (int iColumn = 0; iColumn < table.getColumnCount(); iColumn++)
       {
         Column column = table.getColumns().get(iColumn);
-        addColumnName(qs,column.getName());
+        DataType dt = getColumnType(column);
+        if (dt != null)
+          addColumnName(qs,column.getName());
       }
     }
     /* create result set from query */
@@ -1113,8 +1119,10 @@ public class AccessStatement
           {
             for (int iColumn = 0; iColumn < table.getColumnCount(); iColumn++)
             {
-              String sColumnName = table.getColumns().get(iColumn).getName();
-              listColumnNames.add(sColumnName);
+              Column column = table.getColumns().get(iColumn);
+              DataType dt = getColumnType(column);
+              if (dt != null)
+                listColumnNames.add(column.getName());
             }
           }
           else

@@ -3,9 +3,7 @@ package ch.admin.bar.siard2.jdbc;
 import java.io.*;
 import java.sql.*;
 import static org.junit.Assert.*;
-
 import org.junit.*;
-
 import ch.enterag.utils.*;
 import ch.enterag.utils.jdbc.*;
 import ch.enterag.utils.database.*;
@@ -43,6 +41,11 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
     {
       fileTEST_ACCESS_SOURCE = new File("../Bugs/Issue10/Database_frontend/Database_frontend.accdb");
       fileTEST_ACCESS_DATABASE = new File("tmp/Database_frontend.accdb");
+    }
+    else if (iBug == 13)
+    {
+      fileTEST_ACCESS_SOURCE = new File("testfiles/Northwind.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/Northwind.accdb");
     }
     else 
     {
@@ -82,7 +85,7 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
   }
   
   @Test
-  public void testGetColumnsView()
+  public void testGetColumns()
   {
     try
     {
@@ -168,23 +171,15 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
         rs.close();
         print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
       }
-      else
+      else if (iBug == 13)
       {
-        QualifiedId qiView = new QualifiedId(null,"Admin","VIEWTEST");
-        int iColumn = 0;
-        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
-        while (rs.next())
-        {
-          String sColumnName = rs.getString("COLUMN_NAME");
-          int iDataType = rs.getInt("DATA_TYPE");
-          String sTypeName = rs.getString("TYPE_NAME");
-          iColumn++;
-          int iPosition = rs.getInt("ORDINAL_POSITION");
-          assertEquals("Wrong position!",iColumn,iPosition);
-          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
-        }
-        rs.close();
-        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Inventory on Order");
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Suppliers Extended");
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Invoice Data");
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Inventory");
+        //QualifiedId qiTable = new QualifiedId(null,"Admin","Sales Analysis");
+        QualifiedId qiTable = new QualifiedId(null,"Admin","Top Ten Orders by Sales Amount");
+        print(getDatabaseMetaData().getColumns(qiTable.getCatalog(), qiTable.getSchema(), qiTable.getName(), "%"));
       }
     }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
