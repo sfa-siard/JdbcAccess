@@ -2404,6 +2404,7 @@ public class AccessDatabaseMetaData
   private SqlStatement convertAccessSqlToIso(String sAccessSql)
   {
     AccessSqlFactory asf = new AccessSqlFactory();
+    /* instead of trivial replacements we should appy a complete MS ACCESS parser ... */
     String sIsoSql = sAccessSql.
       replace("&", "||").
       replace("\"", "'").

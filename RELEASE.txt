@@ -1,6 +1,12 @@
 Release Notes for JdbcAccess 2.1
 ================================
 
+2.1.80
+The Nordwind database can now be downloaded. Other complex views may fail, however.
+It is questionable, whether SIARD should implement a full parser for the
+MS ACCESS pseudo-SQL syntax. The table data are stored faithfully.
+Maybe the view columns and their data types are not so important?
+
 2.1.73
 Replaced column meta data of view by full parsing of query.
 
