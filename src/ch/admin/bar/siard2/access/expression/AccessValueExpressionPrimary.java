@@ -122,6 +122,13 @@ public class AccessValueExpressionPrimary
         dt = getSqlFactory().newDataType();
         dt.initPredefinedDataType(pt);
       }
+      else if ("Replace".equalsIgnoreCase(qiRoutine.getName()))
+      {
+        PredefinedType pt = getSqlFactory().newPredefinedType();
+        pt.initVarCharType(256);
+        dt = getSqlFactory().newDataType();
+        dt.initPredefinedDataType(pt);
+      }
     }
     if (dt == null)
       dt = super.getDataType(ss);

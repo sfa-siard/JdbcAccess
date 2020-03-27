@@ -47,6 +47,11 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       fileTEST_ACCESS_SOURCE = new File("testfiles/Northwind.accdb");
       fileTEST_ACCESS_DATABASE = new File("tmp/Northwind.accdb");
     }
+    else if (iBug == 17)
+    {
+      fileTEST_ACCESS_SOURCE = new File("../Bugs//Issue17/NTArchiv/NTArchiv.accdb");
+      fileTEST_ACCESS_DATABASE = new File("tmp/NTArchiv.accdb");
+    }
     else 
     {
       fileTEST_ACCESS_SOURCE = new File("testfiles/testaccess.accdb");
@@ -180,6 +185,25 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
         //QualifiedId qiTable = new QualifiedId(null,"Admin","Sales Analysis");
         QualifiedId qiTable = new QualifiedId(null,"Admin","Top Ten Orders by Sales Amount");
         print(getDatabaseMetaData().getColumns(qiTable.getCatalog(), qiTable.getSchema(), qiTable.getName(), "%"));
+      }
+      else if (iBug == 17)
+      {
+        //QualifiedId qiView = new QualifiedId(null,"Admin","ArchiveSeries Without Matching Query_branches");
+        QualifiedId qiView = new QualifiedId(null,"Admin","ArchiveSeries Without Matching Query_branches");
+        int iColumn = 0;
+        ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
+        while (rs.next())
+        {
+          String sColumnName = rs.getString("COLUMN_NAME");
+          int iDataType = rs.getInt("DATA_TYPE");
+          String sTypeName = rs.getString("TYPE_NAME");
+          iColumn++;
+          int iPosition = rs.getInt("ORDINAL_POSITION");
+          assertEquals("Wrong position!",iColumn,iPosition);
+          System.out.println(sColumnName+": "+sTypeName+" ("+SqlTypes.getTypeName(iDataType)+")");
+        }
+        rs.close();
+        print(getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%"));
       }
     }
     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
