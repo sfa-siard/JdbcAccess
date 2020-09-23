@@ -2857,11 +2857,16 @@ public class AccessDatabaseMetaData
             iColumnIndex = addTableColumns(sCatalog, sSchema, sTableName, sColumnNamePattern,
               iColumnIndex,listColumns);
           else if (sTableType.equals(sJDBC_TABLE_TYPE_VIEW))
-            iColumnIndex = addViewColumns(sCatalog, sSchema, sTableName, sColumnNamePattern,
-              iColumnIndex,listColumns);
+          {
+            try
+            {
+              iColumnIndex = addViewColumns(sCatalog, sSchema, sTableName, sColumnNamePattern,
+                iColumnIndex,listColumns);
+            }
+            catch(IllegalArgumentException iae) { throw new SQLException("MS Access query "+sTableName+" is too complex: "+EU.getExceptionMessage(iae)); }
+          }
         }
         catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
-        catch(IllegalArgumentException iae) { throw new SQLException(EU.getExceptionMessage(iae)); }
       }
       rsTables.close();
     }
