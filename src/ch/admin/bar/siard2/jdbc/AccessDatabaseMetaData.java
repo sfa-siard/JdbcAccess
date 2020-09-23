@@ -2861,6 +2861,7 @@ public class AccessDatabaseMetaData
               iColumnIndex,listColumns);
         }
         catch(IOException ie) { throw new SQLException(EU.getExceptionMessage(ie)); }
+        catch(IllegalArgumentException iae) { throw new SQLException(EU.getExceptionMessage(iae)); }
       }
       rsTables.close();
     }
