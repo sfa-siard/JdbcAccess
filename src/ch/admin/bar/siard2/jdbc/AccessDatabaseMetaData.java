@@ -2404,7 +2404,7 @@ public class AccessDatabaseMetaData
   private SqlStatement convertAccessSqlToIso(String sAccessSql)
   {
     AccessSqlFactory asf = new AccessSqlFactory();
-    /* instead of trivial replacements we should appy a complete MS ACCESS parser ... */
+    /* instead of trivial replacements we should apply a complete MS ACCESS parser ... */
     String sIsoSql = sAccessSql.
       replace("&", "||").
       replace("\"", "'").
@@ -2775,7 +2775,8 @@ public class AccessDatabaseMetaData
     throws IOException, SQLException
   {
     SelectQuery sq = _mapViews.get(sTableName);
-    SqlStatement ss = convertAccessSqlToIso(sq.toSQLString());
+    String sSql = sq.toSQLString();
+    SqlStatement ss = convertAccessSqlToIso(sSql);
     ss.setEvaluationContext("Hartwig", null, "Admin");
     /* prepare tables in query for data type evaluation */
     QuerySpecification qs = ss.getQuerySpecification();

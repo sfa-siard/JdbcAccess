@@ -188,8 +188,7 @@ public class AccessDatabaseMetaDataBugTester extends BaseDatabaseMetaDataTester
       }
       else if (iBug == 17)
       {
-        //QualifiedId qiView = new QualifiedId(null,"Admin","ArchiveSeries Without Matching Query_branches");
-        QualifiedId qiView = new QualifiedId(null,"Admin","ArchiveSeries Without Matching Query_branches");
+        QualifiedId qiView = new QualifiedId(null,"Admin","Find duplicates for View_IT-S_Archivschränke");
         int iColumn = 0;
         ResultSet rs = getDatabaseMetaData().getColumns(qiView.getCatalog(), qiView.getSchema(), qiView.getName(), "%");
         while (rs.next())
