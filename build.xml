@@ -262,7 +262,7 @@ Created    : 16.06.2017, Hartwig Thomas
   <property name="filedatasourcetest" value="datasource-test"/>
   <property name="classjdbctestsuite" value="ch.admin.bar.siard2.jdbc._AccessJdbcTestSuite"/>
   <property name="filejdbctests" value="jdbc-tests"/>
-	<target name="tests" depends="jar">
+	<target name="test" depends="jar">
     <echo message="${ant.project.name}: tests  ${dirdist}/${jarfile};${cpmyjackcess};${cpjdbcbase-test};${cpsqlparser};${cpantlr};${cpenterutils};${cpjunit}"/>
 		<!-- build the tests -->
     <javac debug="true" debuglevel="${debuglevel}"
@@ -323,7 +323,7 @@ Created    : 16.06.2017, Hartwig Thomas
   
   <!-- create the JAR file containing all tests -->
   <property name="jartest" value="${ant.project.name}-test.jar"/>
-  <target name="jartest" depends="tests" if="dbuser">
+  <target name="jartest" depends="test" if="dbuser">
     <echo message="${ant.project.name}: jar"/>
     <jar jarfile="${dirdist}/${jartest}">
       <fileset dir="${dirbuildtests}">
@@ -334,7 +334,7 @@ Created    : 16.06.2017, Hartwig Thomas
   </target>
   
   <!-- create the ZIP file with binaries for Windows and LINUX -->
-  <target name="zip" depends="tests,jartest">
+  <target name="zip" depends="test,jartest">
     <echo message="${ant.project.name}: zip"/>
     <zip zipfile="${dirdist}/${ant.project.name}-${version}.${revision}.zip">
       <zipfileset dir="${dirdist}" prefix="${ant.project.name}/${dirlib}">
