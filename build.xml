@@ -130,67 +130,9 @@ Created    : 16.06.2017, Hartwig Thomas
     <echo message="build.properties.configured: ${build.properties.configured}"/>
   </target>
   
-  <!-- commit local work -->
-  <property name="fileadd" value="${dirtmp}/add.txt"/>
-  <property name="filecommit" value="${dirtmp}/commit.txt"/>
-  <target name="commit" depends="check" if="git">
-    <echo message="get recent SIARD JARs"/>
-    <!-- TODO: get most recently released version of enterutils.jar -->
-    <copy file="../EnterUtilities/dist/enterutils.jar" todir="${dirlib}" failonerror="false"/>
-    <!-- TODO: get most recently released version of sqlparser.jar -->
-    <copy file="../SqlParser/dist/sqlparser.jar" todir="${dirlib}" failonerror="false"/>
-    <!-- TODO: get most recently released version of jdbcbase.jar and jdbcbase-test.jar -->
-    <copy file="../JdbcBase/dist/jdbcbase.jar" todir="${dirlib}" failonerror="false"/>
-    <copy file="../JdbcBase/dist/jdbcbase-test.jar" todir="${dirlib}" failonerror="false"/>
-    <!-- stage all changes -->
-    <echo message="${ant.project.name}: git add -A"/>
-    <exec executable="${git}" output="${fileadd}" failonerror="true">
-      <arg value="add"/>
-      <arg value="-A"/>
-    </exec>
-    <!-- commit all changes -->
-    <echo message="${ant.project.name}: git commit -am &quot;${version}.${revold}&quot;"/>
-    <exec executable="${git}" output="${filecommit}" resultproperty="resultcommit">
-      <arg value="commit"/>
-      <arg value="-am" />
-      <arg value="${version}.${revold}" />
-    </exec>
-    <fail message="git commit failed!">
-      <condition>
-        <not>
-          <or>
-            <equals arg1="${resultcommit}" arg2="0"/>
-            <!-- warning, that nothing needed to be committed: -->
-            <equals arg1="${resultcommit}" arg2="1"/> 
-          </or>
-        </not>
-      </condition>
-    </fail>
-  </target>
-  
-  <!-- update from remote master -->
-  <property name="filepull" value="${dirtmp}/pull.txt"/>
-  <target name="pull" depends="commit" if="git">
-    <!-- pull master branch
-    <echo message="${ant.project.name}: git pull origin master"/>
-    <exec executable="${git}" output="${filepull}">
-      <arg value="pull"/>
-      <arg value="origin"/>
-      <arg value="master"/>
-    </exec>
-    -->
-  <!-- pull dev branch -->
-    <echo message="${ant.project.name}: git pull origin ${branch}"/>
-    <exec executable="${git}" output="${filepull}" failonerror="true">
-      <arg value="pull"/>
-      <arg value="origin"/>
-      <arg value="${branch}"/>
-    </exec>
-  </target>
-  
   <!-- increment revision and update manifest -->
   <property name="filerevisionproperties" value="${dirtmp}/revision.properties"/> 
-  <target name="revision" depends="pull">
+  <target name="revision" depends="check">
     <echo message="${ant.project.name}: revision"/>
     <copy file="${filerevoldproperties}" tofile="${filerevisionproperties}" overwrite="true"/>
     <replaceregexp file="${filerevisionproperties}" 
@@ -262,7 +204,7 @@ Created    : 16.06.2017, Hartwig Thomas
   <property name="filedatasourcetest" value="datasource-test"/>
   <property name="classjdbctestsuite" value="ch.admin.bar.siard2.jdbc._AccessJdbcTestSuite"/>
   <property name="filejdbctests" value="jdbc-tests"/>
-	<target name="tests" depends="jar">
+	<target name="test" depends="jar">
     <echo message="${ant.project.name}: tests  ${dirdist}/${jarfile};${cpmyjackcess};${cpjdbcbase-test};${cpsqlparser};${cpantlr};${cpenterutils};${cpjunit}"/>
 		<!-- build the tests -->
     <javac debug="true" debuglevel="${debuglevel}"
@@ -323,7 +265,7 @@ Created    : 16.06.2017, Hartwig Thomas
   
   <!-- create the JAR file containing all tests -->
   <property name="jartest" value="${ant.project.name}-test.jar"/>
-  <target name="jartest" depends="tests" if="dbuser">
+  <target name="jartest" depends="test" if="dbuser">
     <echo message="${ant.project.name}: jar"/>
     <jar jarfile="${dirdist}/${jartest}">
       <fileset dir="${dirbuildtests}">
@@ -334,7 +276,7 @@ Created    : 16.06.2017, Hartwig Thomas
   </target>
   
   <!-- create the ZIP file with binaries for Windows and LINUX -->
-  <target name="zip" depends="tests,jartest">
+  <target name="zip" depends="test,jartest">
     <echo message="${ant.project.name}: zip"/>
     <zip zipfile="${dirdist}/${ant.project.name}-${version}.${revision}.zip">
       <zipfileset dir="${dirdist}" prefix="${ant.project.name}/${dirlib}">
@@ -358,28 +300,9 @@ Created    : 16.06.2017, Hartwig Thomas
       </zipfileset>
     </zip>
   </target>
-
-  <!-- push to remote dev branch -->
-  <property name="filepush" value="${dirtmp}/push.txt"/>
-  <target name="push" depends="zip" if="git" unless="branch.master">
-    <!-- commit -->
-    <echo message="${ant.project.name}: git commit -am &quot;Build: ${version}.${revision}&quot;"/>
-    <exec executable="${git}" output="${filecommit}" failonerror="true">
-      <arg value="commit"/>
-      <arg value="-am" />
-      <arg value="Build: ${version}.${revision}" />
-    </exec>
-    <!-- push to remote -->
-    <echo message="${ant.project.name}: git push origin ${branch}"/>
-    <exec executable="${git}" output="${filepush}" failonerror="true">
-      <arg value="push"/>
-      <arg value="origin"/>
-      <arg value="${branch}"/>
-    </exec>
-  </target>
   
   <!-- deploy to file system -->
-  <target name="deploy" depends="push" if="dirdeploy">
+  <target name="deploy" if="dirdeploy">
     <echo message="${ant.project.name}: deploy"/>
     <delete dir="${dirdeploy}/${ant.project.name}"/>
     <unzip dest="${dirdeploy}" src="${dirdist}/${ant.project.name}-${version}.${revision}.zip" />
