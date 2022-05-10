@@ -155,7 +155,7 @@ Created    : 16.06.2017, Hartwig Thomas
   </target>
   
   <!-- build the JdbcAccess classes -->
-  <target name="build" depends="init,revision">
+  <target name="build" depends="init">
     <echo message="${ant.project.name}: build"/>
     <!-- without this, the package-info class is not generated! -->
     <touch>
@@ -177,8 +177,8 @@ Created    : 16.06.2017, Hartwig Thomas
   <property name="jarfile" value="${ant.project.name}.jar"/>
   <property name="jarmyjackcess" value="jackcess-2.1.6a.jar"/>
   <property name="cpmyjackcess" value="${dirlib}/${jarmyjackcess};${dirlib}/${jarcommonslang};${dirlib}/${jarcommonslogging}"/>
-	<property name="classdatabaseimpl" value="com/healthmarketscience/jackcess/impl/DatabaseImpl*.class"/>
-  <target name="jar" depends="build">
+  <property name="classdatabaseimpl" value="com/healthmarketscience/jackcess/impl/DatabaseImpl*.class"/>
+  <target name="jar-test" depends="build">
     <echo message="${ant.project.name}: jar"/>
     <jar destfile="${dirdist}/${jarfile}"
     	 duplicate="fail"
@@ -204,7 +204,7 @@ Created    : 16.06.2017, Hartwig Thomas
   <property name="filedatasourcetest" value="datasource-test"/>
   <property name="classjdbctestsuite" value="ch.admin.bar.siard2.jdbc._AccessJdbcTestSuite"/>
   <property name="filejdbctests" value="jdbc-tests"/>
-	<target name="test" depends="jar">
+	<target name="test" depends="jar-test">
     <echo message="${ant.project.name}: tests  ${dirdist}/${jarfile};${cpmyjackcess};${cpjdbcbase-test};${cpsqlparser};${cpantlr};${cpenterutils};${cpjunit}"/>
 		<!-- build the tests -->
     <javac debug="true" debuglevel="${debuglevel}"
@@ -263,11 +263,12 @@ Created    : 16.06.2017, Hartwig Thomas
     </junit>
   </target>
   
-  <!-- create the JAR file containing all tests -->
+  <!-- create the JAR file containing all tests and a new revision -->
   <property name="jartest" value="${ant.project.name}-test.jar"/>
-  <target name="jartest" depends="test" if="dbuser">
+  <target name="jar" depends="test,revision" if="dbuser">
     <echo message="${ant.project.name}: jar"/>
-    <jar jarfile="${dirdist}/${jartest}">
+    <jar jarfile="${dirdist}/${jartest}"
+         manifest="${filemanifest}">
       <fileset dir="${dirbuildtests}">
         <include name="**/*.class"/>
         <include name="**/res/*.*"/>
@@ -276,7 +277,7 @@ Created    : 16.06.2017, Hartwig Thomas
   </target>
   
   <!-- create the ZIP file with binaries for Windows and LINUX -->
-  <target name="zip" depends="test,jartest">
+  <target name="release" depends="jar">
     <echo message="${ant.project.name}: zip"/>
     <zip zipfile="${dirdist}/${ant.project.name}-${version}.${revision}.zip">
       <zipfileset dir="${dirdist}" prefix="${ant.project.name}/${dirlib}">

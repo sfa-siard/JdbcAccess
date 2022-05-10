@@ -17,10 +17,10 @@ ant test
 ```
 
 
-Build the project:
+Create a release
 
 ```shell
-ant build
+ant release
 ```
 
 ## Documentation
