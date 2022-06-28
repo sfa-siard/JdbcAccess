@@ -883,17 +883,20 @@ public class AccessPreparedStatement
     switch(targetSqlType)
     {
       case Types.BIGINT: setLong(parameterIndex,((Long)x).longValue()); break;
-      case Types.BINARY: setBytes(parameterIndex,(byte[])x); break;
-      case Types.BLOB: setBlob(parameterIndex,(Blob)x); break;
+      case Types.BINARY:
+      case Types.VARBINARY: setBytes(parameterIndex,(byte[])x); break;
+      case Types.BLOB:
+      case Types.DATALINK: setBlob(parameterIndex,(Blob)x); break;
       case Types.LONGVARBINARY: setBinaryStream(parameterIndex, (InputStream)x); break;
       case Types.BOOLEAN: setBoolean(parameterIndex, ((Boolean)x).booleanValue()); break;
-      case Types.CHAR: setString(parameterIndex, (String)x); break;
+      case Types.CHAR:
+      case Types.VARCHAR: setString(parameterIndex, (String)x); break;
       case Types.CLOB: setClob(parameterIndex, (Clob)x); break;
       case Types.LONGVARCHAR: setCharacterStream(parameterIndex, (Reader)x); break;
       case Types.DATE: setDate(parameterIndex, (Date)x); break;
       case Types.NUMERIC:
       case Types.DECIMAL: setBigDecimal(parameterIndex,(BigDecimal)x); break;
-      case Types.DOUBLE: setDouble(parameterIndex, ((Double)x).doubleValue()); break;
+      case Types.DOUBLE:
       case Types.FLOAT: setDouble(parameterIndex, ((Double)x).doubleValue()); break;
       case Types.INTEGER: setInt(parameterIndex,((Integer)x).intValue()); break;
       case Types.NCHAR: setNString(parameterIndex,(String)x); break;
@@ -905,8 +908,6 @@ public class AccessPreparedStatement
       case Types.SQLXML: setSQLXML(parameterIndex,(SQLXML)x); break;
       case Types.TIME: setTime(parameterIndex, (Time)x); break;
       case Types.TIMESTAMP: setTimestamp(parameterIndex, (Timestamp)x); break;
-      case Types.VARBINARY: setBytes(parameterIndex,(byte[])x); break;
-      case Types.VARCHAR: setString(parameterIndex,(String)x); break;
       default:
         throw new IllegalArgumentException("Unsupported target type: "+SqlTypes.getTypeName(targetSqlType)+"!");
     }

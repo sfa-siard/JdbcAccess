@@ -225,7 +225,8 @@ abstract public class Shunting
       case Types.BIGINT: pt.initBigIntType(); break;
       case Types.BINARY: pt.initBinaryType(iPrecision); break;
       case Types.BLOB:
-      case Types.LONGVARBINARY: pt.initBlobType(iPrecision, null); break;
+      case Types.LONGVARBINARY:
+      case Types.DATALINK: pt.initBlobType(iPrecision, null); break;
       case Types.BOOLEAN: pt.initBooleanType(); break;
       case Types.CHAR: pt.initCharType(iPrecision); break;
       case Types.CLOB:
@@ -318,6 +319,7 @@ abstract public class Shunting
           oValue = row.getBytes(sColumnName);
           break;
         case BLOB:
+        case DATALINK:
           if (oValue instanceof Blob)
           {
             Blob blob = (Blob)oValue;
@@ -581,6 +583,7 @@ abstract public class Shunting
           oValue = (byte[])oValue;
           break;
         case BLOB:
+        case DATALINK:
           Blob blob = new AccessBlob();
           try { blob.setBytes(1l, (byte[])oValue); }
           catch(SQLException se) { throw new IOException("Blob.setBytes() failed!",se); }

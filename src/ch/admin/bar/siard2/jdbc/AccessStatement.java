@@ -377,6 +377,7 @@ public class AccessStatement
           case BINARY:
           case VARBINARY:
           case BLOB:
+          case DATALINK:
             rsh.addColumn(sColumnName,pt.getType().getSqlType(),pt.getLength()); 
             break;
           case FLOAT:
@@ -816,7 +817,8 @@ public class AccessStatement
               case DATE: dta = com.healthmarketscience.jackcess.DataType.SHORT_DATE_TIME; break;
               case BINARY:
               case VARBINARY: dta = com.healthmarketscience.jackcess.DataType.BINARY; break;
-              case BLOB: dta = com.healthmarketscience.jackcess.DataType.OLE; break;
+              case BLOB:
+              case DATALINK: dta = com.healthmarketscience.jackcess.DataType.OLE; break;
               case CHAR:
               case NCHAR:
               case VARCHAR:
