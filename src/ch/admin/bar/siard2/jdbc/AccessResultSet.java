@@ -401,6 +401,8 @@ public class AccessResultSet
       updateBinaryStream(sColumnLabel, (InputStream)x);
     else if (x instanceof Reader)
       updateCharacterStream(sColumnLabel, (Reader)x);
+    else if (x instanceof URL)
+      updateURL(sColumnLabel, (URL) x);
     else
       _row.put(sColumnLabel, x);
   } /* updateObject */
@@ -1154,6 +1156,16 @@ public class AccessResultSet
     String sColumnLabel = _header.getName(iColumnIndex-1);
     updateNCharacterStream(sColumnLabel, x, lLength);
   } /* updateNCharacterStream */
+
+  public URL updateURL(int columnIndex, URL url) throws SQLException {
+    super.updateObject(columnIndex, url.getPath());
+    return url;
+  }
+
+  public URL updateURL(String columnLabel, URL url) throws SQLException {
+    updateURL(this.findColumn(columnLabel), url);
+    return url;
+  }
 
   /*------------------------------------------------------------------*/
   /** {@link ResultSet} */

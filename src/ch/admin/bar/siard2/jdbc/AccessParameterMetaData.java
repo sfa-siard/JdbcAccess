@@ -82,7 +82,8 @@ public class AccessParameterMetaData
       case CLOB: cls = Clob.class; break;
       case BINARY:
       case VARBINARY: cls = byte[].class; break;
-      case BLOB: cls = Blob.class; break;
+      case BLOB:
+      case DATALINK: cls = Blob.class; break;
       case NUMERIC:
       case DECIMAL: cls = BigDecimal.class; break;
       case SMALLINT: cls = Short.class; break;
@@ -122,7 +123,8 @@ public class AccessParameterMetaData
       case NCHAR:
       case NVARCHAR:
       case CHAR:
-      case VARCHAR: bSigned = false; break;
+      case VARCHAR:
+      case DATALINK: bSigned = false; break;
       case INTERVAL:
       case SMALLINT:
       case INTEGER:

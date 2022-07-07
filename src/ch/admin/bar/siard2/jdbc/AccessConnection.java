@@ -626,4 +626,9 @@ public class AccessConnection
     throw new SQLClientInfoException();
   }
 
+  @Override
+  public Blob createDatalinkObject() throws SQLException {
+    return createBlob();
+  }
+
 } /* AccessConnection */

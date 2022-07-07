@@ -277,7 +277,7 @@ Created    : 16.06.2017, Hartwig Thomas
   </target>
   
   <!-- create the ZIP file with binaries for Windows and LINUX -->
-  <target name="release" depends="jar">
+  <target name="release" depends="jar, jar-test">
     <echo message="${ant.project.name}: zip"/>
     <zip zipfile="${dirdist}/${ant.project.name}-${version}.${revision}.zip">
       <zipfileset dir="${dirdist}" prefix="${ant.project.name}/${dirlib}">
@@ -307,6 +307,14 @@ Created    : 16.06.2017, Hartwig Thomas
     <echo message="${ant.project.name}: deploy"/>
     <delete dir="${dirdeploy}/${ant.project.name}"/>
     <unzip dest="${dirdeploy}" src="${dirdist}/${ant.project.name}-${version}.${revision}.zip" />
+  </target>
+
+  <target name="copy-dependencies" depends="check">
+    <echo message="Copy jar files from dependency projects on local file system"/>
+    <copy file="../EnterUtilities/dist/enterutils.jar" todir="${dirlib}" failonerror="false"/>
+    <copy file="../SqlParser/dist/sqlparser.jar" todir="${dirlib}" failonerror="false"/>
+    <copy file="../JdbcBase/dist/jdbcbase.jar" todir="${dirlib}" failonerror="false"/>
+    <copy file="../JdbcBase/dist/jdbcbase-test.jar" todir="${dirlib}" failonerror="false"/>
   </target>
   
 </project>
