@@ -311,10 +311,10 @@ Created    : 16.06.2017, Hartwig Thomas
 
   <target name="copy-dependencies" depends="check">
     <echo message="Copy jar files from dependency projects on local file system"/>
-    <copy file="../EnterUtilities/dist/enterutils.jar" todir="${dirlib}" failonerror="false"/>
-    <copy file="../SqlParser/dist/sqlparser.jar" todir="${dirlib}" failonerror="false"/>
-    <copy file="../JdbcBase/dist/jdbcbase.jar" todir="${dirlib}" failonerror="false"/>
-    <copy file="../JdbcBase/dist/jdbcbase-test.jar" todir="${dirlib}" failonerror="false"/>
+    <copy file="../EnterUtilities/dist/enterutils.jar" todir="${dirlib}" failonerror="false" overwrite="true"/>
+    <copy file="../SqlParser/dist/sqlparser.jar" todir="${dirlib}" failonerror="false" overwrite="true"/>
+    <copy file="../JdbcBase/dist/jdbcbase.jar" todir="${dirlib}" failonerror="false" overwrite="true"/>
+    <copy file="../JdbcBase/dist/jdbcbase-test.jar" todir="${dirlib}" failonerror="false" overwrite="true"/>
   </target>
   
 </project>
