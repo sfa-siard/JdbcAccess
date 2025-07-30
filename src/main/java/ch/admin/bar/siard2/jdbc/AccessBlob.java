@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Arrays;
 
-/*====================================================================*/
 
 /** AccessBlob implements a trivial byte-array based Blob.
  * @author Hartwig Thomas
@@ -35,51 +34,45 @@ public class AccessBlob implements Blob {
         } else
             throw new SQLException("Cannot position Blob beyond its current length!");
         return bytes.length;
-    } /* setBytes */
+    }
     /*==================================================================*/
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public int setBytes(long pos, byte[] bytes, int offset, int len)
             throws SQLException {
         return setBytes(pos, Arrays.copyOfRange(bytes, offset, offset + len));
-    } /* setBytes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public OutputStream setBinaryStream(long pos) throws SQLException {
         return new BlobOutputStream(Arrays.copyOf(_bufContent, (int) pos - 1));
-    } /* setBinayStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public long length() throws SQLException {
         return _bufContent.length;
-    } /* length */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public long position(byte[] pattern, long start) throws SQLException {
         throw new SQLFeatureNotSupportedException("Searching for binary patterns is not supported!");
-    } /* position */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public long position(Blob pattern, long start) throws SQLException {
         return position(pattern.getBytes(start, (int) (pattern.length() - start)), 1L);
-    } /* position */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
@@ -88,42 +81,37 @@ public class AccessBlob implements Blob {
             _bufContent = Arrays.copyOf(_bufContent, (int) len);
         else
             throw new SQLException("Cannot truncate Blob to length larger than its current length!");
-    } /* truncate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public byte[] getBytes(long pos, int length) throws SQLException {
         return Arrays.copyOfRange(_bufContent, (int) pos - 1, (int) pos + length - 1);
-    } /* getBytes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public InputStream getBinaryStream() throws SQLException {
         return new ByteArrayInputStream(_bufContent);
-    } /* getBinaryStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public InputStream getBinaryStream(long pos, long length)
             throws SQLException {
         return new ByteArrayInputStream(Arrays.copyOfRange(_bufContent, (int) pos - 1, (int) (pos + length) - 1));
-    } /* getBinaryStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Blob} */
     @Override
     public void free() throws SQLException {
         _bufContent = new byte[0];
-    } /* free */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /*==================================================================*/
     private class BlobOutputStream extends ByteArrayOutputStream {
@@ -135,15 +123,15 @@ public class AccessBlob implements Blob {
             } catch (IOException ie) {
                 throw new SQLException("Could not write to byte array!", ie);
             }
-        } /* constructor */
+        }
 
         @Override
         public void close() throws IOException {
             super.close();
             /* copy content to byte array */
             _bufContent = toByteArray();
-        } /* close */
+        }
 
-    } /* class BlobOutputStream */
+    }
 
-} /* class AccessBlob */
+}

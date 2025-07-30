@@ -27,7 +27,6 @@ import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*====================================================================*/
 
 /** AccessConnection implements a wrapped Jackcess Connection for MS Access.
  * @author Hartwig Thomas
@@ -95,7 +94,7 @@ public class AccessConnection
             throw new SQLException(ie.getClass()
                                      .getName() + ": " + ie.getMessage());
         }
-    } /* constructor AccessConnection */
+    }
 
     /** @return Jackcess database */
     Database getDatabase() {
@@ -110,25 +109,21 @@ public class AccessConnection
   /*====================================================================
   Wrapper 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** @return log writer */
     PrintWriter getLogWriter() {
         return _pwLogWriter;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Connection} */
     @Override
     public boolean isWrapperFor(Class<?> clsInterface) throws SQLException {
         return clsInterface.equals(Connection.class);
-    } /* isWrapperFor */
+    }
 
   /*====================================================================
   Warnings 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -140,36 +135,29 @@ public class AccessConnection
         else
             throw new IllegalArgumentException("AccessConnection cannot be unwrapped to " + clsInterface.getName() + "!");
         return impl;
-    } /* unwrap */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void clearWarnings() throws SQLException {
         _sw = null;
-    } /* clearWarnings */
-  
-  /*====================================================================
-  Connection 
-  ====================================================================*/
-    /*------------------------------------------------------------------*/
+    }
+
 
     /** {@link Connection} */
     @Override
     public SQLWarning getWarnings() throws SQLException {
         return _sw;
-    } /* getWarnings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} for JDK 1.7 */
     @Override
     public void abort(Executor executor) throws SQLException {
         throw new SQLException("aborting the connection is not supported!");
-    } /* abort */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -184,196 +172,171 @@ public class AccessConnection
             }
             _db = null;
         }
-    } /* close */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public boolean isClosed() throws SQLException {
         return (_db == null);
-    } /* isClosed */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public boolean isReadOnly() throws SQLException {
         return _bReadOnly;
-    } /* isReadOnly */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void setReadOnly(boolean bReadOnly) throws SQLException {
         if (_bReadOnly != bReadOnly)
             throw new SQLException("Database writeability cannot be changed after it has been opened!");
-    } /* setReadOnly */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public boolean isValid(int iTimeoutSeconds) throws SQLException {
         return !isClosed();
-    } /* isValid */
+    }
 
-  /*====================================================================
-  Connection 
-  ====================================================================*/
-    /*------------------------------------------------------------------*/
+
 
     /** {@link Connection} */
     @Override
     public boolean getAutoCommit() throws SQLException {
         return true;
-    } /* getAutoCommit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void setAutoCommit(boolean bAutoCommit) throws SQLException {
         // Transactions are not supported
-    } /* setAutoCommit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Savepoint setSavepoint() throws SQLException {
         throw new SQLFeatureNotSupportedException("Transactions not supported for MS Access database!");
-    } /* setSavepoint */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Savepoint setSavepoint(String sName) throws SQLException {
         throw new SQLFeatureNotSupportedException("Transactions not supported for MS Access database!");
-    } /* setSavepoint */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void releaseSavepoint(Savepoint arg0) throws SQLException {
         throw new SQLFeatureNotSupportedException("Transactions not supported for MS Access database!");
-    } /* releaseSavepoint */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} for JDK 1.7 */
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("Network timeouts not supported for MS Access database!");
-    } /* setNetworkTimeout */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} for JDK 1.7 */
     @Override
     public int getNetworkTimeout() throws SQLException {
         throw new SQLFeatureNotSupportedException("Network timeouts not supported for MS Access database!");
-    } /* getNetworkTimeout */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} for JDK 1.7 */
     @Override
     public String getSchema() throws SQLException {
         return _schema;
-    } /* getSchema */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} for JDK 1.7 */
     @Override
     public void setSchema(String schema) throws SQLException {
         _schema = schema;
-    } /* setSchema */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public int getTransactionIsolation() throws SQLException {
         return Connection.TRANSACTION_NONE;
-    } /* getTransactionIsolation */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void setTransactionIsolation(int iLevel) throws SQLException {
         if (iLevel != Connection.TRANSACTION_NONE)
             throw new SQLException("Transactions not supported for MS Access database!");
-    } /* setTransactionIsolation */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void commit() throws SQLException {
         // Transactions are not supported
-    } /* commit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void rollback() throws SQLException {
         // Transactions are not supported
-    } /* rollback */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
         // Transactions are not supported
-    } /* rollback */
+    }
 
   /*====================================================================
   Statements 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public int getHoldability() throws SQLException {
         return ResultSet.HOLD_CURSORS_OVER_COMMIT;
-    } /* getHoldability */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void setHoldability(int iHoldability) throws SQLException {
         if (iHoldability != ResultSet.HOLD_CURSORS_OVER_COMMIT)
             throw new SQLFeatureNotSupportedException("Transactions not supported for MS Access database!");
-    } /* setHoldability */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Statement createStatement() throws SQLException {
         return new AccessStatement(this);
-    } /* createStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency)
             throws SQLException {
         return createStatement();
-    } /* createStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -385,17 +348,15 @@ public class AccessConnection
         else
             throw new SQLFeatureNotSupportedException("ResultSet type holdability not supported for MS Access database!");
         return stmt;
-    } /* createStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public CallableStatement prepareCall(String sSql) throws SQLException {
         throw new SQLException("Callable statements not supported for MS Access database!");
-    } /* prepareCall */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -405,9 +366,8 @@ public class AccessConnection
         // cstmt = prepareCall(sSql);
         throw new SQLFeatureNotSupportedException("Callable statements not supported for MS Access database!");
         // return cstmt;
-    } /* prepareCall */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -419,45 +379,40 @@ public class AccessConnection
         else
             throw new SQLFeatureNotSupportedException("ResultSet type or concurrency or holdability not supported for MS Access database!");
         // return cstmt;
-    } /* prepareCall */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public PreparedStatement prepareStatement(String sSql)
             throws SQLException {
         return new AccessPreparedStatement(this, sSql);
-    } /* prepareStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public PreparedStatement prepareStatement(String sSql, int iAutoGeneratedKeys)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("Prepared statements with auto generated keys not supported for MS Access database!");
-    } /* prepareStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public PreparedStatement prepareStatement(String sSql, int[] aiColumnIndexes)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("Prepared statements with auto generated keys not supported for MS Access database!");
-    } /* prepareStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public PreparedStatement prepareStatement(String sSql, String[] asColumnNames)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("Prepared statements with auto generated keys not supported for MS Access database!");
-    } /* prepareStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -468,9 +423,8 @@ public class AccessConnection
         else
             throw new SQLFeatureNotSupportedException("ResultSet type or concurrency not supported for MS Access database!");
         return pstmt;
-    } /* prepareStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -482,65 +436,58 @@ public class AccessConnection
         else
             throw new SQLFeatureNotSupportedException("ResultSet type or concurrency or holdability not supported for MS Access database!");
         return pstmt;
-    } /* prepareStatement */
+    }
 
   /*====================================================================
   large objects 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Blob createBlob() throws SQLException {
         return new AccessBlob();
-    } /* createBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Clob createClob() throws SQLException {
         return new AccessClob();
-    } /* createClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public NClob createNClob() throws SQLException {
         return new AccessNClob();
-    } /* createNClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public SQLXML createSQLXML() throws SQLException {
         return new AccessSqlXml();
-    } /* createSQLXML */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Array createArrayOf(String sTypeName, Object[] ao)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("Array creation not supported for MS Access database!");
-    } /* createArrayOf */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Struct createStruct(String arg0, Object[] arg1)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("UDT creation not supported for MS Access database!");
-    } /* createStruct */
+    }
 
   /*====================================================================
   SQL 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -550,23 +497,21 @@ public class AccessConnection
         ss.parse(sql);
         sql = ss.format();
         return sql;
-    } /* nativeSQL */
+    }
 
   /*====================================================================
   Meta data 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         return new AccessDatabaseMetaData(this);
-    } /* getMetaData */
+    }
 
   /*====================================================================
   UDTs 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -574,19 +519,16 @@ public class AccessConnection
         throw new SQLFeatureNotSupportedException("UDTs not supported for MS Access database!");
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Connection} */
     @Override
     public void setTypeMap(Map<String, Class<?>> arg0)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("UDTs not supported for MS Access database!");
-    } /* setTypeMap */
+    }
 
   /*====================================================================
   Catalog 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -597,8 +539,6 @@ public class AccessConnection
         return null;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Connection} */
     @Override
     public void setCatalog(String arg0) throws SQLException {
@@ -608,15 +548,13 @@ public class AccessConnection
   /*====================================================================
   ClientInfo 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public Properties getClientInfo() throws SQLException {
         return new Properties();
-    } /* getClientInfo */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -625,15 +563,12 @@ public class AccessConnection
         throw new SQLClientInfoException();
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Connection} */
     @Override
     public String getClientInfo(String sName) throws SQLException {
         return null;
-    } /* getClientInfo */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -647,4 +582,4 @@ public class AccessConnection
         return createBlob();
     }
 
-} /* AccessConnection */
+}

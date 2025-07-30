@@ -26,7 +26,6 @@ public class GroupedCursor implements ResultSetCursor {
     /** map from groups to set of row numbers */
     private Map<ResultSetRow, List<Integer>> _mapGroups = null;
 
-    /*------------------------------------------------------------------*/
 
     /** constructor creates a grouped cursor based on an
      * ungrouped result set.
@@ -42,9 +41,8 @@ public class GroupedCursor implements ResultSetCursor {
         _ss = ss;
         _iCurrentGroup = -1;
         initializeGroups();
-    } /* constructor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** compute the list of groups.
      * @throws IOException if an I/O error occurs.
@@ -101,41 +99,36 @@ public class GroupedCursor implements ResultSetCursor {
             _listGroups.add(rsr);
             _mapGroups.put(rsr, listGroup);
         }
-    } /* initializeGroups */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void beforeFirst() {
         _iCurrentGroup = -1;
-    } /* beforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void afterLast() throws IOException {
         _iCurrentGroup = getCount();
-    } /* afterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isBeforeFirst() throws IOException {
         return _iCurrentGroup < 0;
-    } /* isBeforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isAfterLast() throws IOException {
         return _iCurrentGroup >= getCount();
-    } /* isAfterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** evaluate the current group.
      * @return row with evaluated SELECT expression values.
@@ -183,9 +176,8 @@ public class GroupedCursor implements ResultSetCursor {
             }
         }
         return rsr;
-    } /* evaluateGroup */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -196,9 +188,8 @@ public class GroupedCursor implements ResultSetCursor {
         if (!isAfterLast())
             rsr = evaluateGroup();
         return rsr;
-    } /* getNextRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -209,9 +200,8 @@ public class GroupedCursor implements ResultSetCursor {
         if (!isBeforeFirst())
             rsr = evaluateGroup();
         return rsr;
-    } /* getPreviousRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -220,9 +210,8 @@ public class GroupedCursor implements ResultSetCursor {
         if (!(isBeforeFirst() || isAfterLast()))
             rsr = evaluateGroup();
         return rsr;
-    } /* refreshCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -232,38 +221,34 @@ public class GroupedCursor implements ResultSetCursor {
             _listGroups.remove(rsr);
             _mapGroups.remove(rsr);
         }
-    } /* deleteCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void updateCurrentRow(Row row) throws IOException {
         throw new IOException("Current row of a group cannot be updated!");
-    } /* updateCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void insertRow(Row row) throws IOException {
         throw new IOException("Current row of a group cannot be inserted!");
-    } /* insertCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getRow() {
         return _iCurrentGroup;
-    } /* getRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getCount() throws IOException {
         return _listGroups.size();
-    } /* getCount */
+    }
 
-} /* GroupedCursor */
+}

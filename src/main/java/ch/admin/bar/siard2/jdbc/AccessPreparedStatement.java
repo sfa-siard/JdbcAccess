@@ -32,7 +32,6 @@ public class AccessPreparedStatement
     private static final int _iBUFSIZ = 8192;
     private SqlStatement _sqlstmt = null;
 
-    /*------------------------------------------------------------------*/
     public AccessPreparedStatement(AccessConnection conn, String sSql)
             throws SQLException {
         super(conn);
@@ -41,17 +40,15 @@ public class AccessPreparedStatement
         _sqlstmt.parse(sSql);
         _sqlstmt.setEvaluationContext(_conn.getUserName(), _conn.getCatalog(), _conn.getSchema());
         _sqlstmt.setQuestionMarks(_sf.getQuestionMarks());
-    } /* constructor AccessPreparedStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public ResultSet executeQuery() throws SQLException {
         return executeSelect(_sqlstmt);
-    } /* executeSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -79,9 +76,8 @@ public class AccessPreparedStatement
                 iUpdated = update(_sqlstmt);
         }
         return iUpdated;
-    } /* executeUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -114,9 +110,8 @@ public class AccessPreparedStatement
             bIsResultSet = true;
         }
         return bIsResultSet;
-    } /* execute */
+    }
 
-    /*------------------------------------------------------------------*/
     private String getTableName()
             throws SQLException {
         String sTableName = null;
@@ -153,9 +148,8 @@ public class AccessPreparedStatement
             throw getSQLException(iae);
         }
         return sTableName;
-    } /* getTableName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -164,17 +158,15 @@ public class AccessPreparedStatement
         ResultSetHeader rsh = getSelectHeader(
                 new QualifiedId(null, _conn.getUserName(), getTableName()), _sqlstmt);
         return new AccessResultSetMetaData(rsh, _conn);
-    } /* getMetaData */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public ParameterMetaData getParameterMetaData() throws SQLException {
         return new AccessParameterMetaData(_sf, _sqlstmt);
-    } /* getParameterMetaData */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -182,9 +174,8 @@ public class AccessPreparedStatement
         for (int iParameter = 0; iParameter < _sf.getQuestionMarks()
                                                  .size(); iParameter++)
             this.setNull(iParameter + 1, Types.NULL);
-    } /* clearParameters */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -218,18 +209,16 @@ public class AccessPreparedStatement
                                         .get(parameterIndex - 1), dt);
         _sqlstmt.setQuestionMarkValue(_sf.getQuestionMarks()
                                          .get(parameterIndex - 1), null);
-    } /* setNull */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNull(int parameterIndex, int sqlType, String typeName)
             throws SQLException {
         setNull(parameterIndex, sqlType);
-    } /* setNull */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -243,9 +232,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, Boolean.valueOf(x));
-    } /* setBoolean */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -258,9 +246,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, BigDecimal.valueOf(x));
-    } /* setByte */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -273,9 +260,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, BigDecimal.valueOf(x));
-    } /* setShort */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -288,9 +274,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, BigDecimal.valueOf(x));
-    } /* setInt */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -303,9 +288,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, BigDecimal.valueOf(x));
-    } /* setLong */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -318,9 +302,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, Double.valueOf(x));
-    } /* setFloat */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -334,9 +317,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, Double.valueOf(x));
-    } /* setDouble */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -350,9 +332,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setBigDecimal */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -367,18 +348,16 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNString(int parameterIndex, String value)
             throws SQLException {
         setString(parameterIndex, value);
-    } /* setNString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -393,9 +372,8 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setBytes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -408,18 +386,16 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setDate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setDate(int parameterIndex, Date x, Calendar cal)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("setDate with Calendar not supported!");
-    } /* setDate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -432,18 +408,16 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setTime */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setTime(int parameterIndex, Time x, Calendar cal)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("setTime with Calendar not supported!");
-    } /* setTime */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -457,18 +431,16 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x);
-    } /* setTimestamp */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("setTimestamp with Calendar not supported!");
-    } /* setTimestamp  */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -492,9 +464,8 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setAsciiStream failed!", ie);
         }
-    } /* setAsciiStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -522,18 +493,16 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setAsciiStream failed!", ie);
         }
-    } /* setAsciiStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, int length)
             throws SQLException {
         setAsciiStream(parameterIndex, x, (long) length);
-    } /* setAsciiStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -561,9 +530,8 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setUnicodeStream failed!", ie);
         }
-    } /* setUnicodeStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -587,9 +555,8 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setUnicodeStream failed!", ie);
         }
-    } /* setBinaryStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -617,18 +584,16 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setUnicodeStream failed!", ie);
         }
-    } /* setBinaryStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, int length)
             throws SQLException {
         setBinaryStream(parameterIndex, x, (long) length);
-    } /* setBinaryStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -652,9 +617,8 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setCharacterStream failed!", ie);
         }
-    } /* setCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -682,36 +646,32 @@ public class AccessPreparedStatement
         } catch (IOException ie) {
             throw new SQLException("setCharacterStream failed!", ie);
         }
-    } /* setCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader, int length)
             throws SQLException {
         setCharacterStream(parameterIndex, reader, (long) length);
-    } /* setCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNCharacterStream(int parameterIndex, Reader value)
             throws SQLException {
         setCharacterStream(parameterIndex, value);
-    } /* setNCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNCharacterStream(int parameterIndex, Reader value, long length)
             throws SQLException {
         setCharacterStream(parameterIndex, value, length);
-    } /* setNCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -724,27 +684,24 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x.getBytes(1L, (int) x.length()));
-    } /* setBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream)
             throws SQLException {
         setBinaryStream(parameterIndex, inputStream);
-    } /* setBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream,
                         long length) throws SQLException {
         setBinaryStream(parameterIndex, inputStream, length);
-    } /* setBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -757,54 +714,48 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, x.getSubString(1L, (int) x.length()));
-    } /* setClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setClob(int parameterIndex, Reader reader)
             throws SQLException {
         setCharacterStream(parameterIndex, reader);
-    } /* setClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setClob(int parameterIndex, Reader reader, long length)
             throws SQLException {
         setCharacterStream(parameterIndex, reader, length);
-    } /* setClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNClob(int parameterIndex, NClob value)
             throws SQLException {
         setClob(parameterIndex, value);
-    } /* setNClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNClob(int parameterIndex, Reader reader)
             throws SQLException {
         setClob(parameterIndex, reader);
-    } /* setClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setNClob(int parameterIndex, Reader reader, long length)
             throws SQLException {
         setClob(parameterIndex, reader, length);
-    } /* setClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -818,41 +769,36 @@ public class AccessPreparedStatement
                                            .get(parameterIndex - 1);
         _sqlstmt.setQuestionMarkType(gvs, dt);
         _sqlstmt.setQuestionMarkValue(gvs, xmlObject.getString());
-    } /* setSQLXML */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setURL(int parameterIndex, URL x) throws SQLException {
         setString(parameterIndex, x.toString());
-    } /* setURL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setRef(int parameterIndex, Ref x) throws SQLException {
         throw new SQLFeatureNotSupportedException("REF not supported!");
-    } /* setRef */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setRowId(int parameterIndex, RowId x) throws SQLException {
         throw new SQLFeatureNotSupportedException("RowIds are not supported!");
-    } /* setRowId */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setArray(int parameterIndex, Array x) throws SQLException {
         throw new SQLFeatureNotSupportedException("Arrays are not supported!");
-    } /* setArray */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -900,9 +846,8 @@ public class AccessPreparedStatement
             setURL(parameterIndex, (URL) x);
         else
             throw new IllegalArgumentException("Invalid data type for parameter!");
-    } /* setObject */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
@@ -980,39 +925,35 @@ public class AccessPreparedStatement
             default:
                 throw new IllegalArgumentException("Unsupported target type: " + SqlTypes.getTypeName(targetSqlType) + "!");
         }
-    } /* setObject */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void setObject(int parameterIndex, Object x,
                           int targetSqlType, int scaleOrLength) throws SQLException {
         setObject(parameterIndex, x, targetSqlType);
-    } /* setObject */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void addBatch() throws SQLException {
         throw new IllegalArgumentException("Batching not supported for PreparedStatement!");
-    } /* addBatch */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public void clearBatch() throws SQLException {
         throw new IllegalArgumentException("Batching not supported for PreparedStatement!");
-    } /* clearBatch */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link PreparedStatement} */
     @Override
     public int[] executeBatch() throws SQLException {
         throw new IllegalArgumentException("Batching not supported for PreparedStatement!");
-    } /* executeBatch */
+    }
 
-} /* AccessPreparedStatement */
+}

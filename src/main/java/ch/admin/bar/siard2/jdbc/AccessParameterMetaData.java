@@ -18,13 +18,13 @@ public class AccessParameterMetaData
     public AccessParameterMetaData(AccessSqlFactory sf, SqlStatement sqlstmt) {
         _sf = sf;
         _sqlstmt = sqlstmt;
-    } /* constructor */
+    }
 
     @Override
     public int getParameterCount() throws SQLException {
         return _sf.getQuestionMarks()
                   .size();
-    } /* getParameterCount */
+    }
 
     @Override
     public int getParameterType(int param) throws SQLException {
@@ -34,7 +34,7 @@ public class AccessParameterMetaData
                        .getPredefinedType()
                        .getType()
                        .getSqlType();
-    } /* getParameterType */
+    }
 
     @Override
     public String getParameterTypeName(int param) throws SQLException {
@@ -44,7 +44,7 @@ public class AccessParameterMetaData
                        .getPredefinedType()
                        .getType()
                        .getKeyword();
-    } /* getParameterTypeName */
+    }
 
     @Override
     public int getPrecision(int param) throws SQLException {
@@ -59,7 +59,7 @@ public class AccessParameterMetaData
             iPrecision = iPrecision * pt.getMultiplier()
                                         .getValue();
         return iPrecision;
-    } /* getPrecision */
+    }
 
     @Override
     public int getScale(int param) throws SQLException {
@@ -71,7 +71,7 @@ public class AccessParameterMetaData
         if (iScale == PredefinedType.iUNDEFINED)
             iScale = pt.getSecondsDecimals();
         return iScale;
-    } /* getScale */
+    }
 
     @Override
     public String getParameterClassName(int param) throws SQLException {
@@ -140,7 +140,7 @@ public class AccessParameterMetaData
                 break;
         }
         return cls.getName();
-    } /* getParameterClassName */
+    }
 
     @Override
     public boolean isSigned(int param) throws SQLException {
@@ -181,7 +181,7 @@ public class AccessParameterMetaData
                 break;
         }
         return bSigned;
-    } /* getSigned */
+    }
 
     @Override
     public int isNullable(int param) throws SQLException {
@@ -196,11 +196,11 @@ public class AccessParameterMetaData
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         return null;
-    } /* unwrap */
+    }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
-    } /* isWrapperFor */
+    }
 
-} /* AccessParameterMetaData */
+}

@@ -22,7 +22,6 @@ import com.healthmarketscience.jackcess.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
-/*====================================================================*/
 
 /** A table cursor represents the result of a query.
  * Currently only queries based on a single table are supported.
@@ -37,7 +36,6 @@ public class TableCursor implements ResultSetCursor {
     /** cached number of rows */
     private int _iRowCount = -1;
 
-    /*------------------------------------------------------------------*/
 
     /** create a SelectCursor backed by an Access table.
      * N.B.: It is assumed that global evaluation values and the column
@@ -57,43 +55,38 @@ public class TableCursor implements ResultSetCursor {
             throw new SQLException(ie.getClass()
                                      .getName() + ": " + ie.getMessage());
         }
-    } /* constructor SelectCursor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void beforeFirst() {
         _cursor.beforeFirst();
         _iCurrentRow = -1;
-    } /* beforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void afterLast() throws IOException {
         _cursor.afterLast();
         _iCurrentRow = getCount();
-    } /* afterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isBeforeFirst() throws IOException {
         return _cursor.isBeforeFirst();
-    } /* isBeforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isAfterLast() throws IOException {
         return _cursor.isAfterLast();
-    } /* isAfterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** fill the query specification with values from row and evaluate the
      * condition expression.
@@ -112,9 +105,8 @@ public class TableCursor implements ResultSetCursor {
                 bValue = b.booleanValue();
         }
         return bValue;
-    } /* evaluateCondition */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** evaluate the SELECT expressions assuming the query specification
      * has been filled with values.
@@ -125,9 +117,8 @@ public class TableCursor implements ResultSetCursor {
         ResultSetRow rsrow = new ResultSetRow();
         Shunting.fillRowValues(_ss, rsrow);
         return rsrow;
-    } /* evaluateSelectExpressions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** go to next valid row.
      * @return true, if one exists.
@@ -145,9 +136,8 @@ public class TableCursor implements ResultSetCursor {
                 bNext = true;
         }
         return bNext;
-    } /* next */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** go to previous valid row.
      * @return true, if one exists.
@@ -165,9 +155,8 @@ public class TableCursor implements ResultSetCursor {
                 bPrevious = true;
         }
         return bPrevious;
-    } /* previous */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -176,9 +165,8 @@ public class TableCursor implements ResultSetCursor {
         if (next())
             rowTo = evaluateSelectExpressions();
         return rowTo;
-    } /* getNextRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -187,44 +175,39 @@ public class TableCursor implements ResultSetCursor {
         if (previous())
             rowTo = evaluateSelectExpressions();
         return rowTo;
-    } /* getPreviousRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public Row refreshCurrentRow() throws IOException {
         Row row = evaluateSelectExpressions();
         return row;
-    } /* getCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getRow() {
         return _iCurrentRow + 1;
-    } /* getRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void deleteCurrentRow()
             throws IOException {
         _cursor.deleteCurrentRow();
-    } /* deleteCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void updateCurrentRow(Row row)
             throws IOException {
         _cursor.updateCurrentRowFromMap(row);
-    } /* deleteCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -243,9 +226,8 @@ public class TableCursor implements ResultSetCursor {
          ***/
         _cursor.getTable()
                .addRowFromMap(row);
-    } /* insertRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -264,6 +246,6 @@ public class TableCursor implements ResultSetCursor {
                 next();
         }
         return _iRowCount;
-    } /* getCount */
+    }
 
-} /* class TableCursor */
+}

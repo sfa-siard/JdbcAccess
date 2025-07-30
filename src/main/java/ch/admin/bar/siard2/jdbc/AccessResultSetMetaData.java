@@ -17,7 +17,6 @@ import ch.enterag.utils.database.SqlTypes;
 import java.math.BigDecimal;
 import java.sql.*;
 
-/*====================================================================*/
 
 /** AccessResultSetMetaData implements wrapped Jackcess ResultSetMetaData
  * for MS Access.
@@ -36,20 +35,18 @@ public class AccessResultSetMetaData
     AccessResultSetMetaData(ResultSetHeader rsh, Connection conn) {
         _rsh = rsh;
         _conn = conn;
-    } /* constructor AccessResultSetMetaData */
+    }
   
   /*======================================================================
   Wrapper 
   ======================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public boolean isWrapperFor(Class<?> clsInterface) throws SQLException {
         return clsInterface.equals(ResultSetMetaData.class);
-    } /* isWrapperFor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
@@ -61,51 +58,46 @@ public class AccessResultSetMetaData
         else
             throw new IllegalArgumentException("AccessResultSetMetaData cannot be unwrapped to " + clsInterface.getName() + "!");
         return impl;
-    } /* unwrap */
+    }
 
   /*======================================================================
   Catalog, Schema, ... 
   ======================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getCatalogName(int iColumnIndex) throws SQLException {
         /* we only work with ResultSets, that come from a single table ... */
         return _conn.getCatalog();
-    } /* getCatalogName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getSchemaName(int column) throws SQLException {
         return _rsh.getSchemaName();
-    } /* getSchemaName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getTableName(int column) throws SQLException {
         return _rsh.getTableName();
-    } /* getTableName */
+    }
 
   /*======================================================================
   ResultSet properties
   ======================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int getColumnCount() throws SQLException {
         return _rsh.getColumns();
-    } /* getColumnCount */
+    }
 
   /*======================================================================
   Column properties 
   ======================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
@@ -171,141 +163,125 @@ public class AccessResultSetMetaData
                 new IllegalArgumentException("Unexpected type " + SqlTypes.getTypeName(iDataType) + "!");
         }
         return cls.getName();
-    } /* getColumnClassName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int getColumnDisplaySize(int column) throws SQLException {
         return 8; // somewhat absurd ...
-    } /* getColumnDisplaySize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getColumnLabel(int iColumnIndex) throws SQLException {
         return _rsh.getName(iColumnIndex - 1); // iColumnIndex is 1-based
-    } /* getColumnLabel */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getColumnName(int iColumnIndex) throws SQLException {
         return _rsh.getName(iColumnIndex - 1); // iColumnIndex is 1-based
-    } /* getColumnname */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int getColumnType(int iColumnIndex) throws SQLException {
         return _rsh.getType(iColumnIndex - 1); // iColumnIndex is 1-based
-    } /* getColumnType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public String getColumnTypeName(int iColumnIndex) throws SQLException {
         return SqlTypes.getTypeName(getColumnType(iColumnIndex));
-    } /* getColumnTypeName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int getPrecision(int iColumnIndex) throws SQLException {
         return _rsh.getPrecision(iColumnIndex - 1); // iColumnIndex is 1-based
-    } /* getPrecision */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int getScale(int iColumnIndex) throws SQLException {
         return _rsh.getScale(iColumnIndex - 1); // iColumnIndex is 1-based
-    } /* getScale */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public boolean isAutoIncrement(int iColumnIndex) throws SQLException {
         return false;
-    } /* isAutoIncrement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * Definition not quite clear ... */
     @Override
     public boolean isCaseSensitive(int iColumnIndex) throws SQLException {
         return true;
-    } /* isCaseSensitive */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * We do not support currency types ... */
     @Override
     public boolean isCurrency(int iColumnIndex) throws SQLException {
         return false;
-    } /* isCurrency */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * We do not really support writing in ResultSets ... */
     @Override
     public boolean isDefinitelyWritable(int iColumnIndex) throws SQLException {
         return false;
-    } /* isDefinitelyWritable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public int isNullable(int iColumnIndex) throws SQLException {
         return ResultSetMetaData.columnNullableUnknown;
-    } /* isNullable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * We do not really support writing in ResultSets ... */
     @Override
     public boolean isReadOnly(int iColumnIndex) throws SQLException {
         return true;
-    } /* isReadOnly */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData} */
     @Override
     public boolean isSearchable(int iColumnIndex) throws SQLException {
         /* more precise: should be false for large types ... */
         return true;
-    } /* isSearchable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * Where ever it makes sense to ask this, it is true. */
     @Override
     public boolean isSigned(int iColumnIndex) throws SQLException {
         return true;
-    } /* isSigned */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetMetaData}
      * We do not really support writing in ResultSets ... */
     @Override
     public boolean isWritable(int iColumnIndex) throws SQLException {
         return false;
-    } /* isWritable */
+    }
 
-} /* AccessResultSetMetaData */
+}

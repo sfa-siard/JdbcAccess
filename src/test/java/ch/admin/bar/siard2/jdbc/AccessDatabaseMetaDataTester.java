@@ -13,6 +13,7 @@ import ch.enterag.utils.jdbc.BaseDatabaseMetaDataTester;
 import ch.enterag.utils.lang.Execute;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -67,7 +68,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* setUpClass */
+    }
 
     private void setUp(boolean bSql) {
         try {
@@ -93,12 +94,12 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
     @Before
     public void setUp() {
         setUp(true);
-    } /* setUp */
+    }
 
     @Test
     public void testClass() {
         assertEquals("Wrong database meta data class!", AccessDatabaseMetaData.class, getDatabaseMetaData().getClass());
-    } /* testClass */
+    }
 
     @Test
     public void testMatches() {
@@ -227,7 +228,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testGetColumnsSqlSimple */
+    }
 
     @Test
     public void testGetColumnsAccessSimple() {
@@ -321,7 +322,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testGetColumnsAccessSimple */
+    }
 
     @Test
     public void testGetColumnsAccessComplex() {
@@ -413,7 +414,7 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testGetColumnsAccessComplex */
+    }
 
     @Test
     public void testGetColumnsViewSimple() {
@@ -498,30 +499,31 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         }
     }
 
-    /***
-     @Test public void testGetImportedKeys()
-     {
-     enter();
-     File fileBugDatabase = new File("..\\Bugs\\445\\Empty.accdb");
-     File fileAccessDatabase = new File("logs\\Empty.accdb");
-     try
-     {
-     FU.copy(fileBugDatabase, fileAccessDatabase);
-     AccessDataSource dsAccess = new AccessDataSource();
-     dsAccess.setDatabaseName(fileAccessDatabase.getAbsolutePath());
-     dsAccess.setDescription("Bug 445 data base");
-     dsAccess.setReadOnly(false);
-     dsAccess.setUser(sUSER);
-     dsAccess.setPassword(sPASSWORD);
-     AccessConnection connAccess = (AccessConnection)dsAccess.getConnection();
-     connAccess.setAutoCommit(false);
-     AccessDatabaseMetaData dmdAccess = (AccessDatabaseMetaData)connAccess.getMetaData();
-     ResultSet rs = dmdAccess.getImportedKeys(null,"Admin","Main");
-     rs.close();
-     }
-     catch(SQLException se) { fail(EU.getExceptionMessage(se)); }
-     catch(IOException ie) { fail(EU.getExceptionMessage(ie)); }
-     } /* testGetImportedKeys */
+    @Test
+    @Ignore("uses files not available anymore")
+    public void testGetImportedKeys() {
+        enter();
+        File fileBugDatabase = new File("..\\Bugs\\445\\Empty.accdb");
+        File fileAccessDatabase = new File("logs\\Empty.accdb");
+        try {
+            FU.copy(fileBugDatabase, fileAccessDatabase);
+            AccessDataSource dsAccess = new AccessDataSource();
+            dsAccess.setDatabaseName(fileAccessDatabase.getAbsolutePath());
+            dsAccess.setDescription("Bug 445 data base");
+            dsAccess.setReadOnly(false);
+            dsAccess.setUser(sUSER);
+            dsAccess.setPassword(sPASSWORD);
+            AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
+            connAccess.setAutoCommit(false);
+            AccessDatabaseMetaData dmdAccess = (AccessDatabaseMetaData) connAccess.getMetaData();
+            ResultSet rs = dmdAccess.getImportedKeys(null, "Admin", "Main");
+            rs.close();
+        } catch (SQLException se) {
+            fail(EU.getExceptionMessage(se));
+        } catch (IOException ie) {
+            fail(EU.getExceptionMessage(ie));
+        }
+    }
 
     @Override
     @Test
@@ -546,4 +548,4 @@ public class AccessDatabaseMetaDataTester extends BaseDatabaseMetaDataTester {
         }
     }
 
-} /* AccessDatabaseMetaDataTester */
+}

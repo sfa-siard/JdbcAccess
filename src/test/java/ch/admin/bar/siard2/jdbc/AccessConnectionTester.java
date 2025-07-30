@@ -50,7 +50,7 @@ public class AccessConnectionTester extends BaseConnectionTester {
         AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
         new TestSqlDatabase(connAccess);
         connAccess.close();
-    } /* setUpClass */
+    }
 
     @Before
     public void setUp() {
@@ -67,12 +67,12 @@ public class AccessConnectionTester extends BaseConnectionTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* setUp */
+    }
 
     @Test
     public void testClass() {
         assertEquals("Wrong connection class!", AccessConnection.class, getConnection().getClass());
-    } /* testClass */
+    }
 
     @Override
     @Test
@@ -83,7 +83,7 @@ public class AccessConnectionTester extends BaseConnectionTester {
         } catch (SQLException se) {
             System.out.println(EU.getExceptionMessage(se));
         }
-    } /* testPrepareCall*/
+    }
 
     @Override
     @Test
@@ -94,6 +94,6 @@ public class AccessConnectionTester extends BaseConnectionTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testSetTransactionIsolation */
+    }
 
-} /* AccessConnectionTester */
+}

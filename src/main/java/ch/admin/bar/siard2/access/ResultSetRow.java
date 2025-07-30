@@ -33,121 +33,106 @@ public class ResultSetRow
     public ResultSetRow() {
         super();
         _rowId = new ResultSetRowId();
-    } /* constructor MetaDataRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Object put(String key, Object value) {
         return super.put(key, value);
-    } /* put */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public RowId getId() {
         return _rowId;
-    } /* getId */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public String getString(String name) {
         return (String) get(name);
-    } /* getString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Boolean getBoolean(String name) {
         return (Boolean) get(name);
-    } /* getBoolean */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Byte getByte(String name) {
         return (Byte) get(name);
-    } /* getByte */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Short getShort(String name) {
         return (Short) get(name);
-    } /* getShort */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Integer getInt(String name) {
         return (Integer) get(name);
-    } /* getInt */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public BigDecimal getBigDecimal(String name) {
         return (BigDecimal) get(name);
-    } /* getBigDecimal */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Float getFloat(String name) {
         return (Float) get(name);
-    } /* getFloat */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Double getDouble(String name) {
         return (Double) get(name);
-    } /* getDouble */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public Date getDate(String name) {
         return (Date) get(name);
-    } /* getDate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public byte[] getBytes(String name) {
         return (byte[]) get(name);
-    } /* getBytes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public ComplexValueForeignKey getForeignKey(String name) {
         return (ComplexValueForeignKey) get(name);
-    } /* getForeignKey */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Row} */
     @Override
     public OleBlob getBlob(String name) throws IOException {
         return (OleBlob) get(name);
-    } /* getBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** RowId implementation using UUID */
     private class ResultSetRowId implements RowId {
@@ -172,6 +157,6 @@ public class ResultSetRow
                       .compareTo(mriOther.getId()
                                          .toString());
         }
-    } /* class MetaDataRowId */
+    }
 
-} /* ResultSetRow */
+}

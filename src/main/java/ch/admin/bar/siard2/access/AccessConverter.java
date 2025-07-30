@@ -11,7 +11,6 @@ Created    : 07.11.2016, Hartwig Thomas
 ======================================================================*/
 package ch.admin.bar.siard2.access;
 
-/*====================================================================*/
 
 /** AccessConverter implements basic type and value conversions between
  * SQL and Jackcess.
@@ -21,7 +20,6 @@ abstract public class AccessConverter {
   /*====================================================================
   SQL 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** convert native SQL to standard SQL
      * replacing all bracketed identifiers by quoted identifiers,
@@ -94,9 +92,8 @@ abstract public class AccessConverter {
                 sbStandard.append(c);
         }
         return sbStandard.toString();
-    } /* standardSQL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert a standard (ISO) SQL query to native (Jackcess) SQL
      * replacing all quoted identifiers by bracketed identifiers
@@ -146,6 +143,6 @@ abstract public class AccessConverter {
                 sbNativeSql.append(c);
         }
         return sbNativeSql.toString();
-    } /* nativeSQL */
+    }
 
-} /* AccessConverter */
+}

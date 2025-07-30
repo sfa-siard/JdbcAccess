@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
-/*====================================================================*/
 
 /** AccessStatement implements wrapped Jackcess Statement for MS Access.
  * @author Hartwig Thomas
@@ -70,7 +69,6 @@ public class AccessStatement
   /*====================================================================
   Wrapper 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** constructor starts with an H2 session to be used for SQL parsing.
      * The H2 database contains the full empty schema of the MS Access
@@ -82,9 +80,8 @@ public class AccessStatement
             throws SQLException {
         super(null);
         _conn = conn;
-    } /* constructor AccessStatement */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /*====================================================================
     Queries
@@ -137,20 +134,18 @@ public class AccessStatement
             }
         } else // <base> ARRAY[length]
             rsh.addColumn(sColumnName, Types.ARRAY, PredefinedType.iUNDEFINED, PredefinedType.iUNDEFINED);
-    } /* addColumn */
+    }
 
   /*====================================================================
   Warnings 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public boolean isWrapperFor(Class<?> clsInterface) throws SQLException {
         return clsInterface.equals(Statement.class);
-    } /* isWrapperFor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
@@ -162,223 +157,196 @@ public class AccessStatement
         else
             throw new IllegalArgumentException("AccessStatement cannot be unwrapped to " + clsInterface.getName() + "!");
         return impl;
-    } /* unwrap */
+    }
   
   /*====================================================================
   Statement 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public void clearWarnings() throws SQLException {
         _conn.clearWarnings();
-    } /* clearWarnings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Connection} */
     @Override
     public SQLWarning getWarnings() throws SQLException {
         return _conn.getWarnings();
-    } /* getWarnings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void close() throws SQLException {
         _conn = null;
-    } /* close */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void cancel() throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess cannot cancel a Statement!");
-    } /* cancel */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public Connection getConnection() throws SQLException {
         return _conn;
-    } /* getConnection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public boolean isClosed() throws SQLException {
         return (_conn == null);
-    } /* isClosed */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} for JDK 1.7 */
     @Override
     public void closeOnCompletion() throws SQLException {
         throw new SQLFeatureNotSupportedException("close on completion is not supported!");
-    } /* closeOnCompletion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} for JDK 1.7 */
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
         return false;
-    } /* isCloseOnCompletion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getMaxFieldSize() throws SQLException {
         return _iMaxFieldSize;
-    } /* getMaxFieldSize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setMaxFieldSize(int iMaxFieldSize) throws SQLException {
         _iMaxFieldSize = iMaxFieldSize;
-    } /* setMaxFieldSize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getMaxRows() throws SQLException {
         return _iMaxRows;
-    } /* getMaxRows */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setMaxRows(int iMaxRows) throws SQLException {
         _iMaxRows = iMaxRows;
-    } /* setMaxRows */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setEscapeProcessing(boolean bEscapeProcessing) throws SQLException {
         _bEscapeProcessing = bEscapeProcessing;
-    } /* setEscapeProcessing */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getQueryTimeout() throws SQLException {
         return _iQueryTimeoutSeconds;
-    } /* getQueryTimeout */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setQueryTimeout(int iQueryTimeoutSeconds) throws SQLException {
         _iQueryTimeoutSeconds = iQueryTimeoutSeconds;
-    } /* setQueryTimeout */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setCursorName(String sCursorName) throws SQLException {
         _sCursorName = sCursorName;
-    } /* setCursorName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getFetchDirection() throws SQLException {
         return _iFetchDirection;
-    } /* getFetchDirection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setFetchDirection(int iFetchDirection) throws SQLException {
         _iFetchDirection = iFetchDirection;
-    } /* setFetchDirection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getFetchSize() throws SQLException {
         return _iFetchSize;
-    } /* getFetchSize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setFetchSize(int iFetchSize) throws SQLException {
         _iFetchSize = iFetchSize;
-    } /* setFetchSize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getResultSetConcurrency() throws SQLException {
         return ResultSet.CONCUR_READ_ONLY;
-    } /* getResultSetConcurrency */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getResultSetType() throws SQLException {
         return ResultSet.TYPE_FORWARD_ONLY;
-    } /* getResultSetType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public ResultSet getGeneratedKeys() throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
-    } /* getGeneratedKeys */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getResultSetHoldability() throws SQLException {
         return ResultSet.HOLD_CURSORS_OVER_COMMIT;
-    } /* getResultSetHoldability */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public boolean isPoolable() throws SQLException {
         return _bPoolable;
-    } /* getPoolable */
+    }
   
   /*====================================================================
   Exceptions 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void setPoolable(boolean bPoolable) throws SQLException {
         _bPoolable = bPoolable;
-    } /* setPoolable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Convert IOException to SQLException.
      * @param ie IOException
@@ -387,7 +355,7 @@ public class AccessStatement
     protected SQLException getSQLException(IOException ie) {
         SQLException se = new SQLException(ie.getMessage(), "90067");
         return se;
-    } /* getSQLException */
+    }
 
     /** Convert IllegalArgumentException (from Jackcess) to SQLException.
      * @param iae IllegalArgumentException
@@ -408,9 +376,8 @@ public class AccessStatement
             sSqlState = "90057";
         SQLException se = new SQLException(iae.getMessage(), sSqlState);
         return se;
-    } /* getSQLException */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Create a header for the SELECT result set.
      * @param qiTable table name.
@@ -433,9 +400,8 @@ public class AccessStatement
             addColumn(rsh, sColumnName, dt);
         }
         return rsh;
-    } /* getSelectHeader */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** add a select sublist with the column name to the query
      * @param qs query specification.
@@ -456,9 +422,8 @@ public class AccessStatement
         SelectSublist ss = _sf.newSelectSublist();
         ss.setValueExpression(ve);
         qs.addSelectSublist(ss);
-    } /* addColumnName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** retrieve the SQL data type of a Jackcess column.
      * @param column Jackcess column.
@@ -473,9 +438,8 @@ public class AccessStatement
         DataType dt = Shunting.convertTypeFromAccess(column,
                                                      iPrecision, iScale, iLength, iLengthInUnits, _conn.getMetaData());
         return dt;
-    } /* getColumnType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** result set header for base table/query.
      * @param qiBase qualified table/query name.
@@ -493,9 +457,8 @@ public class AccessStatement
             addColumn(rsh, sColumnName, dt);
         }
         return rsh;
-    } /* getBaseHeader */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Execute a SELECT query on a table
      * @param table MS Access table for SELECT query.
@@ -540,7 +503,6 @@ public class AccessStatement
                     addColumnName(qs, column.getName());
             }
         }
-        /* create result set from query */
         ResultSetHeader rshSelect = getSelectHeader(
                 new QualifiedId(null, _conn.getUserName(), table.getName()), ss);
         if (!qs.isGrouped()) {
@@ -573,9 +535,8 @@ public class AccessStatement
             rs = new AccessResultSet(_conn, this, rshSelect, gc);
         }
         return rs;
-    } /* executeTableSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** retrieve the type of a column of a result set.
      * @param rsm result set meta data.
@@ -589,9 +550,8 @@ public class AccessStatement
         int iScale = rsm.getScale(iPosition);
         DataType dt = Shunting.convertTypeFromJdbc(iSqlType, iPrecision, iScale);
         return dt;
-    } /* getColumnType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Execute a SELECT query on a query
      * @param sq Jackcess SelectQuery instance
@@ -631,7 +591,6 @@ public class AccessStatement
                 for (int iColumn = 0; iColumn < rsmQuery.getColumnCount(); iColumn++)
                     addColumnName(qs, rsmQuery.getColumnLabel(iColumn + 1));
             }
-            /* create result set from query */
             ResultSetHeader rshSelect = getSelectHeader(
                     new QualifiedId(null, _conn.getUserName(), sq.getName()), ss);
             if (!qs.isGrouped()) {
@@ -664,9 +623,8 @@ public class AccessStatement
             throw getSQLException(iae);
         }
         return rs;
-    } /* executeQuerySelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** execute the given Select query.
      * Currently limited to single table SELECT commands with simple
@@ -712,9 +670,8 @@ public class AccessStatement
             throw getSQLException(iae);
         }
         return rs;
-    } /* executeSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement}
      * will parse everything but only execute very simple queries
@@ -730,12 +687,11 @@ public class AccessStatement
         ss.setEvaluationContext(_conn.getUserName(), _conn.getCatalog(), _conn.getSchema());
         rs = executeSelect(ss);
         return rs;
-    } /* executeQuery */
+    }
   
   /*====================================================================
   Updates 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** DROP TABLE command
      * @param dt parsed DropTable statement
@@ -772,9 +728,8 @@ public class AccessStatement
             throw new SQLException("Table " + sTableName + " could not be dropped!", ie);
         }
         return iDropped;
-    } /* dropTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** CREATE TABLE command
      * @param cts parsed CreateTable statement
@@ -999,16 +954,14 @@ public class AccessStatement
                         throw new SQLException("CHECK constraints are not supported!");
                 }
             }
-            /* finally create the table */
             tb.toTable(_conn.getDatabase());
         } catch (IOException ie) {
             throw new SQLException("Table " + sTableName + " could not be created!", ie);
         }
         int iCreated = 0;
         return iCreated;
-    } /* createTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** ALTER TABLE DROP CONSTRAINT command
      * @param ats parsed AlterTableDropConstraint statement
@@ -1063,9 +1016,8 @@ public class AccessStatement
             throw new SQLException("Table " + sTableName + " could not be altered!", ie);
         }
         return iAltered;
-    } /* alterTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** DROP VIEW command
      * @param dv parsed DropView statement.
@@ -1085,9 +1037,8 @@ public class AccessStatement
             throw new SQLException("View " + sViewName + " could not be dropped!", ie);
         }
         return iDropped;
-    } /* dropView */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** CREATE VIEW command
      * @param cv parsed CreateView statement.
@@ -1105,9 +1056,8 @@ public class AccessStatement
          * List<String> listOrderings
          */
         throw new SQLException("CREATE VIEW statements are not (yet) supported!");
-    } /* createView */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** INSERT command
      * @param ins parsed Insert statement.
@@ -1209,9 +1159,8 @@ public class AccessStatement
             throw new SQLException("INSERT into table " + sTableName + " failed!", ie);
         }
         return iInserted;
-    } /* insert */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** DELETE command
      * @param sqlstmt sql statement
@@ -1254,9 +1203,8 @@ public class AccessStatement
             throw new SQLException("DELETE from table " + sTableName + " failed!", ie);
         }
         return iDeleted;
-    } /* delete */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** UPDATE command
      * @param sqlstmt parsed Update statement.
@@ -1311,9 +1259,8 @@ public class AccessStatement
             throw new SQLException("UPDATE table " + sTableName + " failed!", ie);
         }
         return iUpdated;
-    } /* update */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement}
      * will parse everything but only execute very simple update statements.
@@ -1351,39 +1298,35 @@ public class AccessStatement
                 iUpdated = update(ss);
         }
         return iUpdated;
-    } /* executeUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int executeUpdate(String sql, int autoGeneratedKeys)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
-    } /* excuteUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int executeUpdate(String sql, int[] columnIndexes)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
-    } /* excuteUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int executeUpdate(String sql, String[] columnNames)
             throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
-    } /* excuteUpdate */
+    }
 
   /*====================================================================
   Execute 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
@@ -1419,9 +1362,8 @@ public class AccessStatement
             bIsResultSet = true;
         }
         return bIsResultSet;
-    } /* execute */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
@@ -1429,15 +1371,11 @@ public class AccessStatement
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Statement} */
     @Override
     public boolean execute(String sql, int[] columnIndexes) throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
@@ -1446,58 +1384,50 @@ public class AccessStatement
         throw new SQLFeatureNotSupportedException("JdbcAccess does not support generated keys!");
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link Statement} */
     @Override
     public ResultSet getResultSet() throws SQLException {
         return _rs;
-    } /* execute */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public int getUpdateCount() throws SQLException {
         return _iUpdateCount;
-    } /* getUpdateCount */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public boolean getMoreResults() throws SQLException {
         throw new SQLException("JdbcAccessStatement does not support complex execute()!");
-    } /* getMoreResults */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public boolean getMoreResults(int iCurrent) throws SQLException {
         throw new SQLFeatureNotSupportedException("JdbcAccessStatement does not support complex execute()!");
-    } /* getMoreResults */
+    }
 
   /*====================================================================
   Batch processing 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void addBatch(String sSql) throws SQLException {
         _listBatch.add(sSql);
-    } /* addBatch */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
     public void clearBatch() throws SQLException {
         _listBatch.clear();
-    } /* clearBatch */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Statement} */
     @Override
@@ -1513,6 +1443,6 @@ public class AccessStatement
             }
         }
         return aiUpdated;
-    } /* executeBatch */
+    }
 
-} /* AccessStatement */
+}

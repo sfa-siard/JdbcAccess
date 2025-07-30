@@ -22,7 +22,6 @@ import ch.enterag.sqlparser.expression.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*====================================================================*/
 
 /** AccessSqlFactory overrides the BaseSqlFactory for the Access-specific
  * SQL parser classes.
@@ -38,36 +37,36 @@ public class AccessSqlFactory extends BaseSqlFactory implements SqlFactory {
     @Override
     public SqlStatement newSqlStatement() {
         return new AccessSqlStatement(this);
-    } /* newSqlStatement */
+    }
 
     @Override
     public ValueExpressionPrimary newValueExpressionPrimary() {
         return new AccessValueExpressionPrimary(this);
-    } /* newValueExpressionPrimary */
+    }
 
     @Override
     public TablePrimary newTablePrimary() {
         return new AccessTablePrimary(this);
-    } /* newTablePrimary */
+    }
 
     @Override
     public QuerySpecification newQuerySpecification() {
         return new AccessQuerySpecification(this);
-    } /* newQuerySpecification */
+    }
 
     @Override
     public GeneralValueSpecification newGeneralValueSpecification() {
         return new AccessGeneralValueSpecification(this);
-    } /* newGeneralValueSpecification */
+    }
 
     @Override
     public PredefinedType newPredefinedType() {
         return new AccessPredefinedType(this);
-    } /* newPredefinedType */
+    }
 
     @Override
     public UnsignedLiteral newUnsignedLiteral() {
         return new AccessUnsignedLiteral(this);
-    } /* newUnsignedLiteral */
+    }
 
-} /* AccessSqlFactory */
+}

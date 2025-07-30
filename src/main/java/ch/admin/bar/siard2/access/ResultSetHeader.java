@@ -12,7 +12,6 @@ package ch.admin.bar.siard2.access;
 import java.util.ArrayList;
 import java.util.List;
 
-/*====================================================================*/
 
 /** Header class describing the columns of a rather trivial ResultSet
  * representing a subset of the columns of a single table.
@@ -34,7 +33,7 @@ public class ResultSetHeader {
         _sSchemaName = sSchemaName;
         _sTableName = sTableName;
         _listColumns = new ArrayList<ResultSetColumn>();
-    } /* constructor ResultSetHeader */
+    }
 
     /** @return schema name */
     public String getSchemaName() {
@@ -46,8 +45,6 @@ public class ResultSetHeader {
         return _sTableName;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** Adds name and type of the next column.
      * @param sName column name (unquoted).
      * @param iType column type (one of java.sql.Types).
@@ -57,9 +54,8 @@ public class ResultSetHeader {
     public void addColumn(String sName, int iType, int iScale, int iPrecision) {
         ResultSetColumn rs = new ResultSetColumn(sName, iType, iPrecision, iScale);
         _listColumns.add(rs);
-    } /* addColumn */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Adds name and type of the next column.
      * @param sName column name (unquoted).
@@ -69,9 +65,8 @@ public class ResultSetHeader {
     public void addColumn(String sName, int iType, int iSize) {
         ResultSetColumn rs = new ResultSetColumn(sName, iType, iSize);
         _listColumns.add(rs);
-    } /* addColumn */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Adds name and type of the next column.
      * @param sName column name (unquoted).
@@ -80,9 +75,8 @@ public class ResultSetHeader {
     public void addColumn(String sName, int iType) {
         ResultSetColumn rs = new ResultSetColumn(sName, iType);
         _listColumns.add(rs);
-    } /* addColumn */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Returns number of columns in header.
      * @return number of columns
@@ -91,8 +85,6 @@ public class ResultSetHeader {
         return _listColumns.size();
     }
 
-    /*------------------------------------------------------------------*/
-
     /** Gets name of a column.
      * @param iColumn column index (0-based)
      * @return column name.
@@ -100,9 +92,8 @@ public class ResultSetHeader {
     public String getName(int iColumn) {
         return _listColumns.get(iColumn)
                            .getName();
-    } /* getName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Gets type of a column.
      * @param iColumn column index (0-based)
@@ -111,9 +102,8 @@ public class ResultSetHeader {
     public int getType(int iColumn) {
         return _listColumns.get(iColumn)
                            .getType();
-    } /* getType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Gets scale of a column.
      * @param iColumn column index (0-based)
@@ -122,9 +112,8 @@ public class ResultSetHeader {
     public int getScale(int iColumn) {
         return _listColumns.get(iColumn)
                            .getScale();
-    } /* getScale */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Gets precision of a column.
      * @param iColumn column index (0-based)
@@ -133,9 +122,8 @@ public class ResultSetHeader {
     public int getPrecision(int iColumn) {
         return _listColumns.get(iColumn)
                            .getPrecision();
-    } /* getPrecision */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** description of a column of the result set */
     private class ResultSetColumn {
@@ -159,7 +147,7 @@ public class ResultSetHeader {
             _iType = iType;
             _iScale = iScale;
             _iPrecision = iPrecision;
-        } /* constructor ResultSetColumn */
+        }
 
         /** constructor
          * @param sName name of column.
@@ -170,7 +158,7 @@ public class ResultSetHeader {
             _sName = sName;
             _iType = iType;
             _iPrecision = iSize;
-        } /* constructor ResultSetColumn */
+        }
 
         /** constructor
          * @param sName name of column.
@@ -179,34 +167,28 @@ public class ResultSetHeader {
         ResultSetColumn(String sName, int iType) {
             _sName = sName;
             _iType = iType;
-        } /* constructor ResultSetColumn */
+        }
 
         /** @return name of column. */
         String getName() {
             return _sName;
         }
 
-        /*------------------------------------------------------------------*/
-
         /** @return java.sql.Types data type */
         int getType() {
             return _iType;
         }
-
-        /*------------------------------------------------------------------*/
 
         /** @return precision of column type */
         int getPrecision() {
             return _iPrecision;
         }
 
-        /*------------------------------------------------------------------*/
-
         /** @return scale of column type */
         int getScale() {
             return _iScale;
         }
 
-    } /* class ResultSetColumn */
+    }
 
-} /* ResultSetHeader */
+}

@@ -14,7 +14,7 @@ public class AccessUnsignedLiteral
      */
     public AccessUnsignedLiteral(SqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
     public static BigDecimal convertInterval(Interval interval) {
         BigDecimal bd = null;
@@ -32,16 +32,14 @@ public class AccessUnsignedLiteral
             }
         }
         return bd;
-    } /* convertInterval */
+    }
 
-    /*------------------------------------------------------------------*/
 
     @Override
     public void setInterval(Interval interval) {
         super.setExact(convertInterval(interval));
-    } /* setInterval */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** format the unsigned literal
      * @return the MSSQL string corresponding to the fields of the unsigned literal.
@@ -66,6 +64,6 @@ public class AccessUnsignedLiteral
         } else
             sFormatted = super.format();
         return sFormatted;
-    } /* format */
+    }
 
-} /* Db2UnsignedLiteral */
+}

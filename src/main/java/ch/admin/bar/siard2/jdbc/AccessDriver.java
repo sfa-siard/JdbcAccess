@@ -17,14 +17,11 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-/*====================================================================*/
 
 /** AccessDriver implements a wrapped Jackcess Driver for MS Access.
  * @author Hartwig Thomas
  */
-public class AccessDriver
-        extends BaseDriver
-        implements Driver {
+public class AccessDriver extends BaseDriver implements Driver {
     /** driver version */
     public static final String sVERSION = "1.0";
     /** protocol sub scheme for Access JDBC URL */
@@ -67,7 +64,7 @@ public class AccessDriver
             sUrl = sACCESS_URL_PREFIX + fileDatabase.getAbsolutePath();
         }
         return sUrl;
-    } /* getUrl */
+    }
 
     /** database file from URL
      * @param sUrl JDBC URL
@@ -75,10 +72,9 @@ public class AccessDriver
      */
     public static String getDatabaseName(String sUrl) {
         String sDatabaseName = null;
-        if (sUrl.startsWith(sACCESS_URL_PREFIX))
-            sDatabaseName = sUrl.substring(sACCESS_URL_PREFIX.length());
+        if (sUrl.startsWith(sACCESS_URL_PREFIX)) sDatabaseName = sUrl.substring(sACCESS_URL_PREFIX.length());
         return sDatabaseName;
-    } /* getDatabaseName */
+    }
 
     /** register this driver */
     public static void register() {
@@ -88,23 +84,20 @@ public class AccessDriver
         } catch (SQLException se) {
             System.err.println("Registering of " + AccessDriver.class.getName() + " with DriverManager failed!");
         }
-    } /* register */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
     public boolean acceptsURL(String sUrl) throws SQLException {
         boolean bAcceptsUrl = getDatabaseName(sUrl) != null;
         return bAcceptsUrl;
-    } /* acceptsUrl */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
-    public Connection connect(String sUrl, Properties propsInfo)
-            throws SQLException {
+    public Connection connect(String sUrl, Properties propsInfo) throws SQLException {
         Connection conn = null;
         if (acceptsURL(sUrl)) {
             /***
@@ -120,14 +113,12 @@ public class AccessDriver
             _sPassword = propsInfo.getProperty(sPROP_PASSWORD);
             String sReadOnly = propsInfo.getProperty(sPROP_READ_ONLY);
             _bReadOnly = false;
-            if (sReadOnly != null)
-                _bReadOnly = Boolean.parseBoolean(propsInfo.getProperty(sPROP_READ_ONLY));
+            if (sReadOnly != null) _bReadOnly = Boolean.parseBoolean(propsInfo.getProperty(sPROP_READ_ONLY));
             conn = new AccessConnection(sDatabaseName, _sUser, _sPassword, _bReadOnly, _pwLogWriter);
         }
         return conn;
-    } /* connect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
@@ -135,12 +126,10 @@ public class AccessDriver
         int iMajorVersion = -1;
         String sVersion = getVersion();
         String[] asVersion = sVersion.split("\\.");
-        if (asVersion.length > 0)
-            iMajorVersion = Integer.parseInt(asVersion[0]);
+        if (asVersion.length > 0) iMajorVersion = Integer.parseInt(asVersion[0]);
         return iMajorVersion;
-    } /* getMajorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
@@ -148,17 +137,14 @@ public class AccessDriver
         int iMinorVersion = -1;
         String sVersion = getVersion();
         String[] asVersion = sVersion.split("\\.");
-        if (asVersion.length > 1)
-            iMinorVersion = Integer.parseInt(asVersion[1]);
+        if (asVersion.length > 1) iMinorVersion = Integer.parseInt(asVersion[1]);
         return iMinorVersion;
-    } /* getMinorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(String sUrl,
-                                                Properties propsInfo) throws SQLException {
+    public DriverPropertyInfo[] getPropertyInfo(String sUrl, Properties propsInfo) throws SQLException {
         DriverPropertyInfo[] adpi = new DriverPropertyInfo[3];
         /* User */
         adpi[0] = new DriverPropertyInfo(sPROP_USER, propsInfo.getProperty(sPROP_USER));
@@ -177,23 +163,20 @@ public class AccessDriver
         adpi[2].choices[0] = "false";
         adpi[2].choices[1] = "true";
         return adpi;
-    } /* getPropertyInfo */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} */
     @Override
     public boolean jdbcCompliant() {
         return true;
-    } /* jdbcCompliant */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} for JDK 1.7 */
     @Override
-    public Logger getParentLogger()
-            throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException("ParentLogger not supported!");
-    } /* getParentLogger */
+    }
 
-} /* AccessDriver */
+}

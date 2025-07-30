@@ -16,14 +16,12 @@ import com.healthmarketscience.jackcess.Row;
 import java.io.IOException;
 
 public interface ResultSetCursor {
-    /*------------------------------------------------------------------*/
 
     /** Resets this cursor for forward traversal (sets cursor to before the first
      * row).
      */
     void beforeFirst();
 
-    /*------------------------------------------------------------------*/
 
     /** Resets this cursor for reverse traversal (sets cursor to after the last
      * row).
@@ -31,7 +29,6 @@ public interface ResultSetCursor {
      */
     void afterLast() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** Returns {@code true} if the cursor is currently positioned before the
      * first row, {@code false} otherwise.
@@ -41,7 +38,6 @@ public interface ResultSetCursor {
      */
     boolean isBeforeFirst() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** Returns {@code true} if the cursor is currently positioned after the
      * last row, {@code false} otherwise.
@@ -51,7 +47,6 @@ public interface ResultSetCursor {
      */
     boolean isAfterLast() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** Moves to the next row in the table and returns it.
      * @return The next row in this table (Column name -> Column value), or
@@ -60,7 +55,6 @@ public interface ResultSetCursor {
      */
     Row getNextRow() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** Moves to the previous row in the table and returns it.
      * @return The previous row in this table (Column name -> Column value), or
@@ -69,7 +63,6 @@ public interface ResultSetCursor {
      */
     Row getPreviousRow() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** reads the current row from table and returns it.
      * @return The current row in this table.
@@ -77,14 +70,12 @@ public interface ResultSetCursor {
      */
     Row refreshCurrentRow() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** delete the current row
      * @throws IOException, if an I/O error occurred.
      */
     void deleteCurrentRow() throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** update the current row in the table.
      * @throws IOException, if the row is not a table row or
@@ -92,7 +83,6 @@ public interface ResultSetCursor {
      */
     void updateCurrentRow(Row row) throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** insert the given row in the table.
      * @param row row of values to be inserted
@@ -101,14 +91,12 @@ public interface ResultSetCursor {
      */
     void insertRow(Row row) throws IOException;
 
-    /*------------------------------------------------------------------*/
 
     /** Retrieve the current row number (1-based).
      * @return current row number (1-based).
      */
     int getRow();
 
-    /*------------------------------------------------------------------*/
 
     /** return the number of rows fulfilling the condition.
      * @return number of rows.
@@ -117,4 +105,4 @@ public interface ResultSetCursor {
     int getCount()
             throws IOException;
 
-} /* ResultSetCursor */
+}

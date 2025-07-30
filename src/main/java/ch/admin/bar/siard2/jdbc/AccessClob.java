@@ -16,7 +16,6 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-/*====================================================================*/
 
 /** AccessClob implements a trivial string-based Clob.
  * @author Hartwig Thomas
@@ -32,7 +31,7 @@ public class AccessClob implements Clob {
         else
             throw new SQLException("Cannot position Clob beyond its current length!");
         return str.length();
-    } /* setString */
+    }
     /*==================================================================*/
 
     /** {@link Clob} */
@@ -40,18 +39,16 @@ public class AccessClob implements Clob {
     public int setString(long pos, String str, int offset, int len)
             throws SQLException {
         return setString(pos, str.substring(offset, offset + len));
-    } /* setString */
+    }
     /*==================================================================*/
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public OutputStream setAsciiStream(long pos) throws SQLException {
         return new AsciiOutputStream(_sContent.substring(0, (int) pos - 1));
-    } /* setAsciiStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
@@ -62,17 +59,15 @@ public class AccessClob implements Clob {
         else
             throw new SQLException("Cannot position Clob beyond its current length!");
         return wr;
-    } /* setCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public long length() throws SQLException {
         return _sContent.length();
-    } /* length */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
@@ -82,17 +77,15 @@ public class AccessClob implements Clob {
         if (lPosition >= 0)
             lPosition += 1;
         return lPosition;
-    } /* position */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public long position(Clob searchstr, long start) throws SQLException {
         return position(searchstr.getSubString(start, (int) (searchstr.length() - start)), 1L);
-    } /* position */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
@@ -101,50 +94,44 @@ public class AccessClob implements Clob {
             _sContent = _sContent.substring(0, (int) len);
         else
             throw new SQLException("Cannot truncate Clob to length larger than its current length!");
-    } /* truncate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public String getSubString(long pos, int length) throws SQLException {
         return _sContent.substring((int) pos - 1, (int) pos + length - 1);
-    } /* getSubString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public Reader getCharacterStream() throws SQLException {
         return new StringReader(_sContent);
-    } /* getCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public Reader getCharacterStream(long pos, long length)
             throws SQLException {
         return new StringReader(_sContent.substring((int) pos - 1, (int) (pos + length) - 1));
-    } /* getCharacterStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public InputStream getAsciiStream() throws SQLException {
         return new ByteArrayInputStream(_sContent.getBytes());
-    } /* getAsciiStream */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Clob} */
     @Override
     public void free() throws SQLException {
         _sContent = "";
-    } /* free */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /*==================================================================*/
     private class ClobWriter extends StringWriter {
@@ -152,30 +139,29 @@ public class AccessClob implements Clob {
         public ClobWriter(String sInitialContent) {
             super();
             write(sInitialContent);
-        } /* constructor */
+        }
 
         @Override
         public void close() throws IOException {
             super.close();
             /* copy content to string */
             _sContent = toString();
-        } /* close */
+        }
 
-    } /* class ClobWriter */
+    }
 
-    /*------------------------------------------------------------------*/
 
     private class AsciiOutputStream extends OutputStream {
         StringBuilder _sb = new StringBuilder();
 
         public AsciiOutputStream(String sInitialContent) {
             _sb.append(sInitialContent);
-        } /* constructor */
+        }
 
         @Override
         public void write(int b) throws IOException {
             _sb.append((char) b);
-        } /* write */
+        }
 
         @Override
         public void write(byte[] buf) {
@@ -185,13 +171,13 @@ public class AccessClob implements Clob {
         @Override
         public void write(byte[] buf, int iOffset, int iLength) {
             _sb.append(new String(Arrays.copyOfRange(buf, iOffset, iOffset + iLength)));
-        } /* write */
+        }
 
         @Override
         public void close() {
             _sContent = _sb.toString();
-        } /* close */
+        }
 
-    } /* class AsciiOutputStream */
+    }
 
-} /* class AccessClob */
+}

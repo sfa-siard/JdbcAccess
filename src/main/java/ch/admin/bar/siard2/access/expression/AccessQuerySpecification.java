@@ -8,7 +8,7 @@ public class AccessQuerySpecification
         extends QuerySpecification {
     public AccessQuerySpecification(AccessSqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
     private boolean equalIgnoreCase(String s1, String s2) {
         boolean bEqual = true;
@@ -18,14 +18,13 @@ public class AccessQuerySpecification
         } else if (s2 != null)
             bEqual = false;
         return bEqual;
-    } /* equalIgnoreCase */
+    }
 
-    /*------------------------------------------------------------------*/
     @Override
     protected boolean equalTables(QualifiedId qiTable1, QualifiedId qiTable2) {
         return equalIgnoreCase(qiTable1.getName(), qiTable2.getName()) &&
                 equalIgnoreCase(qiTable1.getSchema(), qiTable2.getSchema()) &&
                 equalIgnoreCase(qiTable1.getCatalog(), qiTable2.getCatalog());
-    } /* equalTables */
+    }
 
 }

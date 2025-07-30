@@ -15,16 +15,14 @@ import java.util.Iterator;
 
 public class AccessSqlStatement
         extends SqlStatement {
-    /*------------------------------------------------------------------*/
 
     /** constructor with factory only to be called by factory.
      * @param sf factory.
      */
     public AccessSqlStatement(SqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** find a select sublist with the given alias name.
      * @param qs query
@@ -45,9 +43,8 @@ public class AccessSqlStatement
             }
         }
         return sel;
-    } /* findSelectByAlias */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** look up the registered data type of a query column.
      * @param idcColumn column.
@@ -92,6 +89,6 @@ public class AccessSqlStatement
         } else
             throw new IllegalArgumentException("Identifier chain is invalid for column!");
         return dt;
-    } /* getColumnType */
+    }
 
 }

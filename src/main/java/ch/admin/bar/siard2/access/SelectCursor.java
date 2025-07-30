@@ -21,7 +21,6 @@ import com.healthmarketscience.jackcess.Row;
 
 import java.io.IOException;
 
-/*====================================================================*/
 
 /** A select cursor represents the result of a select expression on the
  * result of a select expression.
@@ -36,7 +35,6 @@ public class SelectCursor implements ResultSetCursor {
     /** cached number of rows */
     private int _iRowCount = -1;
 
-    /*------------------------------------------------------------------*/
 
     /** create a SelectCursor backed by a select expression.
      * N.B.: It is assumed that global evaluation values have already been set.
@@ -49,43 +47,38 @@ public class SelectCursor implements ResultSetCursor {
         _rsc = ears.getCursor();
         _ss = ss;
         _iCurrentRow = -1;
-    } /* constructor SelectCursor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void beforeFirst() {
         _rsc.beforeFirst();
         _iCurrentRow = -1;
-    } /* beforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void afterLast() throws IOException {
         _rsc.afterLast();
         _iCurrentRow = getCount();
-    } /* afterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isBeforeFirst() throws IOException {
         return _rsc.isBeforeFirst();
-    } /* isBeforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isAfterLast() throws IOException {
         return _rsc.isAfterLast();
-    } /* isAfterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** fill the query specification with values from row and evaluate the
      * condition expression.
@@ -114,9 +107,8 @@ public class SelectCursor implements ResultSetCursor {
                 bValue = b.booleanValue();
         }
         return bValue;
-    } /* evaluateCondition */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** evaluate the SELECT expressions assuming sql statement has been
      * filled with values.
@@ -127,9 +119,8 @@ public class SelectCursor implements ResultSetCursor {
         ResultSetRow rsrow = new ResultSetRow();
         Shunting.fillRowValues(_ss, rsrow);
         return rsrow;
-    } /* evaluateSelectExpressions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** go to next valid row.
      * @return true, if one exists.
@@ -147,9 +138,8 @@ public class SelectCursor implements ResultSetCursor {
                 bNext = true;
         }
         return bNext;
-    } /* next */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** go to previous valid row.
      * @return true, if one exists.
@@ -167,9 +157,8 @@ public class SelectCursor implements ResultSetCursor {
                 bPrevious = true;
         }
         return bPrevious;
-    } /* previous */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -178,9 +167,8 @@ public class SelectCursor implements ResultSetCursor {
         if (next())
             rowTo = evaluateSelectExpressions();
         return rowTo;
-    } /* getNextRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -189,53 +177,47 @@ public class SelectCursor implements ResultSetCursor {
         if (previous())
             rowTo = evaluateSelectExpressions();
         return rowTo;
-    } /* getPreviousRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public Row refreshCurrentRow() throws IOException {
         Row row = evaluateSelectExpressions();
         return row;
-    } /* getCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getRow() {
         return _iCurrentRow + 1;
-    } /* getRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void deleteCurrentRow()
             throws IOException {
         _rsc.deleteCurrentRow();
-    } /* deleteCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void updateCurrentRow(Row row)
             throws IOException {
         throw new IOException("Current row of a VIEW cannot be updated!");
-    } /* updateCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void insertRow(Row row)
             throws IOException {
         throw new IOException("Row cannot be inserted into a VIEW!");
-    } /* insertRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -254,6 +236,6 @@ public class SelectCursor implements ResultSetCursor {
                 next();
         }
         return _iRowCount;
-    } /* getCount */
+    }
 
-} /* class SelectCursor */
+}

@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*====================================================================*/
 
 /** AccessDatabaseMetaData implements wrapped Jackcess DatabaseMetaData
  * for MS Access.
@@ -306,7 +305,6 @@ public class AccessDatabaseMetaData
     /** map from query name to query */
     private Map<String, SelectQuery> _mapViews = null;
 
-    /*------------------------------------------------------------------*/
 
     /** constructor stores connection to database.
      * @param conn database connection.
@@ -331,9 +329,8 @@ public class AccessDatabaseMetaData
             throw new SQLException(ie.getClass()
                                      .getName() + ": " + ie.getMessage());
         }
-    } /* constructor AccessDatabaseMetaData */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** checks, whether string value matches the JDBC pattern
      * (with _ for any character and % for any string).
@@ -352,7 +349,6 @@ public class AccessDatabaseMetaData
                 String sCharEscape = sMetaCharacters.substring(i, i + 1);
                 sPattern = sPattern.replace(sCharEscape, "\\" + sCharEscape);
             }
-            /* neither '_' nor '%' are special characters for JAVA regular expressions */
             sPattern = sPattern.replaceAll("^_", ".")
                                .replaceAll("([^\\\\])_", "$1.").
                                replaceAll("^%", ".*")
@@ -362,12 +358,11 @@ public class AccessDatabaseMetaData
             bMatch = matcher.matches();
         }
         return bMatch;
-    } /* matches */
+    }
 
   /*====================================================================
   Wrapper
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** Compares two string, handling nulls.
      * @param s1 first string.
@@ -385,20 +380,18 @@ public class AccessDatabaseMetaData
         else if ((s1 != null) && (s2 == null))
             iCompare = 1;
         return iCompare;
-    } /* compareStrings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean isWrapperFor(Class<?> clsInterface) throws SQLException {
         return clsInterface.equals(DatabaseMetaData.class);
-    } /* isWrapperFor */
+    }
 
   /*====================================================================
   Database properties
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -410,104 +403,92 @@ public class AccessDatabaseMetaData
         else
             throw new IllegalArgumentException("AccessDatabaseMetaData cannot be unwrapped to " + clsInterface.getName() + "!");
         return impl;
-    } /* unwrap */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean allProceduresAreCallable() throws SQLException {
         return false;
-    } /* allProceduresAreCallable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean allTablesAreSelectable() throws SQLException {
         return true;
-    } /* allTablesAreSelectable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean autoCommitFailureClosesAllResultSets()
             throws SQLException {
         return false;
-    } /* autoCommitFailureClosesAllResultSets */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean dataDefinitionCausesTransactionCommit()
             throws SQLException {
         return true;
-    } /* dataDefinitionCausesTransactionCommit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean dataDefinitionIgnoredInTransactions()
             throws SQLException {
         return false;
-    } /* dataDefinitionIgnoredInTransactions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean deletesAreDetected(int arg0) throws SQLException {
         //  TODO: check, whether ResultSet.rowDeleted is serviced
         return false;
-    } /* deletesAreDetected */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean insertsAreDetected(int arg0) throws SQLException {
         //  TODO: check, whether ResultSet.rowInserted is serviced
         return false;
-    } /* insertsAreDetected */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean updatesAreDetected(int arg0) throws SQLException {
         //  TODO: check, whether ResultSet.rowUpdated is serviced
         return false;
-    } /* updatesAreDetected */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
         // TODO: Maximum is 4 K excluding large fields
         return false;
-    } /* doesMaxRowSizeIncludeBlobs */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} for JDK 1.7 */
     @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
         return false;
-    } /* generatedKeyAlwaysReturned */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getDefaultTransactionIsolation() throws SQLException {
         return Connection.TRANSACTION_NONE;
-    } /* getDefaultTransactionIsolation */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -523,177 +504,155 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listClientInfo);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getClientInfoProperties */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
         return 510;
-    } /* getMaxBinaryLiteralLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxCatalogNameLength() throws SQLException {
         return 0;
-    } /* getMaxCatalogNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxCharLiteralLength() throws SQLException {
         return 255;
-    } /* getMaxCharLiteralLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnNameLength() throws SQLException {
         return 64;
-    } /* getMaxColumnNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnsInGroupBy() throws SQLException {
         return 255;
-    } /* getMaxColumnsInGroupBy */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnsInIndex() throws SQLException {
         return 10;
-    } /* getMaxColumnsInIndex */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnsInOrderBy() throws SQLException {
         return 255;
-    } /* getMaxColumnsInIndex */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnsInSelect() throws SQLException {
         return 255;
-    } /* getMaxColumnsInSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxColumnsInTable() throws SQLException {
         return 255;
-    } /* getMaxColumnsInTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxConnections() throws SQLException {
         return 255;
-    } /* getMaxConnections */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxCursorNameLength() throws SQLException {
         return 64;
-    } /* getMaxCursorNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxIndexLength() throws SQLException {
         return 0;
-    } /* getMaxIndexLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxProcedureNameLength() throws SQLException {
         return 64;
-    } /* getMaxProcedureNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxRowSize() throws SQLException {
         return 4000;
-    } /* getMaxRowSize */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxSchemaNameLength() throws SQLException {
         return 20;
-    } /* getMaxSchemaNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxStatementLength() throws SQLException {
         return 64000;
-    } /* getMaxStatementLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxStatements() throws SQLException {
         return 0;
-    } /* getMaxStatements */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxTableNameLength() throws SQLException {
         return 64;
-    } /* getMaxTableNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxTablesInSelect() throws SQLException {
         return 32;
-    } /* getMaxTablesInSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getMaxUserNameLength() throws SQLException {
         return 20;
-    } /* getMaxUserNameLength */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public Connection getConnection() throws SQLException {
         return _conn;
-    } /* getConnection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -708,9 +667,8 @@ public class AccessDatabaseMetaData
                                      .getName() + ": " + ie.getMessage());
         }
         return sDatabaseProductName;
-    } /* getDatabaseProductName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -729,9 +687,8 @@ public class AccessDatabaseMetaData
                                      .getName() + ": " + ie.getMessage());
         }
         return sVersion;
-    } /* getDatabaseProductVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -744,9 +701,8 @@ public class AccessDatabaseMetaData
                 iMajorVersion = Integer.parseInt(asVersion[0]);
         }
         return iMajorVersion;
-    } /* getDatabaseMajorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -759,17 +715,15 @@ public class AccessDatabaseMetaData
                 iMinorVersion = Integer.parseInt(asVersion[1]);
         }
         return iMinorVersion;
-    } /* getDatabaseMinorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getDriverVersion() throws SQLException {
         return AccessDriver.getVersion();
-    } /* getDriverVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -782,8 +736,6 @@ public class AccessDatabaseMetaData
         return iMajorVersion;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link DatabaseMetaData} */
     @Override
     public int getDriverMinorVersion() {
@@ -795,8 +747,6 @@ public class AccessDatabaseMetaData
         return iMinorVersion;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link DatabaseMetaData} */
     @Override
     public String getDriverName() throws SQLException {
@@ -804,113 +754,99 @@ public class AccessDatabaseMetaData
         String[] asName = sName.split("\\.");
         sName = asName[asName.length - 1];
         return sName;
-    } /* getDriverName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getJDBCMajorVersion() throws SQLException {
         return 4;
-    } /* getJDBCMajorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getJDBCMinorVersion() throws SQLException {
         return 0;
-    } /* getJDBCMinorVersion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getCatalogSeparator() throws SQLException {
         return ".";
-    } /* getCatalogSeparator */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getSearchStringEscape() throws SQLException {
         return "\\";
-    } /* getSearchStringEscape */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getCatalogTerm() throws SQLException {
         return "catalog";
-    } /* getCatalogTerm */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getSchemaTerm() throws SQLException {
         return "schema";
-    } /* getSchemaTerm */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getProcedureTerm() throws SQLException {
         return "procedure";
-    } /* getProcedureTerm */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getUserName() throws SQLException {
         return _conn.getUserName();
-    } /* getUserName */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getExtraNameCharacters() throws SQLException {
         return "";
-    } /* getExtraNameCharacters */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public String getIdentifierQuoteString() throws SQLException {
         return "\"";
-    } /* getIdentifierQuoteString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getResultSetHoldability() throws SQLException {
         return _conn.getHoldability();
-    } /* getResultSetHoldability */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public RowIdLifetime getRowIdLifetime() throws SQLException {
         return RowIdLifetime.ROWID_UNSUPPORTED;
-    } /* getRowIdLifetime */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public int getSQLStateType() throws SQLException {
         return DatabaseMetaData.sqlStateSQL;
-    } /* getSQLStateType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -918,329 +854,290 @@ public class AccessDatabaseMetaData
         return AccessDriver.getUrl(_conn.getDatabase()
                                         .getFile()
                                         .getAbsolutePath());
-    } /* getURL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * currently no SQL parsing supported */
     @Override
     public String getNumericFunctions() throws SQLException {
         return "";
-    } /* getNumericFunctions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * should really be expanded ... */
     @Override
     public String getSQLKeywords() throws SQLException {
         return "DELETE, INSERT, SELECT, UPDATE";
-    } /* getSQLKeywords */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * currently no SQL parsing supported */
     @Override
     public String getStringFunctions() throws SQLException {
         return "";
-    } /* getStringFunctions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * currently no SQL parsing supported */
     @Override
     public String getSystemFunctions() throws SQLException {
         return "";
-    } /* getSystemFunctions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * currently no SQL parsing supported */
     @Override
     public String getTimeDateFunctions() throws SQLException {
         return "";
-    } /* getTimeDateFunctions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean isCatalogAtStart() throws SQLException {
         return false;
-    } /* isCatalogAtStart */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean isReadOnly() throws SQLException {
         return _conn.isReadOnly();
-    } /* isReadOnly */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean locatorsUpdateCopy() throws SQLException {
         return false;
-    } /* locatorsUpdateCopy */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean nullPlusNonNullIsNull() throws SQLException {
         return true;
-    } /* nullPlusNonNullIsNull */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean nullsAreSortedAtEnd() throws SQLException {
         return false;
-    } /* nullsAreSortedAtEnd */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean nullsAreSortedAtStart() throws SQLException {
         return false;
-    } /* nullsAreSortedAtStart */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean nullsAreSortedHigh() throws SQLException {
         return false;
-    } /* nullsAreSortedHigh */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean nullsAreSortedLow() throws SQLException {
         return true;
-    } /* nullsAreSortedLow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean othersDeletesAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* othersDeletesAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean othersInsertsAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* othersInsertsAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean othersUpdatesAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* othersUpdatesAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean ownDeletesAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* ownDeletesAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean ownInsertsAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* ownInsertsAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean ownUpdatesAreVisible(int iResultSetType) throws SQLException {
         return true;
-    } /* ownUpdatesAreVisible */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesLowerCaseIdentifiers() throws SQLException {
         return false;
-    } /* storesLowerCaseIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
         return false;
-    } /* storesLowerCaseQuotedIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesMixedCaseIdentifiers() throws SQLException {
         return true;
-    } /* storesMixedCaseIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
         return true;
-    } /* storesMixedCaseQuotedIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesUpperCaseIdentifiers() throws SQLException {
         return false;
-    } /* storesUpperCaseIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
         return false;
-    } /* storesUpperCaseQuotedIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsANSI92EntryLevelSQL() throws SQLException {
         return false;
-    } /* supportsANSI92EntryLevelSQL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsANSI92FullSQL() throws SQLException {
         return false;
-    } /* supportsANSI92FullSQL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsANSI92IntermediateSQL() throws SQLException {
         return false;
-    } /* supportsANSI92IntermediateSQL */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not support table altering yet ... */
     @Override
     public boolean supportsAlterTableWithAddColumn() throws SQLException {
         return false;
-    } /* supportsAlterTableWithAddColumn */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not support table altering yet ... */
     @Override
     public boolean supportsAlterTableWithDropColumn() throws SQLException {
         return false;
-    } /* supportsAlterTableWithDropColumn */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsBatchUpdates() throws SQLException {
         return false;
-    } /* supportsBatchUpdates */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsCatalogsInDataManipulation()
             throws SQLException {
         return false;
-    } /* supportsCatalogsInDataManipulation */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsCatalogsInIndexDefinitions()
             throws SQLException {
         return false;
-    } /* supportsCatalogsInIndexDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsCatalogsInPrivilegeDefinitions()
             throws SQLException {
         return false;
-    } /* supportsCatalogsInPrivilegeDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsCatalogsInProcedureCalls() throws SQLException {
         return false;
-    } /* supportsCatalogsInProcedureCalls */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsCatalogsInTableDefinitions()
             throws SQLException {
         return false;
-    } /* supportsCatalogsInTableDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsColumnAliasing() throws SQLException {
         return false;
-    } /* supportsColumnAliasing */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsConvert() throws SQLException {
         return false;
-    } /* supportsConvert */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
@@ -1248,27 +1145,24 @@ public class AccessDatabaseMetaData
     public boolean supportsConvert(int iFromType, int iToType)
             throws SQLException {
         return false;
-    } /* supportsConvert */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsCoreSQLGrammar() throws SQLException {
         return false;
-    } /* supportsCoreSQLGrammar */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsCorrelatedSubqueries() throws SQLException {
         return false;
-    } /* supportsCorrelatedSubqueries */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not support transactions yet ... */
@@ -1276,9 +1170,8 @@ public class AccessDatabaseMetaData
     public boolean supportsDataDefinitionAndDataManipulationTransactions()
             throws SQLException {
         return false;
-    } /* supportsDataDefinitionAndDataManipulationTransactions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not support transactions yet ... */
@@ -1286,9 +1179,8 @@ public class AccessDatabaseMetaData
     public boolean supportsDataManipulationTransactionsOnly()
             throws SQLException {
         return false;
-    } /* supportsDataManipulationTransactionsOnly */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
@@ -1296,174 +1188,154 @@ public class AccessDatabaseMetaData
     public boolean supportsDifferentTableCorrelationNames()
             throws SQLException {
         return false;
-    } /* supportsDifferentTableCorrelationNames */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsExpressionsInOrderBy() throws SQLException {
         return false;
-    } /* supportsExpressionsInOrderBy */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsExtendedSQLGrammar() throws SQLException {
         return false;
-    } /* supportsExtendedSQLGrammar */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsFullOuterJoins() throws SQLException {
         return false;
-    } /* supportsFullOuterJoins */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsGetGeneratedKeys() throws SQLException {
         return false;
-    } /* supportsGetGeneratedKeys */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsGroupBy() throws SQLException {
         return false;
-    } /* supportsGroupBy */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsGroupByBeyondSelect() throws SQLException {
         return false;
-    } /* supportsGroupByBeyondSelect */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsGroupByUnrelated() throws SQLException {
         return false;
-    } /* supportsGroupByUnrelated */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsIntegrityEnhancementFacility()
             throws SQLException {
         return false;
-    } /* supportsIntegrityEnhancementFacility */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsLikeEscapeClause() throws SQLException {
         return false;
-    } /* supportsLikeEscapeClause */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsLimitedOuterJoins() throws SQLException {
         return false;
-    } /* supportsLimitedOuterJoins */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsMinimumSQLGrammar() throws SQLException {
         return false;
-    } /* supportsMinimumSQLGrammar */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsMixedCaseIdentifiers() throws SQLException {
         return true;
-    } /* supportsMixedCaseIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsMixedCaseQuotedIdentifiers()
             throws SQLException {
         return true;
-    } /* supportsMixedCaseQuotedIdentifiers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No callable statements ... */
     @Override
     public boolean supportsMultipleOpenResults() throws SQLException {
         return false;
-    } /* supportsMultipleOpenResults */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsMultipleResultSets() throws SQLException {
         return true;
-    } /* supportsMultipleResultSets */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No transactions */
     @Override
     public boolean supportsMultipleTransactions() throws SQLException {
         return false;
-    } /* supportsMultipleTransactions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No callable statements ... */
     @Override
     public boolean supportsNamedParameters() throws SQLException {
         return false;
-    } /* supportsNamedParameters */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsNonNullableColumns() throws SQLException {
         return true;
-    } /* supportsNonNullableColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No transactions */
     @Override
     public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
         return true;
-    } /* supportsOpenCursorsAcrossCommit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No transactions */
@@ -1471,9 +1343,8 @@ public class AccessDatabaseMetaData
     public boolean supportsOpenCursorsAcrossRollback()
             throws SQLException {
         return false;
-    } /* supportsOpenCursorsAcrossRollback */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No transactions */
@@ -1481,9 +1352,8 @@ public class AccessDatabaseMetaData
     public boolean supportsOpenStatementsAcrossCommit()
             throws SQLException {
         return true;
-    } /* supportsOpenStatementsAcrossCommit */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * No transactions */
@@ -1491,43 +1361,38 @@ public class AccessDatabaseMetaData
     public boolean supportsOpenStatementsAcrossRollback()
             throws SQLException {
         return false;
-    } /* supportsOpenStatementsAcrossRollback */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsOrderByUnrelated() throws SQLException {
         return false;
-    } /* supportsOrderByUnrelated */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsOuterJoins() throws SQLException {
         return false;
-    } /* supportsOuterJoins */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsPositionedDelete() throws SQLException {
         return true;
-    } /* supportsPositionedDelete */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsPositionedUpdate() throws SQLException {
         return true;
-    } /* supportsPositionedUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -1536,197 +1401,173 @@ public class AccessDatabaseMetaData
         return (iConcurrency == ResultSet.CONCUR_READ_ONLY);
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsResultSetHoldability(int iHoldability)
             throws SQLException {
         return (iHoldability == ResultSet.HOLD_CURSORS_OVER_COMMIT);
-    } /* supportsResultSetHoldability */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsResultSetType(int iType) throws SQLException {
         return true;
-    } /* supportsResultSetType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSavepoints() throws SQLException {
         return true;
-    } /* supportsSavepoints */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSchemasInDataManipulation()
             throws SQLException {
         return false;
-    } /* supportsSchemasInDataManipulation */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSchemasInIndexDefinitions()
             throws SQLException {
         return false;
-    } /* supportsSchemasInIndexDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSchemasInPrivilegeDefinitions()
             throws SQLException {
         return false;
-    } /* supportsSchemasInPrivilegeDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSchemasInProcedureCalls() throws SQLException {
         return false;
-    } /* supportsSchemasInProcedureCalls */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSchemasInTableDefinitions()
             throws SQLException {
         return false;
-    } /* supportsSchemasInTableDefinitions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * we do not have a decent SQL parser yet ... */
     @Override
     public boolean supportsSelectForUpdate() throws SQLException {
         return false;
-    } /* supportsSelectForUpdate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsStatementPooling() throws SQLException {
         return false;
-    } /* supportsStatementPooling */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsStoredFunctionsUsingCallSyntax()
             throws SQLException {
         return false;
-    } /* supportsStoredFunctionsUsingCallSyntax */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsStoredProcedures() throws SQLException {
         return false;
-    } /* supportsStoredProcedures */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSubqueriesInComparisons() throws SQLException {
         return false;
-    } /* supportsSubqueriesInComparisons */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSubqueriesInExists() throws SQLException {
         return false;
-    } /* supportsSubqueriesInExists */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSubqueriesInIns() throws SQLException {
         return false;
-    } /* supportsSubqueriesInIns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsSubqueriesInQuantifieds() throws SQLException {
         return false;
-    } /* supportsSubqueriesInQuantifieds */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsTableCorrelationNames() throws SQLException {
         return false;
-    } /* supportsTableCorrelationNames */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsTransactionIsolationLevel(int iLevel)
             throws SQLException {
         return (iLevel == Connection.TRANSACTION_NONE);
-    } /* supportsTransactionIsolationLevel */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsTransactions() throws SQLException {
         return false;
-    } /* supportsTransactions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsUnion() throws SQLException {
         return false;
-    } /* supportsUnion */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean supportsUnionAll() throws SQLException {
         return false;
-    } /* supportsUnionAll */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean usesLocalFilePerTable() throws SQLException {
         return false;
-    } /* usesLocalFilePerTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
     public boolean usesLocalFiles() throws SQLException {
         return true;
-    } /* usesLocalFiles */
+    }
 
   /*====================================================================
   Meta data result sets
@@ -1743,18 +1584,16 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listCatalogs);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getCatalogs */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns set with single schema identical to user */
     @Override
     public ResultSet getSchemas() throws SQLException {
         return getSchemas(null, null);
-    } /* getSchemas */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -1778,9 +1617,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listSchemas);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getSchemas */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns TABLE and VIEW */
@@ -1798,9 +1636,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listTableTypes);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getTableTypes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Compares three sets of strings
      * @param sCatalog1 catalog of first set.
@@ -1826,9 +1663,8 @@ public class AccessDatabaseMetaData
         if (iCompare == 0)
             iCompare = compareStrings(sTable1, sTable2);
         return iCompare;
-    } /* compareStrings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** compare four sets of strings
      * @param sCatalog1 catalog of first set.
@@ -1862,9 +1698,8 @@ public class AccessDatabaseMetaData
         if (iCompare == 0)
             iCompare = compareStrings(sAttribute1, sAttribute2);
         return iCompare;
-    } /* compareStrings */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -1955,9 +1790,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listTables);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getTables */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -1976,9 +1810,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listTablePrivileges);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getTablePrivileges */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** compare three sets of strings and an int
      * @param sCatalog1
@@ -2010,9 +1843,8 @@ public class AccessDatabaseMetaData
         if (iCompare == 0)
             iCompare = iColumn1.compareTo(iColumn2);
         return iCompare;
-    } /* compareColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** return an SQL query for the SelectQuery
      * @param sq select query.
@@ -2077,8 +1909,6 @@ public class AccessDatabaseMetaData
         }
         return sbSql.toString();
     }
-
-    /*------------------------------------------------------------------*/
 
     /** create and fill a row of JDBC column description from the
      * Jackcess column object.
@@ -2193,9 +2023,8 @@ public class AccessDatabaseMetaData
                                      .getName() + ": " + ie.getMessage());
         }
         return row;
-    } /* getColumnRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** create and fill a row of JDBC column description
      * @param sCatalog catalog.
@@ -2262,11 +2091,9 @@ public class AccessDatabaseMetaData
         row.put(sJDBC_IS_AUTOINCREMENT, null);
         row.put(sJDBC_IS_GENERATEDCOLUMN, null);
         return row;
-    } /* getColumnRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private int addTableColumns(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
                                 int iColumnIndex, List<Row> listColumns)
             throws IOException, SQLException {
@@ -2285,11 +2112,9 @@ public class AccessDatabaseMetaData
             }
         }
         return iColumnIndex;
-    } /* addTableColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private SqlStatement convertAccessSqlToIso(String sAccessSql) {
         AccessSqlFactory asf = new AccessSqlFactory();
         /* instead of trivial replacements we should apply a complete MS ACCESS parser ... */
@@ -2327,11 +2152,9 @@ public class AccessDatabaseMetaData
         qs.setHavingCondition(null);
         qs.setWhereCondition(null);
         return ss;
-    } /* convertAccessSqlToIso */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private QuerySpecification expandAsteriskedSelectSublists(QuerySpecification qs)
             throws SQLException {
         AccessSqlFactory asf = new AccessSqlFactory();
@@ -2408,11 +2231,9 @@ public class AccessDatabaseMetaData
         qs.getSelectSublists()
           .addAll(listSelect);
         return qs;
-    } /* expandAsteriskedSelectSublists */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private List<String> getFromTables(TablePrimary tp) {
         List<String> listTables = new ArrayList<String>();
         if (tp.getTableName()
@@ -2422,11 +2243,9 @@ public class AccessDatabaseMetaData
         if (tp.getTableReference() != null)
             listTables.addAll(getFromTables(tp.getTableReference()));
         return listTables;
-    } /* getFromTables */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private List<String> getFromTables(TableReference tr) {
         List<String> listTables = new ArrayList<String>();
         if (tr.getTablePrimary() != null)
@@ -2436,11 +2255,9 @@ public class AccessDatabaseMetaData
         if (tr.getSecondTableReference() != null)
             listTables.addAll(getFromTables(tr.getSecondTableReference()));
         return listTables;
-    } /* getFromTables */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private List<String> getFromTables(QuerySpecification qs) {
         List<String> listTables = new ArrayList<String>();
         // collect names of all tableprimaries in qs.getTableReferences()
@@ -2451,9 +2268,8 @@ public class AccessDatabaseMetaData
             listTables.addAll(getFromTables(tr));
         }
         return listTables;
-    } /* getFromTables */
+    }
 
-    /*------------------------------------------------------------------*/
     /* search for the table in the tree of the table primary */
     private TablePrimary getTablePrimary(String sTable, TablePrimary tp) {
         TablePrimary tpFound = null;
@@ -2466,9 +2282,8 @@ public class AccessDatabaseMetaData
         if ((tpFound == null) && (tp.getTableReference() != null))
             tpFound = getTablePrimary(sTable, tp.getTableReference());
         return tpFound;
-    } /* getTablePrimary */
+    }
 
-    /*------------------------------------------------------------------*/
     /* search for the table in the JOIN tree of the table reference */
     private TablePrimary getTablePrimary(String sTable, TableReference tr) {
         TablePrimary tp = null;
@@ -2479,7 +2294,7 @@ public class AccessDatabaseMetaData
         if ((tp == null) && (tr.getTablePrimary() != null))
             tp = getTablePrimary(sTable, tr.getTablePrimary());
         return tp;
-    } /* getTablePrimary */
+    }
 
     /** search for table in case insensitive manner.
      * @param sTable table name (Access)
@@ -2497,7 +2312,7 @@ public class AccessDatabaseMetaData
                 tpMatched = tp;
         }
         return tpMatched;
-    } /* getTablePrimary */
+    }
 
     /** get list of column names of table including uppercase variants.
      * @param table Access table.
@@ -2513,7 +2328,7 @@ public class AccessDatabaseMetaData
             listColumnNames.add(sColumnName);
         }
         return listColumnNames;
-    } /* getColumnNames */
+    }
 
     /** set data types for columns in table (including uppercase variants).
      * @param table Access table
@@ -2538,7 +2353,7 @@ public class AccessDatabaseMetaData
                 // System.out.println(table.getName()+"."+sColumn+": "+dtColumn.format());
             }
         }
-    } /* setTableDataTypes */
+    }
 
     /** set table data types from view (results in recursive call).
      * @param sView view name.
@@ -2558,9 +2373,8 @@ public class AccessDatabaseMetaData
             // System.out.println(sView+"."+sColumn+": "+dtColumn.format());
         }
         rs.close();
-    } /* setTableDataTypes */
+    }
 
-    /*------------------------------------------------------------------*/
     private int addSelectColumn(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
                                 String sColumnName, SelectSublist sel, SqlStatement ss, int iColumnIndex, List<Row> listColumns)
             throws SQLException {
@@ -2574,9 +2388,8 @@ public class AccessDatabaseMetaData
             }
         }
         return iColumnIndex;
-    } /* addSelectColumn */
+    }
 
-    /*------------------------------------------------------------------*/
     private Table findTable(String sTable)
             throws IOException {
         Database db = _conn.getDatabase();
@@ -2588,11 +2401,9 @@ public class AccessDatabaseMetaData
                 table = db.getTable(sTableName);
         }
         return table;
-    } /* findTable */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private List<String> getSelectColumnNames(QuerySpecification qs)
             throws SQLException {
         List<IdChain> listSelectColumns = new ArrayList<IdChain>();
@@ -2669,11 +2480,9 @@ public class AccessDatabaseMetaData
             }
         }
         return listColumnNames;
-    } /* getSelectColumnNames */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     private int addViewColumns(String sCatalog, String sSchema, String sTableName, String sColumnNamePattern,
                                int iColumnIndex, List<Row> listColumns)
             throws IOException, SQLException {
@@ -2698,7 +2507,6 @@ public class AccessDatabaseMetaData
             } else // it is a query: determine its data types
                 setTableDataTypes(sTable, tp);
         }
-        /* create list of column names without collisions */
         List<String> listSelectColumnNames = getSelectColumnNames(qs);
         /* evaluate the data types */
         for (int iSelectSublist = 0; iSelectSublist < qs.getSelectSublists()
@@ -2713,7 +2521,6 @@ public class AccessDatabaseMetaData
 
   /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -2775,9 +2582,8 @@ public class AccessDatabaseMetaData
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         // System.out.println("<< "+sTableNamePattern);
         return rs;
-    } /* getColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -2796,7 +2602,7 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listColumnPrivileges);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getColumnPrivileges */
+    }
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -2849,7 +2655,7 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listPrimaryKeys);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getPrimaryKeys */
+    }
 
     /**
      * Returns true, if the two indexes refer to the same columns.
@@ -2874,7 +2680,7 @@ public class AccessDatabaseMetaData
                 bMatch = false;
         }
         return bMatch;
-    } /* matchIndexColumns */
+    }
 
     /** Create a header for exported-key, imported-key, cross-reference
      * result sets.
@@ -2898,7 +2704,7 @@ public class AccessDatabaseMetaData
         rsh.addColumn(sJDBC_PK_NAME, java.sql.Types.VARCHAR);
         rsh.addColumn(sJDBC_DEFERRABILITY, java.sql.Types.VARCHAR);
         return rsh;
-    } /* getForeignKeyHeader */
+    }
 
     /** Create a row for exported-key, imported-key, cross-reference
      * result sets.
@@ -2939,7 +2745,7 @@ public class AccessDatabaseMetaData
         row.put(sJDBC_PK_NAME, indexRef.getName());
         row.put(sJDBC_DEFERRABILITY, Short.valueOf((short) DatabaseMetaData.importedKeyNotDeferrable));
         return row;
-    } /* getForeignKeyRow */
+    }
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -3008,14 +2814,12 @@ public class AccessDatabaseMetaData
                 }
             }
         }
-        /* sort exported keys by FK */
         Collections.sort(listExportedKeys, new ForeignKeyComparator());
         MetaDataCursor mdc = new MetaDataCursor(listExportedKeys);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getExportedKeys */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -3068,14 +2872,12 @@ public class AccessDatabaseMetaData
                 }
             }
         }
-        /* sort imported keys by PK */
         Collections.sort(listImportedKeys, new PrimaryKeyComparator());
         MetaDataCursor mdc = new MetaDataCursor(listImportedKeys);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getImportedKeys */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -3126,14 +2928,12 @@ public class AccessDatabaseMetaData
                 }
             }
         }
-        /* sort exported keys by FK */
         Collections.sort(listCrossReference, new ForeignKeyComparator());
         MetaDataCursor mdc = new MetaDataCursor(listCrossReference);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getCrossReference */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Compares two Integer values
      * @param i1 first Integer value.
@@ -3149,9 +2949,8 @@ public class AccessDatabaseMetaData
         else if ((i1 != null) && (i2 == null))
             iCompare = 1;
         return iCompare;
-    } /* compareIntegers */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -3222,14 +3021,12 @@ public class AccessDatabaseMetaData
             row.put(sJDBC_NUM_PREC_RADIX, Integer.valueOf(10));
             listTypeInfo.add(row);
         }
-        /* sort by DATA_TYPE and "closeness" of match */
         Collections.sort(listTypeInfo, new TypeInfoComparator());
         MetaDataCursor mdc = new MetaDataCursor(listTypeInfo);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getTypeInfo */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} */
     @Override
@@ -3300,9 +3097,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listIndexInfo);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getIndexInfo */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty result set */
@@ -3321,9 +3117,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listFunctions);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getFunctions */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty result set */
@@ -3353,9 +3148,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listFunctionColumns);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getFunctionColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty result set */
@@ -3377,9 +3171,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listProcedures);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getProcedures */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty result set */
@@ -3412,9 +3205,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listProcedureColumns);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getProcedureColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3430,9 +3222,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listSuperTables);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getSuperTables */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3452,9 +3243,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listBestRowIdentifier);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getBestRowIdentifier */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3487,9 +3277,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listAttributes);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getAttributes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3507,9 +3296,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listSuperTypes);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getSuperTypes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3529,9 +3317,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listUdts);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getUDTs */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData}
      * returns empty set */
@@ -3550,9 +3337,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listVersionColumns);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getVersionColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DatabaseMetaData} for JDK 1.7
      * returns empty set */
@@ -3578,9 +3364,8 @@ public class AccessDatabaseMetaData
         MetaDataCursor mdc = new MetaDataCursor(listPseudoColumns);
         AccessResultSet rs = new AccessResultSet(_conn, null, rsh, mdc);
         return rs;
-    } /* getPseudoColumns */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of ClientInfo columns */
     class ClientInfoComparator implements Comparator<Row> {
@@ -3592,10 +3377,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_NAME)
             );
             return iCompare;
-        } /* compare */
-    } /* ClientInfoComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of catalogs */
     class CatalogsComparator implements Comparator<Row> {
@@ -3605,10 +3389,9 @@ public class AccessDatabaseMetaData
             String sCatalog1 = row1.getString(sJDBC_TABLE_CAT);
             String sCatalog2 = row2.getString(sJDBC_TABLE_CAT);
             return compareStrings(sCatalog1, sCatalog2);
-        } /* compare */
-    } /* CatalogsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of schemas */
     class SchemasComparator implements Comparator<Row> {
@@ -3625,10 +3408,9 @@ public class AccessDatabaseMetaData
                         row2.getString(sJDBC_TABLE_SCHEM));
             }
             return iCompare;
-        } /* compare */
-    } /* SchemasComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of tables */
     class TablesComparator implements Comparator<Row> {
@@ -3645,10 +3427,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_TABLE_SCHEM),
                     row2.getString(sJDBC_TABLE_NAME));
             return iCompare;
-        } /* compare */
-    } /* TablesComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of table privileges */
     class PrivilegesComparator implements Comparator<Row> {
@@ -3665,10 +3446,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_TABLE_NAME),
                     row2.getString(sJDBC_PRIVILEGE));
             return iCompare;
-        } /* compare */
-    } /* PrivilegesComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of columns */
     class ColumnsComparator implements Comparator<Row> {
@@ -3685,10 +3465,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_TABLE_NAME),
                     row2.getInt(sJDBC_ORDINAL_POSITION));
             return iCompare;
-        } /* compare */
-    } /* ColumnsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of primary keys */
     class PrimaryKeysComparator implements Comparator<Row> {
@@ -3698,10 +3477,9 @@ public class AccessDatabaseMetaData
             String sColumn1 = row1.getString(sJDBC_COLUMN_NAME);
             String sColumn2 = row2.getString(sJDBC_COLUMN_NAME);
             return compareStrings(sColumn1, sColumn2);
-        } /* compare */
-    } /* PrimaryKeysComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of exported keys */
     class ForeignKeyComparator implements Comparator<Row> {
@@ -3718,10 +3496,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_FKTABLE_NAME),
                     Integer.valueOf((row2.getShort(sJDBC_KEY_SEQ)).intValue()));
             return iCompare;
-        } /* compare */
-    } /* ForeignKeyComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of imported keys */
     class PrimaryKeyComparator implements Comparator<Row> {
@@ -3738,10 +3515,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_PKTABLE_NAME),
                     Integer.valueOf((row2.getShort(sJDBC_KEY_SEQ)).intValue()));
             return iCompare;
-        } /* compare */
-    } /* PrimaryKeyComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of type info */
     class TypeInfoComparator implements Comparator<Row> {
@@ -3775,10 +3551,9 @@ public class AccessDatabaseMetaData
                     iCompare = sTypeName1.compareTo(sTypeName2);
             }
             return iCompare;
-        } /* compare */
-    } /* TypeInfoComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of index info */
     class IndexInfoComparator implements Comparator<Row> {
@@ -3807,10 +3582,9 @@ public class AccessDatabaseMetaData
                 iCompare = wOrdinalPosition1.compareTo(wOrdinalPosition2);
             }
             return iCompare;
-        } /* compare */
-    } /* IndexInfoComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of functions */
     class FunctionsComparator implements Comparator<Row> {
@@ -3828,10 +3602,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_SPECIFIC_NAME)
             );
             return iCompare;
-        } /* compare */
-    } /* FunctionsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of function columns */
     class FunctionColumnsComparator implements Comparator<Row> {
@@ -3854,10 +3627,9 @@ public class AccessDatabaseMetaData
                 iCompare = iOrdinalPosition1.compareTo(iOrdinalPosition2);
             }
             return iCompare;
-        } /* compare */
-    } /* FunctionColumnsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of procedures */
     class ProceduresComparator implements Comparator<Row> {
@@ -3875,10 +3647,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_PROCEDURE_NAME)
             );
             return iCompare;
-        } /* compare */
-    } /* ProceduresComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of procedure columns */
     class ProcedureColumnsComparator implements Comparator<Row> {
@@ -3901,10 +3672,9 @@ public class AccessDatabaseMetaData
                 iCompare = iOrdinalPosition1.compareTo(iOrdinalPosition2);
             }
             return iCompare;
-        } /* compare */
-    } /* ProcedureColumnsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of best row identifier columns */
     class BestRowIdentifierComparator implements Comparator<Row> {
@@ -3914,10 +3684,9 @@ public class AccessDatabaseMetaData
             int iCompare = row1.getShort(sJDBC_SCOPE)
                                .compareTo(row2.getShort(sJDBC_SCOPE));
             return iCompare;
-        } /* compare */
-    } /* BestRowIdentifierComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of attributes columns */
     class AttributesComparator implements Comparator<Row> {
@@ -3934,10 +3703,9 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_TYPE_NAME),
                     row2.getInt(sJDBC_ORDINAL_POSITION));
             return iCompare;
-        } /* compare */
-    } /* AttributesComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of UDTs columns */
     class UdtsComparator implements Comparator<Row> {
@@ -3958,10 +3726,9 @@ public class AccessDatabaseMetaData
                         row2.getString(sJDBC_TYPE_NAME));
             }
             return iCompare;
-        } /* compare */
-    } /* UdtsComparator */
+        }
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Comparator for sorting rows of pseudo columns */
     class PseudoColumnsComparator implements Comparator<Row> {
@@ -3978,7 +3745,7 @@ public class AccessDatabaseMetaData
                     row2.getString(sJDBC_TABLE_NAME),
                     row2.getString(sJDBC_COLUMN_NAME));
             return iCompare;
-        } /* compare */
-    } /* PseudoColumnsComparator */
+        }
+    }
 
-} /* AcessDatabaseMetaData */
+}

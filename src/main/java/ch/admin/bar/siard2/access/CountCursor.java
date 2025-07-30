@@ -17,15 +17,11 @@ public class CountCursor implements ResultSetCursor {
         _iCurrentRow = -1;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public void beforeFirst() {
         _iCurrentRow = -1;
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -33,23 +29,17 @@ public class CountCursor implements ResultSetCursor {
         _iCurrentRow = getCount();
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public boolean isBeforeFirst() throws IOException {
         return _iCurrentRow < 0;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public boolean isAfterLast() throws IOException {
         return _iCurrentRow > 0;
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -62,8 +52,6 @@ public class CountCursor implements ResultSetCursor {
         return row;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public Row getPreviousRow() throws IOException {
@@ -74,8 +62,6 @@ public class CountCursor implements ResultSetCursor {
         }
         return row;
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -88,15 +74,11 @@ public class CountCursor implements ResultSetCursor {
         return row;
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public void deleteCurrentRow() throws IOException {
         throw new IOException("Count cannot be deleted!");
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -104,23 +86,17 @@ public class CountCursor implements ResultSetCursor {
         throw new IOException("Count cannot be updated!");
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public void insertRow(Row row) throws IOException {
         throw new IOException("Count cannot be inserted!");
     }
 
-    /*------------------------------------------------------------------*/
-
     /** {@link ResultSetCursor} */
     @Override
     public int getRow() {
         return _iCurrentRow + 1;
     }
-
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override

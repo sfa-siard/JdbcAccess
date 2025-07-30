@@ -22,7 +22,6 @@ public class AnalyzeDatabase {
     /** Jackcess database */
     private Database _db = null;
 
-    /*------------------------------------------------------------------*/
     public AnalyzeDatabase(String[] args)
             throws IOException {
         String sDatabase = _sACCESS_DATABASE;
@@ -31,7 +30,7 @@ public class AnalyzeDatabase {
         _db = new DatabaseBuilder().setReadOnly(true)
                                    .setFile(new File(sDatabase))
                                    .open();
-    } /* constructor */
+    }
 
     /**
      * @param args
@@ -44,14 +43,12 @@ public class AnalyzeDatabase {
         } catch (Exception e) {
             System.err.println(EU.getExceptionMessage(e));
         }
-    } /* main */
+    }
 
     /** @return Jackcess database */
     Database getDatabase() {
         return _db;
     }
-
-    /*------------------------------------------------------------------*/
     public void analyzePropertyMap(PropertyMap pm) {
         System.out.println("    PropertyMap " + pm.getName() + " (" + pm.getClass()
                                                                         .getSimpleName() + ")");
@@ -60,9 +57,8 @@ public class AnalyzeDatabase {
             System.out.println("      " + prop.getName() + " " + prop.getType()
                                                                      .toString() + ": " + prop.getValue());
         }
-    } /* analyzePropertyMap */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeDataType(DataType dt)
             throws SQLException {
         System.out.println("    DataType " + dt.toString() + " (" + dt.getDeclaringClass()
@@ -77,9 +73,8 @@ public class AnalyzeDatabase {
         int iUnitSize = dt.getUnitSize();
         if (iUnitSize > 1)
             System.out.println("      Unit size " + iUnitSize);
-    } /* analyzeDataType */
+    }
 
-    /*------------------------------------------------------------------*/
     @SuppressWarnings("rawtypes")
     public void analyzeComplexInfo(ComplexColumnInfo cci, PropertyMap pm) {
         System.out.println("    ComplexColumnInfo " + cci.getType()
@@ -97,9 +92,8 @@ public class AnalyzeDatabase {
                 System.out.println("      Row source: " + sRowSource);
             }
         }
-    } /* analyzeComplexInfo */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeColumn(Column column)
             throws SQLException, IOException {
         System.out.println("  Column " + column.getName() + " (" + column.getClass()
@@ -127,9 +121,8 @@ public class AnalyzeDatabase {
             if (cci != null)
                 analyzeComplexInfo(cci, pm);
         }
-    } /* analyzeColumn */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeIndex(Index index)
             throws IOException {
         System.out.println("  Index " + index.getName() + " (" + index.getClass()
@@ -143,9 +136,8 @@ public class AnalyzeDatabase {
         Index indexReferenced = index.getReferencedIndex();
         if (indexReferenced != null)
             System.out.println("    Referenced " + indexReferenced.getName());
-    } /* analyzeIndex */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeRow(Row row, List<? extends Column> listColumns)
             throws SQLException, IOException {
         System.out.println("  Row " + row.getId() + " (" + row.getClass()
@@ -273,9 +265,8 @@ public class AnalyzeDatabase {
                     throw new SQLException("Invalid data type " + dt + " encountered!");
             }
         }
-    } /* analyzeRow */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeTable(Table table)
             throws SQLException, IOException {
         System.out.println("Table " + table.getName() + " (" + table.getClass()
@@ -300,21 +291,18 @@ public class AnalyzeDatabase {
             Row row = table.getNextRow();
             analyzeRow(row, table.getColumns());
         }
-    } /* analyzeTable */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeQuery(Query query) {
         System.out.println("Query " + query.getName() + " (" + query.getClass()
                                                                     .getSimpleName() + ")");
-    } /* analyzeQuery */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyzeRelationship(Relationship rel) {
         System.out.println("Relationship " + rel.getName() + " (" + rel.getClass()
                                                                        .getSimpleName() + ")");
-    } /* analyzeRelationship */
+    }
 
-    /*------------------------------------------------------------------*/
     public void analyze()
             throws SQLException, IOException {
         System.out.println("TABLES");
@@ -336,14 +324,12 @@ public class AnalyzeDatabase {
             analyzeRelationship(rel);
         }
         // _db.getRelationships()
-    } /* analyze */
+    }
 
-    /*------------------------------------------------------------------*/
 
-    /*------------------------------------------------------------------*/
     public void close()
             throws IOException {
         _db.close();
-    } /* close */
+    }
 
-} /* class AnalyteDatabase */
+}

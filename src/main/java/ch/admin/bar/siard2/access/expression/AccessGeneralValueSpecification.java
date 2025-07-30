@@ -8,7 +8,7 @@ public class AccessGeneralValueSpecification
         extends GeneralValueSpecification {
     public AccessGeneralValueSpecification(AccessSqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
     @Override
     public void setGeneralValue(GeneralValue generalValue) {
@@ -16,6 +16,6 @@ public class AccessGeneralValueSpecification
         if (generalValue == GeneralValue.QUESTION_MARK)
             ((AccessSqlFactory) getSqlFactory()).getQuestionMarks()
                                                 .add(this);
-    } /* setGeneralValue */
+    }
 
-} /* AccessGeneralValueSpecification */
+}

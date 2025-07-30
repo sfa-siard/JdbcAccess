@@ -38,7 +38,6 @@ abstract public class Shunting {
     public static final int iMAX_CLOB_LENGTH = 8388607;
     private static final SqlFactory _sf = new BaseSqlFactory();
 
-    /*------------------------------------------------------------------*/
 
     /** Return the appropriate column name of the select sublist.
      * @param ss select sublist.
@@ -55,9 +54,8 @@ abstract public class Shunting {
             sColumnName = ss.format()
                             .replace("\"", "");
         return sColumnName;
-    } /* getColumnName */
+    }
 
-    /*------------------------------------------------------------------*/
     public static DataType convertTypeFromAccess(Column column,
                                                  int iPrecision, int iScale, int iLength, int iLengthInUnits,
                                                  DatabaseMetaData dmd)
@@ -247,9 +245,8 @@ abstract public class Shunting {
                 dt.initArrayType(pt, iCardinality);
         }
         return dt;
-    } /* convertTypeFromAccess */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** Convert JDBC sql type to SQL data types.
      * N.B.: In this direction we do not handle array types!
@@ -334,9 +331,8 @@ abstract public class Shunting {
                 break;
         }
         return dt;
-    } /* convertTypeFromJdbc */
+    }
 
-    /*------------------------------------------------------------------*/
     private static Object getSimpleSqlValue(Row row, String sColumnName, DataType dt)
             throws IOException {
         Object oValue = null;
@@ -487,9 +483,8 @@ abstract public class Shunting {
             }
         }
         return oValue;
-    } /* getSimpleSqlValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** get complex value from row for filling SQL statement.
      * @param row row.
@@ -543,9 +538,8 @@ abstract public class Shunting {
         }
         oValue = listValues;
         return oValue;
-    } /* getComplexSqlValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** fill sql statement with values from row.
      * N.B.: It is assumed that global values, the column names and the types
@@ -591,9 +585,8 @@ abstract public class Shunting {
                 throw new IllegalArgumentException("Cannot fill INSERT statement with row values.");
         } else
             throw new IllegalArgumentException("Cannot fill DDL statement with row values!");
-    } /* fillSqlValues */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** transform predefined SQL value to a result set row value.
      * @param oValue SQL value.
@@ -714,9 +707,8 @@ abstract public class Shunting {
             }
         }
         return oValue;
-    } /* getRowValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** get an MS Access row value from an SQL value.
      * @param oValue SQL value.
@@ -729,9 +721,8 @@ abstract public class Shunting {
         if (oValue != null)
             oValue = getRowValue(oValue, pt);
         return oValue;
-    } /* fillSimpleRowValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** get an MS Access row value from an SQL value.
      * @param oValue SQL value.
@@ -752,9 +743,8 @@ abstract public class Shunting {
                                       .format(), ao);
         }
         return array;
-    } /* fillComplexRowValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** fill a result set row with values from sql.
      * @param sqlstmt sql statement with initialized column values.
@@ -803,6 +793,6 @@ abstract public class Shunting {
                 throw new IllegalArgumentException("Cannot fill row values from an INSERT statement.");
         } else
             throw new IllegalArgumentException("Cannot fill row values from a DDL statement!");
-    } /* fillRowValues */
+    }
 
-} /* Shunting */
+}

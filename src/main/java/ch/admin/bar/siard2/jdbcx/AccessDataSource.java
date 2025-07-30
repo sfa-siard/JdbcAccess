@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.util.logging.Logger;
 
-/*====================================================================*/
 
 /** AccessDataSource implements a wrapped Jackcess DataSource for
  * MS Access.
@@ -44,14 +43,14 @@ public class AccessDataSource
     private PrintWriter _pwLogWriter = new PrintWriter(System.out);
 
     public AccessDataSource() {
-    } /* constructor */
+    }
 
     public AccessDataSource(String sUrl, String sUser, String sPassword)
             throws SQLException {
         setUrl(sUrl);
         setUser(sUser);
         setPassword(sPassword);
-    } /* constructor AccessDataSource */
+    }
 
     /** @return file name of MS Access database. */
     public String getDatabaseName() {
@@ -106,13 +105,11 @@ public class AccessDataSource
   /*====================================================================
   Wrapper 
   ====================================================================*/
-    /*------------------------------------------------------------------*/
 
     /** @return true, if database is to be opened read-only. */
     public boolean getReadOnly() {
         return _bReadOnly;
     }
-    /*------------------------------------------------------------------*/
 
     /** @param bReadOnly true, if database is to be opened read-only. */
     public void setReadOnly(boolean bReadOnly) {
@@ -127,7 +124,7 @@ public class AccessDataSource
     @Override
     public boolean isWrapperFor(Class<?> clsInterface) throws SQLException {
         return clsInterface.equals(DataSource.class);
-    } /* isWrapperFor */
+    }
 
     /** {@link ResultSetMetaData} */
     @Override
@@ -139,7 +136,7 @@ public class AccessDataSource
         else
             throw new SQLException("AccessDataSource cannot be unwrapped to " + clsInterface.getName() + "!");
         return impl;
-    } /* unwrap */
+    }
 
     /** {@link DataSource} */
     @Override
@@ -168,23 +165,20 @@ public class AccessDataSource
   /*======================================================================
   Interface methods 
   ======================================================================*/
-    /*------------------------------------------------------------------*/
     /** {@link DataSource} for JDK 1.7
      @Override public Logger getParentLogger()
      throws SQLFeatureNotSupportedException
      {
      throw new SQLFeatureNotSupportedException("ParentLogger not supported!");
-     } /* getParentLogger */
+     }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DataSource} */
     @Override
     public Connection getConnection() throws SQLException {
         return new AccessConnection(_sDatabaseName, _sUser, _sPassword, _bReadOnly, _pwLogWriter);
-    } /* getConnection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link DataSource} */
     @Override
@@ -193,15 +187,14 @@ public class AccessDataSource
         setUser(sUser);
         setPassword(sPassword);
         return getConnection();
-    } /* getConnection */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link Driver} for JDK 1.7 */
     @Override
     public Logger getParentLogger()
             throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException("ParentLogger not supported!");
-    } /* getParentLogger */
+    }
 
-} /* AccessDataSource */
+}

@@ -13,10 +13,9 @@ package ch.admin.bar.siard2.jdbc;
 
 import java.sql.NClob;
 
-/*====================================================================*/
 
 /** AccessNClob implements an NClob as a trivial string-based Clob.
  * @author Hartwig Thomas
  */
 public class AccessNClob extends AccessClob implements NClob {
-} /* AccessNClob */
+}

@@ -37,7 +37,7 @@ public class AccessDriverTester {
             fail(se.getClass()
                    .getName() + ": " + se.getMessage());
         }
-    } /* setUp */
+    }
 
     @After
     public void tearDown() {
@@ -50,18 +50,18 @@ public class AccessDriverTester {
             fail(se.getClass()
                    .getName() + ": " + se.getMessage());
         }
-    } /* tearDown */
+    }
 
     @Test
     public void testWrapping() {
         assertSame("Registration of driver wrapper failed!", AccessDriver.class, _driver.getClass());
         assertSame("Choice of connection wrapper failed!", AccessConnection.class, _conn.getClass());
-    } /* testWrapping */
+    }
 
     @Test
     public void testCompliant() {
         assertSame("Access driver not JDBC compliant!", true, _driver.jdbcCompliant());
-    } /* testCompliant */
+    }
 
     @Test
     public void testAcceptsURL() {
@@ -72,7 +72,7 @@ public class AccessDriverTester {
             fail(se.getClass()
                    .getName() + ": " + se.getMessage());
         }
-    } /* testAcceptsURL */
+    }
 
     @Test
     public void testVersion() {
@@ -80,7 +80,7 @@ public class AccessDriverTester {
         int iMinorVersion = _driver.getMinorVersion();
         String sVersion = iMajorVersion + "." + iMinorVersion;
         assertEquals("Wrong Access Driver version " + sVersion + " found!", AccessDriver.sVERSION, sVersion);
-    } /* testVersion */
+    }
 
     @Test
     public void testDriverProperties() {
@@ -97,6 +97,6 @@ public class AccessDriverTester {
             fail(se.getClass()
                    .getName() + ": " + se.getMessage());
         }
-    } /* testDriverProperties */
+    }
 
 }

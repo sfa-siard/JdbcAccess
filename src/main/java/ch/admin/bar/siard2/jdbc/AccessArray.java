@@ -23,17 +23,17 @@ public class AccessArray implements Array {
         dt.parse(sTypeName);
         _pt = dt.getPredefinedType()
                 .getType();
-    } /* constructor */
+    }
 
     @Override
     public void free() throws SQLException {
         _ao = null;
-    } /* free */
+    }
 
     @Override
     public Object getArray() throws SQLException {
         return _ao;
-    } /* getArray */
+    }
 
     @Override
     public Object getArray(Map<String, Class<?>> arg0)
@@ -53,7 +53,7 @@ public class AccessArray implements Array {
                 throw new IllegalArgumentException("Invalid start index!");
         }
         return ao;
-    } /* getArray */
+    }
 
     @Override
     public Object getArray(long arg0, int arg1, Map<String, Class<?>> arg2)
@@ -64,12 +64,12 @@ public class AccessArray implements Array {
     @Override
     public int getBaseType() throws SQLException {
         return _pt.getSqlType();
-    } /* getBaseType */
+    }
 
     @Override
     public String getBaseTypeName() throws SQLException {
         return _pt.getKeyword();
-    } /* getBaseTypeName */
+    }
 
     @Override
     public ResultSet getResultSet() throws SQLException {

@@ -10,12 +10,10 @@ import java.util.Map;
 public class AccessTablePrimary
         extends TablePrimary {
 
-    /*------------------------------------------------------------------*/
     public AccessTablePrimary(AccessSqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
-    /*------------------------------------------------------------------*/
     @Override
     public DataType getColumnType(String sColumnName) {
         DataType dt = null;
@@ -27,9 +25,8 @@ public class AccessTablePrimary
                 dt = getColumnTypes().get(sColumn);
         }
         return dt;
-    } /* getColumnType */
+    }
 
-    /*------------------------------------------------------------------*/
     @Override
     public boolean hasColumn(String sColumn) {
         boolean bHasColumn = false;
@@ -42,6 +39,6 @@ public class AccessTablePrimary
                 bHasColumn = true;
         }
         return bHasColumn;
-    } /* hasColumn */
+    }
 
 }

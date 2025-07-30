@@ -62,7 +62,7 @@ public class AccessStatementTester extends BaseStatementTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* setUpClass */
+    }
 
     private void setUp(boolean bSql) {
         try {
@@ -88,13 +88,13 @@ public class AccessStatementTester extends BaseStatementTester {
     @Before
     public void setUp() {
         setUp(false);
-    } /* setUp */
+    }
 
 
     @Test
     public void testClass() {
         assertEquals("Wrong statement class!", AccessStatement.class, getStatement().getClass());
-    } /* testClass */
+    }
 
     @Override
     @Test
@@ -105,7 +105,7 @@ public class AccessStatementTester extends BaseStatementTester {
         } catch (SQLException se) {
             System.out.println(EU.getExceptionMessage(se));
         }
-    } /* testGetMoreResults */
+    }
 
     @Test
     public void testExecuteUpdate() {
@@ -121,7 +121,7 @@ public class AccessStatementTester extends BaseStatementTester {
         tearDown();
         setUpClass();
         /***/
-    } /* testExcuteUpdate */
+    }
 
     @Test
     public void testCreateTable() {
@@ -160,7 +160,7 @@ public class AccessStatementTester extends BaseStatementTester {
         tearDown();
         setUpClass();
         /***/
-    } /* testExcuteUpdate */
+    }
 
     @Test
     public void testExecuteQuery() {
@@ -181,7 +181,7 @@ public class AccessStatementTester extends BaseStatementTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testExecuteQuery */
+    }
 
     @Test
     public void testExecuteSelectSizes() {
@@ -230,7 +230,7 @@ public class AccessStatementTester extends BaseStatementTester {
         } catch (SQLException se) {
             System.out.println(EU.getExceptionMessage(se));
         }
-    } /* testExecuteSelectSizes */
+    }
 
     /***
      @Test public void testExecuteSelectCount()
@@ -301,4 +301,4 @@ public class AccessStatementTester extends BaseStatementTester {
      }
      ***/
 
-} /* AccessStatementTester */
+}

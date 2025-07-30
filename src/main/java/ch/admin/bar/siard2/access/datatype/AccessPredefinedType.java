@@ -16,7 +16,6 @@ import ch.enterag.sqlparser.datatype.PredefinedType;
 import ch.enterag.sqlparser.datatype.enums.IntervalField;
 import ch.enterag.sqlparser.datatype.enums.PreType;
 
-/*====================================================================*/
 
 /** AccessPredefinedType implements the type translation from ISO SQL to
  * MS Access.
@@ -24,16 +23,14 @@ import ch.enterag.sqlparser.datatype.enums.PreType;
  */
 public class AccessPredefinedType
         extends PredefinedType {
-    /*------------------------------------------------------------------*/
 
     /** constructor with factory only to be called by factory.
      * @param sf factory.
      */
     public AccessPredefinedType(SqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** map INTERVAL type to BIGINT (number of months) or leave it unchanged,
      * if IntervalQualifier has already beens set.
@@ -44,9 +41,8 @@ public class AccessPredefinedType
         if ((type == PreType.INTERVAL) && (getIntervalQualifier() == null))
             type = PreType.BIGINT;
         super.setType(type);
-    } /* setType */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** map INTERVAL type to BIGINT (number of months), if it is a YEAR-MONTH
      * interval, or to DECIMAL(19,9) (seconds) if it is a DAY-SECOND interval.
@@ -66,6 +62,6 @@ public class AccessPredefinedType
                 throw new IllegalArgumentException("Interval qualifier must have valid start field!");
         } else
             super.setIntervalQualifier(iq);
-    } /* setIntervalQualifier */
+    }
 
-} /* class AccessPredefinedType */
+}

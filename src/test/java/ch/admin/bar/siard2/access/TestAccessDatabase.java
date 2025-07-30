@@ -96,7 +96,7 @@ public class TestAccessDatabase {
         drop();
         create();
         _conn.close();
-    } /* constructor */
+    }
 
     public static QualifiedId getQualifiedSimpleTable() {
         return new QualifiedId(null, _sTEST_SCHEMA, _sTEST_TABLE_SIMPLE);
@@ -169,11 +169,11 @@ public class TestAccessDatabase {
     private void drop() {
         dropViews();
         dropTables();
-    } /* drop */
+    }
 
     private void dropViews() {
         dropView(getQualifiedSimpleView());
-    } /* dropViews */
+    }
 
     private void dropView(QualifiedId qiView) {
         String sSql = "DROP VIEW " + qiView.format();
@@ -185,11 +185,11 @@ public class TestAccessDatabase {
         } catch (SQLException se) {
             System.out.println(EU.getExceptionMessage(se));
         }
-    } /* dropView */
+    }
 
     private void dropTables() {
         dropTable(getQualifiedSimpleTable());
-    } /* dropTables */
+    }
 
     private void dropTable(QualifiedId qiTable) {
         String sSql = "DROP TABLE " + qiTable.format();
@@ -201,20 +201,20 @@ public class TestAccessDatabase {
         } catch (SQLException se) {
             System.out.println(EU.getExceptionMessage(se));
         }
-    } /* dropTable */
+    }
 
     private void create()
             throws SQLException {
         createTables();
         createViews();
         insertTables();
-    } /* create */
+    }
 
     private List<TestColumnDefinition> getSingle(TestColumnDefinition cd) {
         List<TestColumnDefinition> listSingle =
                 Collections.singletonList(cd);
         return listSingle;
-    } /* getSingle */
+    }
 
     private void createTables()
             throws SQLException {
@@ -224,7 +224,7 @@ public class TestAccessDatabase {
                     getQualifiedComplexTable(),
                     getSingle(_listCdComplex.get(_iPrimaryComplex))
         );
-    } /* createTables */
+    }
 
     private void createTable(QualifiedId qiTable, List<TestColumnDefinition> listCd,
                              List<TestColumnDefinition> listCdPrimary, List<TestColumnDefinition> listCdForeign,
@@ -266,12 +266,12 @@ public class TestAccessDatabase {
         stmt.executeUpdate(sbSql.toString());
         stmt.close();
         _conn.commit();
-    } /* createTable */
+    }
 
     private void createViews()
             throws SQLException {
         createView(getQualifiedSimpleView(), _listCdSimple, getQualifiedSimpleTable());
-    } /* createTables */
+    }
 
     private void createView(QualifiedId qiView,
                             List<TestColumnDefinition> listCd, QualifiedId qiTable)
@@ -291,12 +291,12 @@ public class TestAccessDatabase {
         stmt.executeUpdate(sbSql.toString());
         stmt.close();
         _conn.commit();
-    } /* createView */
+    }
 
     private void insertTables()
             throws SQLException {
         insertTable(getQualifiedSimpleTable(), _listCdSimple);
-    } /* insertTables */
+    }
 
     private void insertTable(QualifiedId qiTable, List<TestColumnDefinition> listCd)
             throws SQLException {
@@ -342,7 +342,7 @@ public class TestAccessDatabase {
         pstmt.executeUpdate();
         pstmt.close();
         _conn.commit();
-    } /* insertTable */
+    }
 
     /*
      * We cannot create a database with all needed features programmatically
@@ -378,6 +378,6 @@ public class TestAccessDatabase {
                 sValueLiteral = SqlLiterals.formatStringLiteral(getValue().toString());
             return sValueLiteral;
         }
-    } /* ColumnDefinition */
+    }
 
-} /* TestAccessDatabase */
+}

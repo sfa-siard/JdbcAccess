@@ -15,7 +15,6 @@ import com.healthmarketscience.jackcess.Row;
 import java.io.IOException;
 import java.util.List;
 
-/*====================================================================*/
 
 /** Primitive cursor implementation used for meta data.
  * @author Hartwig Thomas */
@@ -26,7 +25,6 @@ public class MetaDataCursor
     /** list of all rows */
     private List<Row> _listRows = null;
 
-    /*------------------------------------------------------------------*/
 
     /** constructor with list of rows to be accessed through the cursor
      * interface.
@@ -35,41 +33,36 @@ public class MetaDataCursor
     public MetaDataCursor(List<Row> listRows) {
         _listRows = listRows;
         _iCurrentRow = -1;
-    } /* constructor MetaDataCursor */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void beforeFirst() {
         _iCurrentRow = -1;
-    } /* beforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void afterLast() {
         _iCurrentRow = _listRows.size();
-    } /* afterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isBeforeFirst() throws IOException {
         return (_iCurrentRow < 0);
-    } /* isBeforeFirst */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public boolean isAfterLast() throws IOException {
         return (_iCurrentRow >= _listRows.size());
-    } /* isAfterLast */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -81,9 +74,8 @@ public class MetaDataCursor
                 row = _listRows.get(_iCurrentRow);
         }
         return row;
-    } /* getNextRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
@@ -95,56 +87,50 @@ public class MetaDataCursor
                 row = _listRows.get(_iCurrentRow);
         }
         return row;
-    } /* getPreviousRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public Row refreshCurrentRow() throws IOException {
         Row row = _listRows.get(_iCurrentRow);
         return row;
-    } /* getCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getRow() {
         return _iCurrentRow + 1;
-    } /* getRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void deleteCurrentRow() throws IOException {
         _listRows.remove(_iCurrentRow);
-    } /* deleteCurrentRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void updateCurrentRow(Row row) throws IOException {
         _listRows.set(_iCurrentRow, row);
-    } /* updateRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public void insertRow(Row row)
             throws IOException {
         _listRows.add(row);
-    } /* insertRow */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** {@link ResultSetCursor} */
     @Override
     public int getCount() {
         return _listRows.size();
-    } /* getCount */
+    }
 
-} /* MetaDataCursor */
+}

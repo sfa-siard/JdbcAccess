@@ -47,7 +47,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         sbSql.append("\r\nFROM ");
         sbSql.append(qiTable.format());
         return sbSql.toString();
-    } /* getTableQuery */
+    }
 
     @BeforeClass
     public static void setUpClass() {
@@ -79,7 +79,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* setUpClass */
+    }
 
     private void openResultSet(boolean bSql, String sQuery)
             throws SQLException {
@@ -101,7 +101,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         ResultSet rs = stmt.executeQuery(sQuery);
         ResultSetMetaData rsmd = rs.getMetaData();
         setResultSetMetaData(rsmd, rs);
-    } /* openResultSet */
+    }
 
     @Before
     public void setUp() {
@@ -110,12 +110,12 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* setUp */
+    }
 
     @Test
     public void testClass() {
         assertEquals("Wrong database meta data class!", AccessResultSetMetaData.class, getResultSetMetaData().getClass());
-    } /* testClass */
+    }
 
     @Test
     public void testNativeSimple() {
@@ -125,7 +125,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testNativeSimple */
+    }
 
     @Test
     public void testNativeComplex() {
@@ -135,7 +135,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testNativeComplex */
+    }
 
     @Test
     public void testSqlSimple() {
@@ -145,6 +145,6 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
         } catch (SQLException se) {
             fail(EU.getExceptionMessage(se));
         }
-    } /* testSqlSimple */
+    }
 
 }

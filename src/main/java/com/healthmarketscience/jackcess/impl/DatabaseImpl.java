@@ -1391,7 +1391,6 @@ public class DatabaseImpl implements Database {
                     throw new SQLException("Relationship " + sDropName + " could not be dropped!", "HY000");
             }
         }
-        /* delete all rows with this name from MSysObjects */
         if (_systemCatalog == null)
             _systemCatalog = getSystemTable(TABLE_SYSTEM_CATALOG);
         cursor = new CursorBuilder(_systemCatalog).toCursor();
@@ -1488,7 +1487,6 @@ public class DatabaseImpl implements Database {
             if (iId.intValue() == iObjectId)
                 cursor.deleteCurrentRow();
         }
-        /* delete all rows with this id from MSysObjects */
         if (_systemCatalog == null)
             _systemCatalog = getSystemTable(TABLE_SYSTEM_CATALOG);
         cursor = new CursorBuilder(_systemCatalog).toCursor();
@@ -1522,7 +1520,7 @@ public class DatabaseImpl implements Database {
             }
         } else
             throw new SQLException("Query " + sDropName + " cannot be dropped, because it is referenced!", "23000");
-    } /* dropQuery */
+    }
 
     public List<Relationship> getRelationships(Table table1, Table table2)
             throws IOException {

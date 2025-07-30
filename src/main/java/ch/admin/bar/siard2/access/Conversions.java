@@ -29,7 +29,6 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 
-/*====================================================================*/
 
 /** Implements "best effort" conversions between database value types.
  * @author Hartwig
@@ -38,7 +37,6 @@ public abstract class Conversions {
     /** milli seconds per day */
     public static final long lMILLI_SECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-    /*------------------------------------------------------------------*/
 
     /** convert source object using the given conversion method if it exists.
      * @param oSource source object (not null!).
@@ -69,9 +67,8 @@ public abstract class Conversions {
                                                   .getName() + ": " + iae.getMessage());
         }
         return oResult;
-    } /* get */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Boolean or throw IllegalArgumentException, if
      * that is not possible.
@@ -92,9 +89,8 @@ public abstract class Conversions {
                                                            Boolean.class.getName());
         }
         return b;
-    } /* getBoolean */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Byte or throw IllegalArgumentException, if
      * that is not possible.
@@ -115,9 +111,8 @@ public abstract class Conversions {
                                                            Byte.class.getName());
         }
         return by;
-    } /* getByte */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Short or throw IllegalArgumentException, if
      * that is not possible.
@@ -138,9 +133,8 @@ public abstract class Conversions {
                                                            Short.class.getName());
         }
         return w;
-    } /* getShort */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Integer or throw IllegalArgumentException, if
      * that is not possible.
@@ -165,9 +159,8 @@ public abstract class Conversions {
                                                            Integer.class.getName());
         }
         return i;
-    } /* getInteger */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Long or throw IllegalArgumentException, if
      * that is not possible.
@@ -188,9 +181,8 @@ public abstract class Conversions {
                                                            Long.class.getName());
         }
         return l;
-    } /* getLong */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Float or throw IllegalArgumentException, if
      * that is not possible.
@@ -211,9 +203,8 @@ public abstract class Conversions {
                                                            Float.class.getName());
         }
         return f;
-    } /* getFloat */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Double or throw IllegalArgumentException, if
      * that is not possible.
@@ -234,9 +225,8 @@ public abstract class Conversions {
                                                            Double.class.getName());
         }
         return d;
-    } /* getDouble */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to BigInteger or throw IllegalArgumentException, if
      * that is not possible.
@@ -269,9 +259,8 @@ public abstract class Conversions {
                                                            BigInteger.class.getName());
         }
         return bi;
-    } /* getBigInteger */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to BigDecimal or throw IllegalArgumentException, if
      * that is not possible.
@@ -301,9 +290,8 @@ public abstract class Conversions {
                                                            BigDecimal.class.getName());
         }
         return bd;
-    } /* getBigDecimal */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to BigDecimal or throw IllegalArgumentException, if
      * that is not possible.
@@ -343,9 +331,8 @@ public abstract class Conversions {
                                                            BigDecimal.class.getName());
         }
         return bd;
-    } /* getBigDecimal */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to String or throw IllegalArgumentException, if
      * that is not possible.
@@ -381,9 +368,8 @@ public abstract class Conversions {
             }
         }
         return s;
-    } /* getString */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to java.sql.Date or throw IllegalArgumentException, if
      * that is not possible.
@@ -408,7 +394,6 @@ public abstract class Conversions {
                     date = java.sql.Date.valueOf(s);
                 } catch (IllegalArgumentException iae) {
                 }
-                /* else try to parse it */
                 try {
                     date = new java.sql.Date(java.util.Date.parse(s));
                 } catch (IllegalArgumentException iae) {
@@ -438,9 +423,8 @@ public abstract class Conversions {
                                                            java.sql.Date.class.getName());
         }
         return date;
-    } /* getDate */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to java.sql.Time or throw IllegalArgumentException, if
      * that is not possible.
@@ -465,7 +449,6 @@ public abstract class Conversions {
                     time = java.sql.Time.valueOf(s);
                 } catch (IllegalArgumentException iae) {
                 }
-                /* else try to parse it */
                 try {
                     time = new java.sql.Time(java.util.Date.parse(s));
                 } catch (IllegalArgumentException iae) {
@@ -495,9 +478,8 @@ public abstract class Conversions {
                                                            java.sql.Time.class.getName());
         }
         return time;
-    } /* getTime */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to java.sql.Timestamp or throw IllegalArgumentException, if
      * that is not possible.
@@ -524,7 +506,6 @@ public abstract class Conversions {
                     ts = java.sql.Timestamp.valueOf(s);
                 } catch (IllegalArgumentException iae) {
                 }
-                /* else try to parse it */
                 try {
                     ts = new java.sql.Timestamp(java.util.Date.parse(s));
                 } catch (IllegalArgumentException iae) {
@@ -555,9 +536,8 @@ public abstract class Conversions {
                                                            java.sql.Timestamp.class.getName());
         }
         return ts;
-    } /* getTimestamp */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to Duration or throw IllegalArgumentException, if
      * that is not possible.
@@ -606,9 +586,8 @@ public abstract class Conversions {
                                                            Duration.class.getName());
         }
         return duration;
-    } /* getDuration */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to byte[] or throw IllegalArgumentException, if
      * that is not possible.
@@ -645,9 +624,8 @@ public abstract class Conversions {
                                                            byte[].class.getName());
         }
         return buffer;
-    } /* getBytes */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to BLOB or throw IllegalArgumentException, if
      * that is not possible.
@@ -674,9 +652,8 @@ public abstract class Conversions {
             }
         }
         return blob;
-    } /* getBlob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to CLOB or throw IllegalArgumentException, if
      * that is not possible.
@@ -703,9 +680,8 @@ public abstract class Conversions {
             }
         }
         return clob;
-    } /* getClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to NCLOB or throw IllegalArgumentException, if
      * that is not possible.
@@ -732,9 +708,8 @@ public abstract class Conversions {
             }
         }
         return nclob;
-    } /* getNClob */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to NCLOB or throw IllegalArgumentException, if
      * that is not possible.
@@ -761,9 +736,8 @@ public abstract class Conversions {
             }
         }
         return sx;
-    } /* getSqlXml */
+    }
 
-    /*------------------------------------------------------------------*/
 
     /** convert object to URL or throw IllegalArgumentException, if
      * that is not possible.
@@ -794,6 +768,6 @@ public abstract class Conversions {
             }
         }
         return url;
-    } /* getURL */
+    }
 
-} /* class Conversions */
+}

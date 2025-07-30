@@ -13,7 +13,7 @@ public class AccessValueExpressionPrimary
         extends ValueExpressionPrimary {
     public AccessValueExpressionPrimary(AccessSqlFactory sf) {
         super(sf);
-    } /* constructor */
+    }
 
     private BooleanValueExpression getIsNull(ValueExpression ve) {
         RowValuePredicand rvp = getSqlFactory().newRowValuePredicand();
@@ -41,9 +41,8 @@ public class AccessValueExpressionPrimary
             }
         }
         return bve;
-    } /* getBooleanValue */
+    }
 
-    /*------------------------------------------------------------------*/
 
     @Override
     public void parse(SqlParser.ValueExpressionPrimaryContext ctx) {
@@ -121,5 +120,5 @@ public class AccessValueExpressionPrimary
         if (dt == null)
             dt = super.getDataType(ss);
         return dt;
-    } /* getDataType */
+    }
 }
