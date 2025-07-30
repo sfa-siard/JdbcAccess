@@ -3,10 +3,10 @@ package ch.admin.bar.siard2.jdbc;
 import ch.admin.bar.siard2.access.TestAccessDatabase;
 import ch.admin.bar.siard2.access.TestSqlDatabase;
 import ch.admin.bar.siard2.jdbcx.AccessDataSource;
-import ch.enterag.utils.EU;
 import ch.enterag.utils.FU;
 import ch.enterag.utils.jdbc.BaseConnectionTester;
 import ch.enterag.utils.lang.Execute;
+import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class AccessConnectionTester extends BaseConnectionTester {
     private static final File fileTEST_EMPTY_DATABASE = new File("src/test/resources/testfiles/testempty.accdb");
@@ -53,20 +52,16 @@ public class AccessConnectionTester extends BaseConnectionTester {
     }
 
     @Before
-    public void setUp() {
-        try {
-            AccessDataSource dsAccess = new AccessDataSource();
-            dsAccess.setDatabaseName(fileTEST_SQL_DATABASE.getAbsolutePath());
-            dsAccess.setDescription("SQL data base");
-            dsAccess.setReadOnly(false);
-            dsAccess.setUser(sUSER);
-            dsAccess.setPassword(sPASSWORD);
-            AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
-            connAccess.setAutoCommit(false);
-            setConnection(connAccess);
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void setUp() throws SQLException {
+        AccessDataSource dsAccess = new AccessDataSource();
+        dsAccess.setDatabaseName(fileTEST_SQL_DATABASE.getAbsolutePath());
+        dsAccess.setDescription("SQL data base");
+        dsAccess.setReadOnly(false);
+        dsAccess.setUser(sUSER);
+        dsAccess.setPassword(sPASSWORD);
+        AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
+        connAccess.setAutoCommit(false);
+        setConnection(connAccess);
     }
 
     @Test
@@ -74,26 +69,18 @@ public class AccessConnectionTester extends BaseConnectionTester {
         assertEquals("Wrong connection class!", AccessConnection.class, getConnection().getClass());
     }
 
+    @SneakyThrows
     @Override
-    @Test
+    @Test(expected = SQLException.class)
     public void testPrepareCall() {
-        enter();
-        try {
-            getConnection().prepareCall(_sSQL);
-        } catch (SQLException se) {
-            System.out.println(EU.getExceptionMessage(se));
-        }
+        getConnection().prepareCall(_sSQL);
     }
 
+    @SneakyThrows
     @Override
     @Test
     public void testSetTransactionIsolation() {
-        enter();
-        try {
-            getConnection().setTransactionIsolation(Connection.TRANSACTION_NONE);
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+        getConnection().setTransactionIsolation(Connection.TRANSACTION_NONE);
     }
 
 }

@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class TestSqlDatabase {
     public static final String _sTEST_SCHEMA = null;
     private static final String _sTEST_TABLE_SIMPLE = "TSQLSIMPLE";

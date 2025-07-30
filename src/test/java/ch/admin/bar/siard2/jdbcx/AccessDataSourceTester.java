@@ -2,6 +2,7 @@ package ch.admin.bar.siard2.jdbcx;
 
 import ch.admin.bar.siard2.jdbc.AccessConnection;
 import ch.enterag.utils.FU;
+import lombok.SneakyThrows;
 import org.junit.*;
 
 import javax.sql.DataSource;
@@ -30,14 +31,11 @@ public class AccessDataSourceTester {
     @Before
     public void setUp() throws Exception {
         boolean bCopied = false;
-        try {
-            if (fileBACKUP_DATABASE.exists())
-                FU.copy(fileBACKUP_DATABASE, fileTEST_DATABASE);
-            else
-                FU.copy(fileTEST_DATABASE, fileBACKUP_DATABASE);
-            bCopied = true;
-        } catch (Exception e) {
-        }
+        if (fileBACKUP_DATABASE.exists())
+            FU.copy(fileBACKUP_DATABASE, fileTEST_DATABASE);
+        else
+            FU.copy(fileTEST_DATABASE, fileBACKUP_DATABASE);
+        bCopied = true;
         if (!bCopied)
             fail("Initial copying failed!");
         _ds = new AccessDataSource();
@@ -82,70 +80,39 @@ public class AccessDataSourceTester {
         assertEquals("Invalid read-only value!", bREAD_ONLY, _ds.getReadOnly());
     }
 
+    @SneakyThrows
     @Test
     public void testIsWrapperFor() {
         System.out.println("\nIsWrapperFor");
-        try {
-            assertTrue("IsWrapperFor failed!", _ds.isWrapperFor(DataSource.class));
-            assertFalse("IsWrapperFor did not fail!", _ds.isWrapperFor(Connection.class));
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+        assertTrue("IsWrapperFor failed!", _ds.isWrapperFor(DataSource.class));
+        assertFalse("IsWrapperFor did not fail!", _ds.isWrapperFor(Connection.class));
     }
 
-    @Test
+    @SneakyThrows
+    @Test(expected = SQLException.class)
     public void testUnwrap() {
-        System.out.println("\nUnwrap");
-        try {
-            DataSource ds = _ds.unwrap(DataSource.class);
-            assertNotNull("Unwrap failed!", ds);
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
-        try {
-            Connection conn = _ds.unwrap(Connection.class);
-            assertNull("Unwrap did not fail!", conn);
-        } catch (SQLException se) {
-        }
+        DataSource ds = _ds.unwrap(DataSource.class);
+        assertNotNull("Unwrap failed!", ds);
+        Connection conn = _ds.unwrap(Connection.class);
     }
 
     @Test
-    public void testGetLoginTimeout() {
-        System.out.println("\nGetLoginTimeout");
-        try {
-            assertEquals("Invalid login timeout!", 0, _ds.getLoginTimeout());
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void testGetLoginTimeout() throws SQLException {
+        assertEquals("Invalid login timeout!", 0, _ds.getLoginTimeout());
     }
 
     @Test
-    public void testGetConnection() {
-        System.out.println("\nGetConnection");
-        try {
-            Connection conn = _ds.getConnection();
-            assertEquals("Invalid class!", AccessConnection.class, conn.getClass());
-            conn.close();
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void testGetConnection() throws SQLException {
+        Connection conn = _ds.getConnection();
+        assertEquals("Invalid class!", AccessConnection.class, conn.getClass());
+        conn.close();
     }
 
     @Test
-    public void testGetConnectionStringString() {
-        System.out.println("\nGetConnection(\"Admin\",\"\")");
-        try {
-            Connection conn = _ds.getConnection(sUSER, "");
-            assertEquals("Invalid class!", AccessConnection.class, conn.getClass());
-            conn.close();
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void testGetConnectionStringString() throws SQLException {
+        Connection conn = _ds.getConnection(sUSER, "");
+        assertEquals("Invalid class!", AccessConnection.class, conn.getClass());
+        conn.close();
     }
 
 }

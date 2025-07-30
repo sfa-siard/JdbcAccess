@@ -23,33 +23,16 @@ public class AccessDriverTester {
     private Connection _conn = null;
 
     @Before
-    public void setUp() {
-        try {
-            Class.forName(_sDRIVER_CLASS);
-        } catch (ClassNotFoundException cnfe) {
-            fail(cnfe.getClass()
-                     .getName() + ": " + cnfe.getMessage());
-        }
-        try {
-            _driver = DriverManager.getDriver(_sDB_URL);
-            _conn = DriverManager.getConnection(_sDB_URL, _sDB_USER, _sDB_PASSWORD);
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void setUp() throws ClassNotFoundException, SQLException {
+        Class.forName(_sDRIVER_CLASS);
+        _driver = DriverManager.getDriver(_sDB_URL);
+        _conn = DriverManager.getConnection(_sDB_URL, _sDB_USER, _sDB_PASSWORD);
     }
 
     @After
-    public void tearDown() {
-        try {
-            if ((_conn != null) && (!_conn.isClosed()))
-                _conn.close();
-            else
-                fail("Connection cannot be closed!");
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void tearDown() throws SQLException {
+        if ((_conn != null) && (!_conn.isClosed())) _conn.close();
+        else fail("Connection cannot be closed!");
     }
 
     @Test
@@ -64,14 +47,9 @@ public class AccessDriverTester {
     }
 
     @Test
-    public void testAcceptsURL() {
-        try {
-            assertSame("Valid Access URL not accepted!", true, _driver.acceptsURL(_sDB_URL));
-            assertSame("Invalid Access URL accepted!", false, _driver.acceptsURL(_sINVALID_ACCESS_URL));
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void testAcceptsURL() throws SQLException {
+        assertSame("Valid Access URL not accepted!", true, _driver.acceptsURL(_sDB_URL));
+        assertSame("Invalid Access URL accepted!", false, _driver.acceptsURL(_sINVALID_ACCESS_URL));
     }
 
     @Test
@@ -83,20 +61,15 @@ public class AccessDriverTester {
     }
 
     @Test
-    public void testDriverProperties() {
-        try {
-            Properties props = new Properties();
-            props.setProperty(AccessDriver.sPROP_USER, "TheUser");
-            props.setProperty(AccessDriver.sPROP_PASSWORD, "ThePassword");
-            props.setProperty(AccessDriver.sPROP_READ_ONLY, "false");
-            DriverPropertyInfo[] apropInfo = _driver.getPropertyInfo(_sDB_URL, props);
-            for (DriverPropertyInfo dpi : apropInfo)
-                System.out.println(dpi.name + ": " + dpi.value + " (" + dpi.description + ")");
-            assertSame("Unexpected driver properties!", 3, apropInfo.length);
-        } catch (SQLException se) {
-            fail(se.getClass()
-                   .getName() + ": " + se.getMessage());
-        }
+    public void testDriverProperties() throws SQLException {
+        Properties props = new Properties();
+        props.setProperty(AccessDriver.sPROP_USER, "TheUser");
+        props.setProperty(AccessDriver.sPROP_PASSWORD, "ThePassword");
+        props.setProperty(AccessDriver.sPROP_READ_ONLY, "false");
+        DriverPropertyInfo[] apropInfo = _driver.getPropertyInfo(_sDB_URL, props);
+        for (DriverPropertyInfo dpi : apropInfo)
+            System.out.println(dpi.name + ": " + dpi.value + " (" + dpi.description + ")");
+        assertSame("Unexpected driver properties!", 3, apropInfo.length);
     }
 
 }

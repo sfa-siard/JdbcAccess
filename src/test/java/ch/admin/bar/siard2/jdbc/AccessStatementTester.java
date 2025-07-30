@@ -1,6 +1,5 @@
 package ch.admin.bar.siard2.jdbc;
 
-
 import ch.admin.bar.siard2.access.TestAccessDatabase;
 import ch.admin.bar.siard2.access.TestSqlDatabase;
 import ch.admin.bar.siard2.jdbcx.AccessDataSource;
@@ -13,6 +12,7 @@ import ch.enterag.utils.database.SqlTypes;
 import ch.enterag.utils.jdbc.BaseDatabaseMetaData;
 import ch.enterag.utils.jdbc.BaseStatementTester;
 import ch.enterag.utils.lang.Execute;
+import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -96,27 +96,21 @@ public class AccessStatementTester extends BaseStatementTester {
         assertEquals("Wrong statement class!", AccessStatement.class, getStatement().getClass());
     }
 
+    @SneakyThrows
+    @Override
+    @Test(expected = SQLException.class)
+    public void testGetMoreResults() {
+        getStatement().getMoreResults();
+    }
+
+    @SneakyThrows
     @Override
     @Test
-    public void testGetMoreResults() {
-        enter();
-        try {
-            getStatement().getMoreResults();
-        } catch (SQLException se) {
-            System.out.println(EU.getExceptionMessage(se));
-        }
-    }
-
-    @Test
     public void testExecuteUpdate() {
-        try {
-            String sSql = "CREATE SCHEMA TESTSCHEMA";
-            Statement stmt = getStatement();
-            int iResult = stmt.executeUpdate(sSql);
-            assertEquals("Invalid result!", 0, iResult);
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+        String sSql = "CREATE SCHEMA TESTSCHEMA";
+        Statement stmt = getStatement();
+        int iResult = stmt.executeUpdate(sSql);
+        assertEquals("Invalid result!", 0, iResult);
         /***/
         tearDown();
         setUpClass();
@@ -124,112 +118,102 @@ public class AccessStatementTester extends BaseStatementTester {
     }
 
     @Test
-    public void testCreateTable() {
-        try {
-            String sSql = "CREATE TABLE \"Admin\".TABLETEST1(\r\n" +
-                    "  \"id\" INTEGER NOT NULL,\r\n" +
-                    "  COLNUMERIC NUMERIC(18),\r\n" +
-                    "  COLDECIMAL DECIMAL,\r\n" +
-                    "  COLCHAR CHAR,\r\n" +
-                    "  COLTEXT VARCHAR(256),\r\n" +
-                    "  COLMEMO CLOB,\r\n" +
-                    "  COLLONG INTEGER,\r\n" +
-                    "  COLINT SMALLINT,\r\n" +
-                    "  COLBYTE SMALLINT,\r\n" +
-                    "  COLDOUBLE DOUBLE PRECISION,\r\n" +
-                    "  COLFLOAT REAL,\r\n" +
-                    "  COLDATETIME TIMESTAMP,\r\n" +
-                    "  COLDATE TIMESTAMP,\r\n" +
-                    "  COLTIME TIMESTAMP,\r\n" +
-                    "  COLMONEY DECIMAL(19, 4),\r\n" +
-                    "  COLBOOLEAN BOOLEAN,\r\n" +
-                    "  \"COLLOOKUP.COLLOOKUP[1]\" VARCHAR(2),\r\n" +
-                    "  \"COLLOOKUP.COLLOOKUP[2]\" VARCHAR(2),\r\n" +
-                    "  COLRICHTEXT CLOB,\r\n" +
-                    "  \"COLATTACH.COLATTACH[1]\" BLOB,\r\n" +
-                    "  COLOLE BLOB,\r\n" +
-                    "  COLLINK CLOB,\r\n" +
-                    "  PRIMARY KEY(\"id\"))";
-            Statement stmt = getStatement();
-            int iResult = stmt.executeUpdate(sSql);
-            assertEquals("Invalid result!", 0, iResult);
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void testCreateTable() throws SQLException {
+        String sSql = "CREATE TABLE \"Admin\".TABLETEST1(\r\n" +
+                "  \"id\" INTEGER NOT NULL,\r\n" +
+                "  COLNUMERIC NUMERIC(18),\r\n" +
+                "  COLDECIMAL DECIMAL,\r\n" +
+                "  COLCHAR CHAR,\r\n" +
+                "  COLTEXT VARCHAR(256),\r\n" +
+                "  COLMEMO CLOB,\r\n" +
+                "  COLLONG INTEGER,\r\n" +
+                "  COLINT SMALLINT,\r\n" +
+                "  COLBYTE SMALLINT,\r\n" +
+                "  COLDOUBLE DOUBLE PRECISION,\r\n" +
+                "  COLFLOAT REAL,\r\n" +
+                "  COLDATETIME TIMESTAMP,\r\n" +
+                "  COLDATE TIMESTAMP,\r\n" +
+                "  COLTIME TIMESTAMP,\r\n" +
+                "  COLMONEY DECIMAL(19, 4),\r\n" +
+                "  COLBOOLEAN BOOLEAN,\r\n" +
+                "  \"COLLOOKUP.COLLOOKUP[1]\" VARCHAR(2),\r\n" +
+                "  \"COLLOOKUP.COLLOOKUP[2]\" VARCHAR(2),\r\n" +
+                "  COLRICHTEXT CLOB,\r\n" +
+                "  \"COLATTACH.COLATTACH[1]\" BLOB,\r\n" +
+                "  COLOLE BLOB,\r\n" +
+                "  COLLINK CLOB,\r\n" +
+                "  PRIMARY KEY(\"id\"))";
+        Statement stmt = getStatement();
+        int iResult = stmt.executeUpdate(sSql);
+        assertEquals("Invalid result!", 0, iResult);
         /***/
         tearDown();
         setUpClass();
         /***/
     }
 
+    @SneakyThrows
+    @Override
     @Test
     public void testExecuteQuery() {
-        try {
-            QualifiedId qiTable = TestAccessDatabase.getQualifiedComplexTable();
-            String sQuery = "SELECT COUNT(*) AS RECORDS, SUM(OCTET_LENGTH(\"COLMEMO\")) AS \"COLMEMO_SIZE\" FROM " + qiTable.format();
-            Statement stmt = getStatement();
-            ResultSet rs = stmt.executeQuery(sQuery);
-            if (rs != null) {
-                while (rs.next()) {
-                    int iRecords = rs.getInt("RECORDS");
-                    int iSize = rs.getInt("COLMEMO_SIZE");
-                    System.out.println("Records: " + iRecords + ", Size: " + iSize);
-                }
-                rs.close();
+        QualifiedId qiTable = TestAccessDatabase.getQualifiedComplexTable();
+        String sQuery = "SELECT COUNT(*) AS RECORDS, SUM(OCTET_LENGTH(\"COLMEMO\")) AS \"COLMEMO_SIZE\" FROM " + qiTable.format();
+        Statement stmt = getStatement();
+        ResultSet rs = stmt.executeQuery(sQuery);
+        if (rs != null) {
+            while (rs.next()) {
+                int iRecords = rs.getInt("RECORDS");
+                int iSize = rs.getInt("COLMEMO_SIZE");
+                System.out.println("Records: " + iRecords + ", Size: " + iSize);
             }
-            stmt.close();
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
+            rs.close();
         }
+        stmt.close();
     }
 
     @Test
-    public void testExecuteSelectSizes() {
-        try {
-            QualifiedId qiTable = TestAccessDatabase.getQualifiedComplexTable();
-            BaseDatabaseMetaData bdmd = (BaseDatabaseMetaData) getStatement().getConnection()
-                                                                             .getMetaData();
-            StringBuilder sbSql = new StringBuilder("SELECT COUNT(*) AS RECORDS");
-            for (int iColumn = 0; iColumn < TestAccessDatabase._listCdComplex.size(); iColumn++) {
-                TestColumnDefinition tcd = TestAccessDatabase._listCdComplex.get(iColumn);
-                String sColumnName = tcd.getName();
-                int iDataType = Types.NULL;
-                String sTypeName = null;
-                ResultSet rsColumns = bdmd.getColumns(
-                        qiTable.getCatalog(),
-                        bdmd.toPattern(qiTable.getSchema()),
-                        bdmd.toPattern(qiTable.getName()),
-                        bdmd.toPattern(sColumnName));
-                if (rsColumns.next()) {
-                    iDataType = rsColumns.getInt("DATA_TYPE");
-                    sTypeName = rsColumns.getString("TYPE_NAME");
-                }
-                rsColumns.close();
-                System.out.println(sColumnName + ": " + iDataType + " (" + SqlTypes.getTypeName(iDataType) + ") " + sTypeName);
-                if ((iDataType == Types.BLOB) ||
-                        (iDataType == Types.CLOB) ||
-                        (iDataType == Types.NCLOB)) {
-                    sbSql.append(",\r\n  SUM(OCTET_LENGTH(");
-                    sbSql.append(SqlLiterals.formatId(sColumnName));
-                    sbSql.append(")) AS ");
-                    sbSql.append(SqlLiterals.formatId(sColumnName + "_SIZE"));
-                }
+    public void testExecuteSelectSizes() throws SQLException {
+        QualifiedId qiTable = TestAccessDatabase.getQualifiedComplexTable();
+        BaseDatabaseMetaData bdmd = (BaseDatabaseMetaData) getStatement().getConnection()
+                                                                         .getMetaData();
+        StringBuilder sbSql = new StringBuilder("SELECT COUNT(*) AS RECORDS");
+        for (int iColumn = 0; iColumn < TestAccessDatabase._listCdComplex.size(); iColumn++) {
+            TestColumnDefinition tcd = TestAccessDatabase._listCdComplex.get(iColumn);
+            String sColumnName = tcd.getName();
+            int iDataType = Types.NULL;
+            String sTypeName = null;
+            ResultSet rsColumns = bdmd.getColumns(
+                    qiTable.getCatalog(),
+                    bdmd.toPattern(qiTable.getSchema()),
+                    bdmd.toPattern(qiTable.getName()),
+                    bdmd.toPattern(sColumnName));
+            if (rsColumns.next()) {
+                iDataType = rsColumns.getInt("DATA_TYPE");
+                sTypeName = rsColumns.getString("TYPE_NAME");
             }
-            sbSql.append("\r\nFROM ");
-            sbSql.append(qiTable.format());
-            ResultSet rs = getStatement().executeQuery(sbSql.toString());
-            ResultSetMetaData rsmd = rs.getMetaData();
-            while (rs.next()) {
-                for (int iColumn = 0; iColumn < rsmd.getColumnCount(); iColumn++) {
-                    String sColumnName = rsmd.getColumnLabel(iColumn + 1);
-                    long lValue = rs.getLong(iColumn + 1);
-                    System.out.println(sColumnName + ": " + lValue);
-                }
+            rsColumns.close();
+            System.out.println(sColumnName + ": " + iDataType + " (" + SqlTypes.getTypeName(iDataType) + ") " + sTypeName);
+            if ((iDataType == Types.BLOB) ||
+                    (iDataType == Types.CLOB) ||
+                    (iDataType == Types.NCLOB)) {
+                sbSql.append(",\r\n  SUM(OCTET_LENGTH(");
+                sbSql.append(SqlLiterals.formatId(sColumnName));
+                sbSql.append(")) AS ");
+                sbSql.append(SqlLiterals.formatId(sColumnName + "_SIZE"));
             }
-            rs.close();
-        } catch (SQLException se) {
-            System.out.println(EU.getExceptionMessage(se));
         }
+        sbSql.append("\r\nFROM ");
+        sbSql.append(qiTable.format());
+        ResultSet rs = getStatement().executeQuery(sbSql.toString());
+        ResultSetMetaData rsmd = rs.getMetaData();
+        while (rs.next()) {
+            for (int iColumn = 0; iColumn < rsmd.getColumnCount(); iColumn++) {
+                String sColumnName = rsmd.getColumnLabel(iColumn + 1);
+                long lValue = rs.getLong(iColumn + 1);
+                System.out.println(sColumnName + ": " + lValue);
+            }
+        }
+        rs.close();
     }
 
     /***

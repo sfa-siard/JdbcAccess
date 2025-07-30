@@ -37,11 +37,10 @@ public class TestAccessDatabase {
     }
 
     private Connection _conn = null;
-    public TestAccessDatabase(File file)
-            throws SQLException {
-        String sUrl = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};" +
-                "DBQ=" + file.getAbsolutePath() + ";" +
-                "ExtendedAnsiSQL=1";
+
+    public TestAccessDatabase(File file) throws SQLException {
+
+        String sUrl = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};" + "DBQ=" + file.getAbsolutePath() + ";" + "ExtendedAnsiSQL=1";
         _conn = DriverManager.getConnection(sUrl, "Admin", "");
         /*** Array can be created, but we prefer not to try this through ODBC ...
          Array array = _conn.createArrayOf("TYPEARRAY", asTypeInfoColumn);
@@ -53,10 +52,8 @@ public class TestAccessDatabase {
          sqlxml.setString("<p>Blabla</p>");
          ***/
         DatabaseMetaData dmd = _conn.getMetaData();
-        System.out.println("Database: " + dmd.getDatabaseProductName() +
-                                   " " + dmd.getDatabaseProductVersion());
-        System.out.println("Driver: " + dmd.getDriverName() +
-                                   " " + dmd.getDriverVersion());
+        System.out.println("Database: " + dmd.getDatabaseProductName() + " " + dmd.getDatabaseProductVersion());
+        System.out.println("Driver: " + dmd.getDriverName() + " " + dmd.getDriverVersion());
     /* Type info
      * See also https://docs.microsoft.com/en-us/sql/odbc/microsoft/microsoft-access-data-types
     String[] asTypeInfoColumn = new String[] {
@@ -203,39 +200,27 @@ public class TestAccessDatabase {
         }
     }
 
-    private void create()
-            throws SQLException {
+    private void create() throws SQLException {
         createTables();
         createViews();
         insertTables();
     }
 
     private List<TestColumnDefinition> getSingle(TestColumnDefinition cd) {
-        List<TestColumnDefinition> listSingle =
-                Collections.singletonList(cd);
+        List<TestColumnDefinition> listSingle = Collections.singletonList(cd);
         return listSingle;
     }
 
-    private void createTables()
-            throws SQLException {
-        createTable(getQualifiedSimpleTable(), _listCdSimple,
-                    getSingle(_listCdSimple.get(_iPrimarySimple)),
-                    getSingle(_listCdSimple.get(_iForeignSimple)),
-                    getQualifiedComplexTable(),
-                    getSingle(_listCdComplex.get(_iPrimaryComplex))
-        );
+    private void createTables() throws SQLException {
+        createTable(getQualifiedSimpleTable(), _listCdSimple, getSingle(_listCdSimple.get(_iPrimarySimple)), getSingle(_listCdSimple.get(_iForeignSimple)), getQualifiedComplexTable(), getSingle(_listCdComplex.get(_iPrimaryComplex)));
     }
 
-    private void createTable(QualifiedId qiTable, List<TestColumnDefinition> listCd,
-                             List<TestColumnDefinition> listCdPrimary, List<TestColumnDefinition> listCdForeign,
-                             QualifiedId qiTableReferenced, List<TestColumnDefinition> listCdReferenced)
-            throws SQLException {
+    private void createTable(QualifiedId qiTable, List<TestColumnDefinition> listCd, List<TestColumnDefinition> listCdPrimary, List<TestColumnDefinition> listCdForeign, QualifiedId qiTableReferenced, List<TestColumnDefinition> listCdReferenced) throws SQLException {
         StringBuilder sbSql = new StringBuilder("CREATE TABLE ");
         sbSql.append(qiTable.format());
         sbSql.append("\r\n(\r\n  ");
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
-            if (iColumn > 0)
-                sbSql.append(",\r\n  ");
+            if (iColumn > 0) sbSql.append(",\r\n  ");
             TestColumnDefinition tcd = listCd.get(iColumn);
             sbSql.append(tcd.getName());
             sbSql.append(" ");
@@ -268,20 +253,16 @@ public class TestAccessDatabase {
         _conn.commit();
     }
 
-    private void createViews()
-            throws SQLException {
+    private void createViews() throws SQLException {
         createView(getQualifiedSimpleView(), _listCdSimple, getQualifiedSimpleTable());
     }
 
-    private void createView(QualifiedId qiView,
-                            List<TestColumnDefinition> listCd, QualifiedId qiTable)
-            throws SQLException {
+    private void createView(QualifiedId qiView, List<TestColumnDefinition> listCd, QualifiedId qiTable) throws SQLException {
         StringBuilder sbSql = new StringBuilder("CREATE VIEW ");
         sbSql.append(qiView.format());
         sbSql.append(" AS\r\nSELECT\r\n  ");
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
-            if (iColumn > 0)
-                sbSql.append(",\r\n  ");
+            if (iColumn > 0) sbSql.append(",\r\n  ");
             sbSql.append(listCd.get(iColumn)
                                .getName());
         }
@@ -293,19 +274,16 @@ public class TestAccessDatabase {
         _conn.commit();
     }
 
-    private void insertTables()
-            throws SQLException {
+    private void insertTables() throws SQLException {
         insertTable(getQualifiedSimpleTable(), _listCdSimple);
     }
 
-    private void insertTable(QualifiedId qiTable, List<TestColumnDefinition> listCd)
-            throws SQLException {
+    private void insertTable(QualifiedId qiTable, List<TestColumnDefinition> listCd) throws SQLException {
         StringBuilder sbSql = new StringBuilder("INSERT INTO ");
         sbSql.append(qiTable.format());
         sbSql.append("\r\n(\r\n  ");
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
-            if (iColumn > 0)
-                sbSql.append(",\r\n  ");
+            if (iColumn > 0) sbSql.append(",\r\n  ");
             TestColumnDefinition tcd = listCd.get(iColumn);
             sbSql.append(tcd.getName());
         }
@@ -313,12 +291,10 @@ public class TestAccessDatabase {
         Map<Integer, Object> mapParameters = new HashMap<Integer, Object>();
         int iParameter = 1;
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
-            if (iColumn > 0)
-                sbSql.append(",\r\n  ");
+            if (iColumn > 0) sbSql.append(",\r\n  ");
             TestColumnDefinition tcd = listCd.get(iColumn);
             String sLiteral = tcd.getValueLiteral();
-            if (sLiteral.length() < 1000)
-                sbSql.append(sLiteral);
+            if (sLiteral.length() < 1000) sbSql.append(sLiteral);
             else {
                 sbSql.append("?");
                 mapParameters.put(Integer.valueOf(iParameter), tcd.getValue());
@@ -362,18 +338,14 @@ public class TestAccessDatabase {
             if (getValue() instanceof Timestamp) {
                 sValueLiteral = sValueLiteral.substring("TIMESTAMP".length());
                 int i = sValueLiteral.indexOf('.');
-                if (i >= 0)
-                    sValueLiteral = sValueLiteral.substring(0, i) + "'";
+                if (i >= 0) sValueLiteral = sValueLiteral.substring(0, i) + "'";
             } else if (getValue() instanceof byte[])
                 sValueLiteral = "0x" + sValueLiteral.substring(2, sValueLiteral.length() - 3);
-            else if (getValue() instanceof Byte)
-                sValueLiteral = ((Byte) getValue()).toString();
+            else if (getValue() instanceof Byte) sValueLiteral = ((Byte) getValue()).toString();
             else if (getValue() instanceof Boolean) {
                 boolean b = ((Boolean) getValue()).booleanValue();
-                if (b)
-                    sValueLiteral = "1";
-                else
-                    sValueLiteral = "0";
+                if (b) sValueLiteral = "1";
+                else sValueLiteral = "0";
             } else if (getValue() instanceof UUID)
                 sValueLiteral = SqlLiterals.formatStringLiteral(getValue().toString());
             return sValueLiteral;

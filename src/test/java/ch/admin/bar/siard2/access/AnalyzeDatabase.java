@@ -18,7 +18,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class AnalyzeDatabase {
-    private static final String _sACCESS_DATABASE = "testfiles/testaccess.accdb";
+    private static final String _sACCESS_DATABASE = "src/test/resources/testfiles/testaccess.accdb";
     /** Jackcess database */
     private Database _db = null;
 

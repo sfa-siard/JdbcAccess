@@ -5,7 +5,6 @@ import ch.admin.bar.siard2.access.TestSqlDatabase;
 import ch.admin.bar.siard2.jdbcx.AccessDataSource;
 import ch.enterag.sqlparser.SqlLiterals;
 import ch.enterag.sqlparser.identifier.QualifiedId;
-import ch.enterag.utils.EU;
 import ch.enterag.utils.FU;
 import ch.enterag.utils.base.TestColumnDefinition;
 import ch.enterag.utils.jdbc.BaseResultSetMetaDataTester;
@@ -23,7 +22,6 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
     private static final String _sNativeQuerySimple = getTableQuery(TestAccessDatabase.getQualifiedSimpleTable(), TestAccessDatabase._listCdSimple);
@@ -39,8 +37,7 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
     private static String getTableQuery(QualifiedId qiTable, List<TestColumnDefinition> listCd) {
         StringBuilder sbSql = new StringBuilder("SELECT\r\n  ");
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
-            if (iColumn > 0)
-                sbSql.append(",\r\n  ");
+            if (iColumn > 0) sbSql.append(",\r\n  ");
             TestColumnDefinition tcd = listCd.get(iColumn);
             sbSql.append(SqlLiterals.formatId(tcd.getName()));
         }
@@ -50,39 +47,31 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
     }
 
     @BeforeClass
-    public static void setUpClass() {
-        try {
-            FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_ACCESS_DATABASE);
-            /* The JDBC-ODBC bridge could still be used until JAVA 1.8 using
-             * an extract from the JAVA 7 run-time library and the JdbcOdbc.dll.
-             * Now that is blocked by the split packages prohibition.
-             * So we use the test database originally created under JAVA 1.8.
-             * If we ever want more controlled features in the test database
-             * we shall be in trouble ... (have to use JAVA 1.7 or 1.8!)
-             */
-            if (Execute.isOsWindows() && Execute.isJavaVersionLessThan("9"))
-                new TestAccessDatabase(fileTEST_ACCESS_DATABASE);
-            else
-                FU.copy(fileTEST_ACCESS_SOURCE, fileTEST_ACCESS_DATABASE);
-            FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_SQL_DATABASE);
-            AccessDataSource dsAccess = new AccessDataSource();
-            dsAccess.setDatabaseName(fileTEST_SQL_DATABASE.getAbsolutePath());
-            dsAccess.setDescription("SQL data base");
-            dsAccess.setReadOnly(false);
-            dsAccess.setUser(sUSER);
-            dsAccess.setPassword(sPASSWORD);
-            AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
-            new TestSqlDatabase(connAccess);
-            connAccess.close();
-        } catch (IOException ie) {
-            fail(EU.getExceptionMessage(ie));
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public static void setUpClass() throws SQLException, IOException {
+        FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_ACCESS_DATABASE);
+        /* The JDBC-ODBC bridge could still be used until JAVA 1.8 using
+         * an extract from the JAVA 7 run-time library and the JdbcOdbc.dll.
+         * Now that is blocked by the split packages prohibition.
+         * So we use the test database originally created under JAVA 1.8.
+         * If we ever want more controlled features in the test database
+         * we shall be in trouble ... (have to use JAVA 1.7 or 1.8!)
+         */
+        if (Execute.isOsWindows() && Execute.isJavaVersionLessThan("9"))
+            new TestAccessDatabase(fileTEST_ACCESS_DATABASE);
+        else FU.copy(fileTEST_ACCESS_SOURCE, fileTEST_ACCESS_DATABASE);
+        FU.copy(fileTEST_EMPTY_DATABASE, fileTEST_SQL_DATABASE);
+        AccessDataSource dsAccess = new AccessDataSource();
+        dsAccess.setDatabaseName(fileTEST_SQL_DATABASE.getAbsolutePath());
+        dsAccess.setDescription("SQL data base");
+        dsAccess.setReadOnly(false);
+        dsAccess.setUser(sUSER);
+        dsAccess.setPassword(sPASSWORD);
+        AccessConnection connAccess = (AccessConnection) dsAccess.getConnection();
+        new TestSqlDatabase(connAccess);
+        connAccess.close();
     }
 
-    private void openResultSet(boolean bSql, String sQuery)
-            throws SQLException {
+    private void openResultSet(boolean bSql, String sQuery) throws SQLException {
         tearDown();
         AccessDataSource dsAccess = new AccessDataSource();
         if (bSql) {
@@ -104,12 +93,8 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
     }
 
     @Before
-    public void setUp() {
-        try {
-            openResultSet(true, _sSqlQuerySimple);
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void setUp() throws SQLException {
+        openResultSet(true, _sSqlQuerySimple);
     }
 
     @Test
@@ -118,33 +103,21 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester {
     }
 
     @Test
-    public void testNativeSimple() {
-        try {
-            openResultSet(false, _sNativeQuerySimple);
-            super.testAll();
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void testNativeSimple() throws SQLException {
+        openResultSet(false, _sNativeQuerySimple);
+        super.testAll();
     }
 
     @Test
-    public void testNativeComplex() {
-        try {
-            openResultSet(false, _sNativeQueryComplex);
-            super.testAll();
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void testNativeComplex() throws SQLException {
+        openResultSet(false, _sNativeQueryComplex);
+        super.testAll();
     }
 
     @Test
-    public void testSqlSimple() {
-        try {
-            openResultSet(true, _sSqlQuerySimple);
-            super.testAll();
-        } catch (SQLException se) {
-            fail(EU.getExceptionMessage(se));
-        }
+    public void testSqlSimple() throws SQLException {
+        openResultSet(true, _sSqlQuerySimple);
+        super.testAll();
     }
 
 }
