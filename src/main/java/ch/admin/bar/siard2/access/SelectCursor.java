@@ -10,252 +10,250 @@ Created    : 07.11.2016, Hartwig Thomas
 ======================================================================*/
 package ch.admin.bar.siard2.access;
 
-import java.io.*;
+import ch.admin.bar.siard2.jdbc.AccessResultSet;
+import ch.enterag.sqlparser.DmlStatement;
+import ch.enterag.sqlparser.SqlStatement;
+import ch.enterag.sqlparser.dml.DeleteStatement;
+import ch.enterag.sqlparser.dml.UpdateStatement;
+import ch.enterag.sqlparser.expression.BooleanValueExpression;
+import ch.enterag.sqlparser.expression.QuerySpecification;
+import com.healthmarketscience.jackcess.Row;
 
-import ch.enterag.sqlparser.*;
-import ch.enterag.sqlparser.dml.*;
-import ch.enterag.sqlparser.expression.*;
-import com.healthmarketscience.jackcess.*;
-import ch.admin.bar.siard2.jdbc.*;
+import java.io.IOException;
 
 /*====================================================================*/
-/** A select cursor represents the result of a select expression on the 
+
+/** A select cursor represents the result of a select expression on the
  * result of a select expression.
  * @author Hartwig Thomas */
-public class SelectCursor implements ResultSetCursor
-{
-  /** FROM select expression result */
-  private ResultSetCursor _rsc = null;
-  /** sql statement */
-  private SqlStatement _ss = null;
-  /** current row number (0-based) */
-  private int _iCurrentRow = -1;
-  /** cached number of rows */
-  private int _iRowCount = -1;
+public class SelectCursor implements ResultSetCursor {
+    /** FROM select expression result */
+    private ResultSetCursor _rsc = null;
+    /** sql statement */
+    private SqlStatement _ss = null;
+    /** current row number (0-based) */
+    private int _iCurrentRow = -1;
+    /** cached number of rows */
+    private int _iRowCount = -1;
 
-  /*------------------------------------------------------------------*/
-  /** create a SelectCursor backed by a select expression.
-   * N.B.: It is assumed that global evaluation values have already been set.
-   * @param ears result set describing the rows of the FROM expression.
-   * @param ss sql statement with column values.
-   */
-  public SelectCursor(
-    AccessResultSet ears,
-    SqlStatement ss)
-  {
-    _rsc = ears.getCursor();
-    _ss = ss;
-    _iCurrentRow = -1;
-  } /* constructor SelectCursor */
+    /*------------------------------------------------------------------*/
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public void beforeFirst()
-  {
-    _rsc.beforeFirst();
-    _iCurrentRow = -1;
-  } /* beforeFirst */
+    /** create a SelectCursor backed by a select expression.
+     * N.B.: It is assumed that global evaluation values have already been set.
+     * @param ears result set describing the rows of the FROM expression.
+     * @param ss sql statement with column values.
+     */
+    public SelectCursor(
+            AccessResultSet ears,
+            SqlStatement ss) {
+        _rsc = ears.getCursor();
+        _ss = ss;
+        _iCurrentRow = -1;
+    } /* constructor SelectCursor */
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public void afterLast() throws IOException
-  {
-    _rsc.afterLast();
-    _iCurrentRow = getCount();
-  } /* afterLast */
+    /*------------------------------------------------------------------*/
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public boolean isBeforeFirst() throws IOException
-  {
-    return _rsc.isBeforeFirst();
-  } /* isBeforeFirst */
+    /** {@link ResultSetCursor} */
+    @Override
+    public void beforeFirst() {
+        _rsc.beforeFirst();
+        _iCurrentRow = -1;
+    } /* beforeFirst */
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public boolean isAfterLast() throws IOException
-  {
-    return _rsc.isAfterLast();
-  } /* isAfterLast */
+    /*------------------------------------------------------------------*/
 
-  /*------------------------------------------------------------------*/
-  /** fill the query specification with values from row and evaluate the 
-   * condition expression. 
-   * @param row Row with values.
-   * @return false, if the expression evaluates to false, true otherwise.
-   */
-  private boolean evaluateCondition(Row row) throws IOException
-  {
-    boolean bValue = true;
-    Shunting.fillSqlValues(row,_ss);
-    BooleanValueExpression bve = null;
-    QuerySpecification qs = _ss.getQuerySpecification();
-    DmlStatement dstmt = _ss.getDmlStatement();
-    if (qs != null)
-      bve = qs.getWhereCondition();
-    else if (dstmt != null)
-    {
-      UpdateStatement us = dstmt.getUpdateStatement();
-      DeleteStatement ds = dstmt.getDeleteStatement();
-      if (us != null)
-        bve = us.getBooleanValueExpression();
-      else if (ds != null)
-        bve = ds.getBooleanValueExpression();
-    }
-    if ((row != null) && (bve != null))
-    {
-      Boolean b = bve.evaluate(_ss,false);
-      if (b != null)
-        bValue = b.booleanValue();
-    }
-    return bValue;
-  } /* evaluateCondition */
-  
-  /*------------------------------------------------------------------*/
-  /** evaluate the SELECT expressions assuming sql statement has been 
-   * filled with values.   
-   * @return row with evaluated SELECT expression values.
-   */
-  private ResultSetRow evaluateSelectExpressions()
-    throws IOException
-  {
-    ResultSetRow rsrow = new ResultSetRow();
-    Shunting.fillRowValues(_ss,rsrow);
-    return rsrow;
-  } /* evaluateSelectExpressions */
-  
-  /*------------------------------------------------------------------*/
-  /** go to next valid row.
-   * @return true, if one exists.
-   * @throws IOException
-   */
-  private boolean next() throws IOException
-  {
-    boolean bNext = false;
-    if (!_rsc.isAfterLast())
-    {
-      _iCurrentRow++;
-      /* get the next table row  matching the condition */
-      Row rowFrom = _rsc.getNextRow();
-      while ((!_rsc.isAfterLast()) && (!evaluateCondition(rowFrom)))
-        rowFrom = _rsc.getNextRow();
-      if (!_rsc.isAfterLast())
-        bNext = true;
-    }
-    return bNext;
-  } /* next */
+    /** {@link ResultSetCursor} */
+    @Override
+    public void afterLast() throws IOException {
+        _rsc.afterLast();
+        _iCurrentRow = getCount();
+    } /* afterLast */
 
-  /*------------------------------------------------------------------*/
-  /** go to previous valid row.
-   * @return true, if one exists.
-   * @throws IOException
-   */
-  private boolean previous() throws IOException
-  {
-    boolean bPrevious = false;
-    if (!_rsc.isBeforeFirst())
-    {
-      _iCurrentRow--;
-      /* get the previous table row  matching the condition */
-      Row rowFrom = _rsc.getPreviousRow();
-      while ((!_rsc.isBeforeFirst()) && (!evaluateCondition(rowFrom)))
-        rowFrom = _rsc.getPreviousRow();
-      if (!_rsc.isBeforeFirst())
-        bPrevious = true;
-    }
-    return bPrevious;
-  } /* previous */
+    /*------------------------------------------------------------------*/
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public Row getNextRow() throws IOException
-  {
-    Row rowTo = null;
-    if (next())
-      rowTo = evaluateSelectExpressions();
-    return rowTo;
-  } /* getNextRow */
+    /** {@link ResultSetCursor} */
+    @Override
+    public boolean isBeforeFirst() throws IOException {
+        return _rsc.isBeforeFirst();
+    } /* isBeforeFirst */
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public Row getPreviousRow() throws IOException
-  {
-    Row rowTo = null;
-    if (previous())
-      rowTo = evaluateSelectExpressions();
-    return rowTo;
-  } /* getPreviousRow */
+    /*------------------------------------------------------------------*/
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override 
-  public Row refreshCurrentRow() throws IOException
-  {
-    Row row = evaluateSelectExpressions();
-    return row;
-  } /* getCurrentRow */
-  
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public int getRow()
-  {
-    return _iCurrentRow+1;
-  } /* getRow */
-  
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public void deleteCurrentRow()
-    throws IOException
-  {
-    _rsc.deleteCurrentRow();
-  } /* deleteCurrentRow */
-  
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */ 
-  @Override
-  public void updateCurrentRow(Row row)
-    throws IOException
-  {
-    throw new IOException("Current row of a VIEW cannot be updated!");
-  } /* updateCurrentRow */
+    /** {@link ResultSetCursor} */
+    @Override
+    public boolean isAfterLast() throws IOException {
+        return _rsc.isAfterLast();
+    } /* isAfterLast */
 
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */
-  @Override
-  public void insertRow(Row row)
-    throws IOException
-  {
-    throw new IOException("Row cannot be inserted into a VIEW!");
-  } /* insertRow */
-  
-  /*------------------------------------------------------------------*/
-  /** {@link ResultSetCursor} */
-  @Override
-  public int getCount()
-    throws IOException
-  {
-    if (_iRowCount < 0)
-    {
-      _iRowCount = 0;
-      /* remember position */
-      int iCurrentRow = _iCurrentRow;
-      beforeFirst();
-      while (next())
-        _iRowCount++;
-      /* reposition */
-      beforeFirst();
-      while (iCurrentRow != _iCurrentRow)
-        next();
-    }
-    return _iRowCount;
-  } /* getCount */
+    /*------------------------------------------------------------------*/
+
+    /** fill the query specification with values from row and evaluate the
+     * condition expression.
+     * @param row Row with values.
+     * @return false, if the expression evaluates to false, true otherwise.
+     */
+    private boolean evaluateCondition(Row row) throws IOException {
+        boolean bValue = true;
+        Shunting.fillSqlValues(row, _ss);
+        BooleanValueExpression bve = null;
+        QuerySpecification qs = _ss.getQuerySpecification();
+        DmlStatement dstmt = _ss.getDmlStatement();
+        if (qs != null)
+            bve = qs.getWhereCondition();
+        else if (dstmt != null) {
+            UpdateStatement us = dstmt.getUpdateStatement();
+            DeleteStatement ds = dstmt.getDeleteStatement();
+            if (us != null)
+                bve = us.getBooleanValueExpression();
+            else if (ds != null)
+                bve = ds.getBooleanValueExpression();
+        }
+        if ((row != null) && (bve != null)) {
+            Boolean b = bve.evaluate(_ss, false);
+            if (b != null)
+                bValue = b.booleanValue();
+        }
+        return bValue;
+    } /* evaluateCondition */
+
+    /*------------------------------------------------------------------*/
+
+    /** evaluate the SELECT expressions assuming sql statement has been
+     * filled with values.
+     * @return row with evaluated SELECT expression values.
+     */
+    private ResultSetRow evaluateSelectExpressions()
+            throws IOException {
+        ResultSetRow rsrow = new ResultSetRow();
+        Shunting.fillRowValues(_ss, rsrow);
+        return rsrow;
+    } /* evaluateSelectExpressions */
+
+    /*------------------------------------------------------------------*/
+
+    /** go to next valid row.
+     * @return true, if one exists.
+     * @throws IOException
+     */
+    private boolean next() throws IOException {
+        boolean bNext = false;
+        if (!_rsc.isAfterLast()) {
+            _iCurrentRow++;
+            /* get the next table row  matching the condition */
+            Row rowFrom = _rsc.getNextRow();
+            while ((!_rsc.isAfterLast()) && (!evaluateCondition(rowFrom)))
+                rowFrom = _rsc.getNextRow();
+            if (!_rsc.isAfterLast())
+                bNext = true;
+        }
+        return bNext;
+    } /* next */
+
+    /*------------------------------------------------------------------*/
+
+    /** go to previous valid row.
+     * @return true, if one exists.
+     * @throws IOException
+     */
+    private boolean previous() throws IOException {
+        boolean bPrevious = false;
+        if (!_rsc.isBeforeFirst()) {
+            _iCurrentRow--;
+            /* get the previous table row  matching the condition */
+            Row rowFrom = _rsc.getPreviousRow();
+            while ((!_rsc.isBeforeFirst()) && (!evaluateCondition(rowFrom)))
+                rowFrom = _rsc.getPreviousRow();
+            if (!_rsc.isBeforeFirst())
+                bPrevious = true;
+        }
+        return bPrevious;
+    } /* previous */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public Row getNextRow() throws IOException {
+        Row rowTo = null;
+        if (next())
+            rowTo = evaluateSelectExpressions();
+        return rowTo;
+    } /* getNextRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public Row getPreviousRow() throws IOException {
+        Row rowTo = null;
+        if (previous())
+            rowTo = evaluateSelectExpressions();
+        return rowTo;
+    } /* getPreviousRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public Row refreshCurrentRow() throws IOException {
+        Row row = evaluateSelectExpressions();
+        return row;
+    } /* getCurrentRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public int getRow() {
+        return _iCurrentRow + 1;
+    } /* getRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public void deleteCurrentRow()
+            throws IOException {
+        _rsc.deleteCurrentRow();
+    } /* deleteCurrentRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public void updateCurrentRow(Row row)
+            throws IOException {
+        throw new IOException("Current row of a VIEW cannot be updated!");
+    } /* updateCurrentRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public void insertRow(Row row)
+            throws IOException {
+        throw new IOException("Row cannot be inserted into a VIEW!");
+    } /* insertRow */
+
+    /*------------------------------------------------------------------*/
+
+    /** {@link ResultSetCursor} */
+    @Override
+    public int getCount()
+            throws IOException {
+        if (_iRowCount < 0) {
+            _iRowCount = 0;
+            /* remember position */
+            int iCurrentRow = _iCurrentRow;
+            beforeFirst();
+            while (next())
+                _iRowCount++;
+            /* reposition */
+            beforeFirst();
+            while (iCurrentRow != _iCurrentRow)
+                next();
+        }
+        return _iRowCount;
+    } /* getCount */
 
 } /* class SelectCursor */

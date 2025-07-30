@@ -11,12 +11,12 @@ Created    : 07.03.2017, Hartwig Thomas
 ======================================================================*/
 package ch.admin.bar.siard2.jdbc;
 
-import java.sql.*;
+import java.sql.NClob;
 
 /*====================================================================*/
+
 /** AccessNClob implements an NClob as a trivial string-based Clob.
  * @author Hartwig Thomas
  */
-public class AccessNClob extends AccessClob implements NClob
-{
+public class AccessNClob extends AccessClob implements NClob {
 } /* AccessNClob */

@@ -1,17 +1,23 @@
 package ch.admin.bar.siard2.jdbc;
 
-import java.io.*;
-import java.sql.*;
+import ch.admin.bar.siard2.access.TestAccessDatabase;
+import ch.admin.bar.siard2.access.TestSqlDatabase;
+import ch.admin.bar.siard2.jdbcx.AccessDataSource;
+import ch.enterag.utils.EU;
+import ch.enterag.utils.FU;
+import ch.enterag.utils.jdbc.BaseConnectionTester;
+import ch.enterag.utils.lang.Execute;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import org.junit.*;
-
-import ch.enterag.utils.*;
-import ch.enterag.utils.jdbc.*;
-import ch.enterag.utils.lang.*;
-import ch.admin.bar.siard2.access.*;
-import ch.admin.bar.siard2.jdbcx.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class AccessConnectionTester extends BaseConnectionTester {
     private static final File fileTEST_EMPTY_DATABASE = new File("src/test/resources/testfiles/testempty.accdb");
