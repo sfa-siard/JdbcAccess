@@ -35,10 +35,10 @@ public class AccessResultSetMetaDataTester extends BaseResultSetMetaDataTester
   private static String _sNativeQueryComplex = getTableQuery(TestAccessDatabase.getQualifiedComplexTable(),TestAccessDatabase._listCdComplex);
   private static String _sSqlQuerySimple = getTableQuery(TestSqlDatabase.getQualifiedSimpleTable(),TestSqlDatabase._listCdSimple);
   
-  private static final File fileTEST_EMPTY_DATABASE = new File("testfiles/testempty.accdb");
-  private static final File fileTEST_ACCESS_SOURCE = new File("testfiles/testaccess.accdb");
-  private static final File fileTEST_ACCESS_DATABASE = new File("tmp/testaccess.accdb");
-  private static final File fileTEST_SQL_DATABASE = new File("tmp/testsql.accdb");
+  private static final File fileTEST_EMPTY_DATABASE = new File("src/test/resources/testfiles/testempty.accdb");
+  private static final File fileTEST_ACCESS_SOURCE = new File("src/test/resources/testfiles/testaccess.accdb");
+  private static final File fileTEST_ACCESS_DATABASE = new File("src/test/resources/tmp/testaccess.accdb");
+  private static final File fileTEST_SQL_DATABASE = new File("src/test/resources/tmp/testsql.accdb");
   private static final String sUSER = "Admin";
   private static final String sPASSWORD = "";
   

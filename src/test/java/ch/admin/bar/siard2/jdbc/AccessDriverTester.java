@@ -9,7 +9,7 @@ import org.junit.*;
 public class AccessDriverTester
 {
   // private static final File fileTEST_EMPTY_DATABASE = new File(_cp.getInstance()+"/"+_cp.getCatalog());
-  private static final File fileTEST_EMPTY_DATABASE = new File("tmp/testempty.accdb");
+  private static final File fileTEST_EMPTY_DATABASE = new File("src/test/resources/tmp/testempty.accdb");
   private static String _sDB_URL = AccessDriver.getUrl(fileTEST_EMPTY_DATABASE.getPath());
   private static final String _sDB_USER = "Admin";
   private static final String _sDB_PASSWORD = "";

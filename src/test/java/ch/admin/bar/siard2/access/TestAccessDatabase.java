@@ -13,8 +13,8 @@ import ch.enterag.sqlparser.identifier.*;
 
 public class TestAccessDatabase
 {
-  private static final String sATTACHMENT = "testfiles/Sämmtliche_Werke.pdf";
-  private static final String sOLE_OBJECT = "testfiles/zitrone.png";
+  private static final String sATTACHMENT = "src/test/resources/testfiles/Sämmtliche_Werke.pdf";
+  private static final String sOLE_OBJECT = "src/test/resources/testfiles/zitrone.png";
   private static final String sHYPERLINK = "https://www.enterag.ch/";
  
   /*

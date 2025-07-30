@@ -10,8 +10,8 @@ import ch.enterag.utils.FU;
 
 public class AccessDataSourceTester
 {
-  private static final File fileTEST_DATABASE = new File("testfiles/TestDataSource.accdb");
-  private static final File fileBACKUP_DATABASE = new File("tmp/TestDataSource.bak");
+  private static final File fileTEST_DATABASE = new File("src/test/resources/testfiles/TestDataSource.accdb");
+  private static final File fileBACKUP_DATABASE = new File("src/test/resources/tmp/TestDataSource.bak");
   private static final String sDESCRIPTION = "Test of AccessDataSource";
   private static final boolean bREAD_ONLY = true;
   private static final String sUSER = "Admin";
