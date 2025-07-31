@@ -30,8 +30,6 @@ dependencies {
     implementation("ch.admin.bar:SqlParser:v2.2.2")
     implementation("ch.admin.bar:jdbc-base:${versions["jdbc-base"]}")
 
-    implementation(fileTree(mapOf("dir" to "lib", "include" to listOf("*.jar"))))
-
     implementation("org.antlr:antlr4-runtime:4.5.2")
 
     implementation("commons-lang:commons-lang:2.6")
