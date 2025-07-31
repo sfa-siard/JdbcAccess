@@ -26,20 +26,25 @@ val versions = mapOf(
 )
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "lib", "include" to listOf("*.jar"))))
-
-    /*implementation("org.antlr:antlr4-runtime:4.5.2")
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    implementation("org.postgresql:postgresql:42.2.5")
     implementation("ch.admin.bar:enterutilities:v2.2.3")
     implementation("ch.admin.bar:SqlParser:v2.2.2")
     implementation("ch.admin.bar:jdbc-base:${versions["jdbc-base"]}")
-*/
+
+    implementation(fileTree(mapOf("dir" to "lib", "include" to listOf("*.jar"))))
+
+    implementation("org.antlr:antlr4-runtime:4.5.2")
+
+    implementation("commons-lang:commons-lang:2.6")
+    implementation("commons-logging:commons-logging:1.1.3")
+    implementation("com.healthmarketscience.jackcess:jackcess:2.1.12")
+
+    implementation("com.googlecode.json-simple:json-simple:1.1.1")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testImplementation("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 
-  //  testImplementation(testFixtures("ch.admin.bar:jdbc-base:${versions["jdbc-base"]}"))
+    testImplementation(testFixtures("ch.admin.bar:jdbc-base:${versions["jdbc-base"]}"))
 }
 
 tasks.test {
