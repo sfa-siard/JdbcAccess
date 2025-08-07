@@ -22,12 +22,12 @@ repositories {
 }
 
 val versions = mapOf(
-    "jdbc-base" to "v2.2.9",
+    "jdbc-base" to "v2.2.10",
 )
 
 dependencies {
-    implementation("ch.admin.bar:enterutilities:v2.2.3")
-    implementation("ch.admin.bar:SqlParser:v2.2.2")
+    implementation("ch.admin.bar:enterutilities:v2.2.4")
+    implementation("ch.admin.bar:SqlParser:v2.2.3")
     implementation("ch.admin.bar:jdbc-base:${versions["jdbc-base"]}")
 
     implementation("org.antlr:antlr4-runtime:4.5.2")
