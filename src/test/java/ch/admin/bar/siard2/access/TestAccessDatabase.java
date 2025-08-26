@@ -113,18 +113,18 @@ public class TestAccessDatabase {
 
     @SuppressWarnings("deprecation")
     private static List<TestColumnDefinition> getListCdSimple() {
-        List<TestColumnDefinition> listCdSimple = new ArrayList<TestColumnDefinition>();
+        List<TestColumnDefinition> listCdSimple = new ArrayList<>();
         _iPrimarySimple = listCdSimple.size(); // next column will be primary key column
         listCdSimple.add(new ColumnDefinition("CCOUNTER", "COUNTER", 1));
-        listCdSimple.add(new ColumnDefinition("CBYTE", "BYTE", new Byte((byte) -100)));
-        listCdSimple.add(new ColumnDefinition("CSMALLINT", "SMALLINT", new Short((short) -32000)));
+        listCdSimple.add(new ColumnDefinition("CBYTE", "BYTE", (byte) -100));
+        listCdSimple.add(new ColumnDefinition("CSMALLINT", "SMALLINT", (short) -32000));
         _iForeignSimple = listCdSimple.size(); // next column will be foreign key column referencing primary key of complex table
-        listCdSimple.add(new ColumnDefinition("CINTEGER", "INTEGER", new Integer(1)));
+        listCdSimple.add(new ColumnDefinition("CINTEGER", "INTEGER", 1));
         listCdSimple.add(new ColumnDefinition("CDECIMAL_10_5", "DECIMAL(10,5)", new BigDecimal(BigInteger.valueOf(3141592653L), 5)));
         listCdSimple.add(new ColumnDefinition("CNUMERIC_18", "NUMERIC(18)", BigInteger.valueOf(123456789012345678L)));
         listCdSimple.add(new ColumnDefinition("CCURRENCY", "CURRENCY", BigDecimal.valueOf(12.3456)));
-        listCdSimple.add(new ColumnDefinition("CREAL", "REAL", new Float(Math.PI)));
-        listCdSimple.add(new ColumnDefinition("CDOUBLE", "DOUBLE", new Double(Math.E)));
+        listCdSimple.add(new ColumnDefinition("CREAL", "REAL", (float) Math.PI));
+        listCdSimple.add(new ColumnDefinition("CDOUBLE", "DOUBLE", Math.E));
         listCdSimple.add(new ColumnDefinition("CDATETIME", "DATETIME", new Timestamp(2017 - 1900, 3, 8, 17, 30, 43, 0)));
         listCdSimple.add(new ColumnDefinition("CCHAR_254", "CHAR(254)", TestUtils.getString(250)));
         listCdSimple.add(new ColumnDefinition("CVARCHAR_254", "VARCHAR(254)", TestUtils.getString(250)));
@@ -139,17 +139,17 @@ public class TestAccessDatabase {
 
     @SuppressWarnings("deprecation")
     private static List<TestColumnDefinition> getListCdComplex() {
-        List<TestColumnDefinition> listCdComplex = new ArrayList<TestColumnDefinition>();
+        List<TestColumnDefinition> listCdComplex = new ArrayList<>();
         _iPrimaryComplex = listCdComplex.size(); // next column will be primary key column
-        listCdComplex.add(new ColumnDefinition("id", "INTEGER", new Integer(1)));
+        listCdComplex.add(new ColumnDefinition("id", "INTEGER", 1));
         listCdComplex.add(new ColumnDefinition("COLTEXT", "TEXT", "text"));
         listCdComplex.add(new ColumnDefinition("COLMEMO", "MEMO", "memo"));
-        listCdComplex.add(new ColumnDefinition("COLLONG", "LONG", new Integer(100000)));
-        listCdComplex.add(new ColumnDefinition("COLINT", "INT", new Short((short) 10000)));
-        listCdComplex.add(new ColumnDefinition("COLBYTE", "BYTE", new Byte((byte) 100)));
+        listCdComplex.add(new ColumnDefinition("COLLONG", "LONG", 100000));
+        listCdComplex.add(new ColumnDefinition("COLINT", "INT", (short) 10000));
+        listCdComplex.add(new ColumnDefinition("COLBYTE", "BYTE", (byte) 100));
         listCdComplex.add(new ColumnDefinition("COLDECIMAL", "DECIMAL", BigDecimal.valueOf(1234567890L)));
-        listCdComplex.add(new ColumnDefinition("COLDOUBLE", "DOUBLE", new Double(12.3456789012)));
-        listCdComplex.add(new ColumnDefinition("COLFLOAT", "FLOAT", new Float(98.76543)));
+        listCdComplex.add(new ColumnDefinition("COLDOUBLE", "DOUBLE", 12.3456789012));
+        listCdComplex.add(new ColumnDefinition("COLFLOAT", "FLOAT", 98.76543F));
         listCdComplex.add(new ColumnDefinition("COLDATETIME", "DATETIME", new Timestamp(2017 - 1900, 2, 8, 11, 38, 0, 0)));
         listCdComplex.add(new ColumnDefinition("COLDATE", "DATE", new Date(2017 - 1900, 2, 8))); // month is 0-based!
         listCdComplex.add(new ColumnDefinition("COLTIME", "TIME", new Time(11, 38, 25)));
@@ -229,21 +229,21 @@ public class TestAccessDatabase {
         if (listCdPrimary != null) {
             sbSql.append(",\r\n  ");
             sbSql.append("CONSTRAINT " + "PK" + qiTable.getName() + " PRIMARY KEY(");
-            for (int iPrimary = 0; iPrimary < listCdPrimary.size(); iPrimary++)
-                sbSql.append(listCdPrimary.get(iPrimary)
-                                          .getName());
+            for (TestColumnDefinition testColumnDefinition : listCdPrimary)
+                sbSql.append(testColumnDefinition
+                        .getName());
             sbSql.append(")");
         }
         if (listCdForeign != null) {
             sbSql.append(",\r\n  ");
             sbSql.append("CONSTRAINT " + "FK" + qiTable.getName() + " FOREIGN KEY(");
-            for (int iForeign = 0; iForeign < listCdForeign.size(); iForeign++)
-                sbSql.append(listCdForeign.get(iForeign)
-                                          .getName());
+            for (TestColumnDefinition testColumnDefinition : listCdForeign)
+                sbSql.append(testColumnDefinition
+                        .getName());
             sbSql.append(") REFERENCES " + qiTableReferenced.format() + "(");
             for (int iReferenced = 0; iReferenced < listCdForeign.size(); iReferenced++)
                 sbSql.append(listCdReferenced.get(iReferenced)
-                                             .getName());
+                        .getName());
             sbSql.append(")");
         }
         sbSql.append("\r\n)");
@@ -264,7 +264,7 @@ public class TestAccessDatabase {
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
             if (iColumn > 0) sbSql.append(",\r\n  ");
             sbSql.append(listCd.get(iColumn)
-                               .getName());
+                    .getName());
         }
         sbSql.append("\r\nFROM ");
         sbSql.append(qiTable.format());
@@ -288,7 +288,7 @@ public class TestAccessDatabase {
             sbSql.append(tcd.getName());
         }
         sbSql.append("\r\n)\r\nVALUES\r\n(\r\n  ");
-        Map<Integer, Object> mapParameters = new HashMap<Integer, Object>();
+        Map<Integer, Object> mapParameters = new HashMap<>();
         int iParameter = 1;
         for (int iColumn = 0; iColumn < listCd.size(); iColumn++) {
             if (iColumn > 0) sbSql.append(",\r\n  ");
@@ -297,14 +297,14 @@ public class TestAccessDatabase {
             if (sLiteral.length() < 1000) sbSql.append(sLiteral);
             else {
                 sbSql.append("?");
-                mapParameters.put(Integer.valueOf(iParameter), tcd.getValue());
+                mapParameters.put(iParameter, tcd.getValue());
                 iParameter++;
             }
         }
         sbSql.append("\r\n)");
         PreparedStatement pstmt = _conn.prepareStatement(sbSql.toString());
         for (iParameter = 1; iParameter <= mapParameters.size(); iParameter++) {
-            Object o = mapParameters.get(Integer.valueOf(iParameter));
+            Object o = mapParameters.get(iParameter);
             if (o instanceof byte[]) {
                 byte[] buf = (byte[]) o;
                 InputStream isBlob = new ByteArrayInputStream(buf);
@@ -343,7 +343,7 @@ public class TestAccessDatabase {
                 sValueLiteral = "0x" + sValueLiteral.substring(2, sValueLiteral.length() - 3);
             else if (getValue() instanceof Byte) sValueLiteral = ((Byte) getValue()).toString();
             else if (getValue() instanceof Boolean) {
-                boolean b = ((Boolean) getValue()).booleanValue();
+                boolean b = (Boolean) getValue();
                 if (b) sValueLiteral = "1";
                 else sValueLiteral = "0";
             } else if (getValue() instanceof UUID)
@@ -351,5 +351,4 @@ public class TestAccessDatabase {
             return sValueLiteral;
         }
     }
-
 }
