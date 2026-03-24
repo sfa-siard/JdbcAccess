@@ -1,3 +1,9 @@
+> **⚠️ ARCHIVED REPOSITORY**  
+> This repository is archived and no longer maintained. All development has moved to the new monorepo:  
+> **https://github.com/sfa-siard/siard-suite**  
+> 
+> Please create any issues or pull requests in the new monorepo, which now contains all submodules including this one.
+
 # JdbcAccess - SIARD 2.2 JDBC Interface to MS Access databases based on Jackcess
 This package contains the JDBC interface for MS Access for SIARD Suite 2.2.
 
